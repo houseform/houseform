@@ -1,6 +1,5 @@
 import {createContext, PropsWithChildren, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState} from "react";
-import {ZodTypeAny} from "zod/lib/types";
-import {ZodError} from "zod";
+import {ZodError, ZodTypeAny} from "zod";
 
 function validate<T>(val: T, validator: ZodTypeAny | ((val: T) => Promise<boolean>)) {
     if (validator instanceof Function) {
@@ -10,9 +9,17 @@ function validate<T>(val: T, validator: ZodTypeAny | ((val: T) => Promise<boolea
     }
 }
 
+// TODO: Add a `getValidationError`
+// if (error instanceof ZodError) {
+//     formField.setErrors(error.errors.map(error => error.message));
+// } else {
+//     formField.setErrors([error]);
+// }
+
+
 const FormContext = createContext({
     formFieldsRef: {current: [] as FieldProps[]},
-    onSubmit: () => {
+    onSubmit: async () => {
         return undefined as void;
     }
 });
@@ -24,18 +31,28 @@ interface FormProps<T> {
 export function Form<T>(props: PropsWithChildren<FormProps<T>>) {
     const formFieldsRef = useRef<FieldProps[]>([]);
 
-    const onSubmit = useCallback(() => {
-        // TODO: Validate onSubmit
-        const values = formFieldsRef.current.reduce((prev, curr) => {
-            if (prev === null) return null;
-            if (curr.errors.length > 0) return null;
-            prev[curr.props.name] = curr.value;
-            return prev;
-        }, {} as Record<string, T> | null)
+    const onSubmit = useCallback(async () => {
+        let values = {} as Record<string, T>;
 
-        if (values === null) {
-            return;
-        }
+        const validArrays = await Promise.all(formFieldsRef.current.map(async formField => {
+            if (formField.props.onSubmitValidate) {
+                try {
+                    await validate(formField.value, formField.props.onSubmitValidate);
+                } catch (error) {
+                    if (error instanceof ZodError) {
+                        formField.setErrors(error.errors.map(error => error.message));
+                    } else {
+                        formField.setErrors([error as string]);
+                    }
+                    return false;
+                }
+            }
+            if (formField.errors.length > 0) return false;
+            values[formField.props.name] = formField.value;
+            return true;
+        }));
+
+        if (!validArrays.every(isValid => !!isValid)) return;
 
         props.onSubmit(values);
     }, [formFieldsRef, props.onSubmit]);
@@ -61,6 +78,7 @@ interface FieldProps<T = any> {
 }
 
 interface FieldRenderProps<T = any> extends FieldBase<T> {
+    // TODO: Pass `isValid`, pass `isTouched`, pass `isDirty`
     children: (props: {
         value: T,
         onChange: (val: T) => void,
