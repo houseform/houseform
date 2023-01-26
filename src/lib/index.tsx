@@ -27,9 +27,15 @@ export function Form<T>(props: PropsWithChildren<FormProps<T>>) {
     const onSubmit = useCallback(() => {
         // TODO: Validate onSubmit
         const values = formFieldsRef.current.reduce((prev, curr) => {
+            if (prev === null) return null;
+            if (curr.errors.length > 0) return null;
             prev[curr.props.name] = curr.value;
             return prev;
-        }, {} as Record<string, T>)
+        }, {} as Record<string, T> | null)
+
+        if (values === null) {
+            return;
+        }
 
         props.onSubmit(values);
     }, [formFieldsRef, props.onSubmit]);
@@ -51,6 +57,7 @@ interface FieldProps<T = any> {
     value: T;
     props: FieldBase<T>;
     setErrors: (error: string[]) => void;
+    errors: string[];
 }
 
 interface FieldRenderProps<T = any> extends FieldBase<T> {
@@ -83,7 +90,7 @@ export function Field<T>(props: FieldRenderProps<T>) {
         }
     }
 
-    const mutableRef = useRef<FieldProps<T>>({value, props, setErrors});
+    const mutableRef = useRef<FieldProps<T>>({value, props, setErrors, errors});
 
     useLayoutEffect(() => {
         mutableRef.current.props = props;
@@ -99,6 +106,10 @@ export function Field<T>(props: FieldRenderProps<T>) {
         mutableRef.current.value = value;
     }, [value]);
 
+    useLayoutEffect(() => {
+        mutableRef.current.errors = errors;
+    }, [errors]);
+
     return props.children({value, onChange, errors})
 }
 
@@ -110,6 +121,8 @@ interface SubmitFieldProps {
 
 export function SubmitField(props: SubmitFieldProps) {
     const {onSubmit} = useContext(FormContext);
+
+    // TODO: Pass `isValid`, pass `isTouched`, pass `isDirty`
 
     return props.children({onSubmit});
 }
