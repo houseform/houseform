@@ -2,24 +2,26 @@ import {createContext, PropsWithChildren, useCallback, useContext, useLayoutEffe
 import {ZodTypeAny} from "zod/lib/types";
 
 const FormContext = createContext({
-    formFieldsRef: {current: [] as any[]},
+    formFieldsRef: {current: [] as FieldProps[]},
     onSubmit: () => {
         return undefined as void;
     }
 });
 
 interface FormProps<T> {
-    onSubmit: (values: T) => void;
+    onSubmit: (values: Record<string, T>) => void;
 }
 
 export function Form<T>(props: PropsWithChildren<FormProps<T>>) {
-    const formFieldsRef = useRef([]);
+    const formFieldsRef = useRef<FieldProps[]>([]);
 
     const onSubmit = useCallback(() => {
-        // TODO: Add `onSubmitValidate` support
-        formFieldsRef.current.forEach(() => {
+        const values = formFieldsRef.current.reduce((prev, curr) => {
+            prev[curr.props.name] = curr.value;
+            return prev;
+        }, {} as Record<string, T>)
 
-        })
+        props.onSubmit(values);
     }, [formFieldsRef, props.onSubmit]);
 
     const value = useMemo(() => {
@@ -29,13 +31,18 @@ export function Form<T>(props: PropsWithChildren<FormProps<T>>) {
     return <FormContext.Provider value={value}>{props.children}</FormContext.Provider>
 }
 
-interface FieldProps<T = any> {
+interface FieldBase<T = any> {
     name: string;
     onChangeValidate?: ZodTypeAny | ((val: T) => Promise<boolean>);
     onSubmitValidate?: ZodTypeAny | ((val: T) => Promise<boolean>);
 }
 
-interface FieldRenderProps<T = any> extends FieldProps<T> {
+interface FieldProps<T = any> {
+    value: T;
+    props: FieldBase<T>;
+}
+
+interface FieldRenderProps<T = any> extends FieldBase<T> {
     children: (props: {
         value: T,
         onChange: (val: T) => void,
@@ -55,26 +62,32 @@ export function Field<T>(props: FieldRenderProps<T>) {
         setValue(val);
     }
 
+    const mutableRef = useRef<FieldProps<T>>({value, props});
+
     useLayoutEffect(() => {
-        formFieldsRef.current.push(props);
+        mutableRef.current.props = props;
+        const newMutable = mutableRef.current;
+        formFieldsRef.current.push(newMutable);
 
         return () => {
-            formFieldsRef.current.slice(formFieldsRef.current.indexOf(props), 1);
+            formFieldsRef.current.slice(formFieldsRef.current.indexOf(newMutable), 1);
         }
     }, [props]);
 
-    // TODO: Add value and error to formFieldsRef.current
+    useLayoutEffect(() => {
+        mutableRef.current.value = value;
+    }, [value]);
 
     return props.children({value, onChange, error: null})
 }
 
-interface SubmitButtonProps {
+interface SubmitFieldProps {
     children: (props: {
         onSubmit: () => void
     }) => JSX.Element;
 }
 
-export function SubmitButton(props: SubmitButtonProps) {
+export function SubmitField(props: SubmitFieldProps) {
     const {onSubmit} = useContext(FormContext);
 
     return props.children({onSubmit});

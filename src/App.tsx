@@ -1,4 +1,4 @@
-import {Field, Form} from "./lib";
+import {Field, Form, SubmitField} from "./lib";
 import {z} from 'zod';
 
 function isEmailUnique(val: string) {
@@ -24,11 +24,14 @@ function App() {
                    onSubmitValidate={isEmailUnique}>
                 {({value, onChange, error}) => {
                     return <div>
-                        <input value={value} onChange={e => onChange(e.target.value)}/>
+                        <input value={value} onChange={e => onChange(e.target.value)} placeholder={"Email"}/>
                         {error && <p>{error}</p>}
                     </div>
                 }}
             </Field>
+            <SubmitField>
+                {({onSubmit}) => <button onClick={onSubmit}>Submit</button>}
+            </SubmitField>
         </Form>
     )
 }
