@@ -22,10 +22,10 @@ function App() {
             <Field name="email"
                    onChangeValidate={z.string().email("This must be an email")}
                    onSubmitValidate={isEmailUnique}>
-                {({value, onChange, error}) => {
+                {({value, onChange, errors}) => {
                     return <div>
                         <input value={value} onChange={e => onChange(e.target.value)} placeholder={"Email"}/>
-                        {error && <p>{error}</p>}
+                        {errors.map(error => <p>{error}</p>)}
                     </div>
                 }}
             </Field>
