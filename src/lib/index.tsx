@@ -9,13 +9,13 @@ function validate<T>(val: T, validator: ZodTypeAny | ((val: T) => Promise<boolea
     }
 }
 
-// TODO: Add a `getValidationError`
-// if (error instanceof ZodError) {
-//     formField.setErrors(error.errors.map(error => error.message));
-// } else {
-//     formField.setErrors([error]);
-// }
-
+function getValidationError(error: ZodError | string) {
+    if (error instanceof ZodError) {
+        return error.errors.map(error => error.message);
+    } else {
+        return [error];
+    }
+}
 
 const FormContext = createContext({
     formFieldsRef: {current: [] as FieldProps[]},
@@ -39,11 +39,7 @@ export function Form<T>(props: PropsWithChildren<FormProps<T>>) {
                 try {
                     await validate(formField.value, formField.props.onSubmitValidate);
                 } catch (error) {
-                    if (error instanceof ZodError) {
-                        formField.setErrors(error.errors.map(error => error.message));
-                    } else {
-                        formField.setErrors([error as string]);
-                    }
+                    formField.setErrors(getValidationError(error as ZodError | string));
                     return false;
                 }
             }
@@ -99,12 +95,8 @@ export function Field<T>(props: FieldRenderProps<T>) {
             validate(val, props.onChangeValidate)
                 .then(() => setErrors([]))
                 .catch((error: string | ZodError) => {
-                if (error instanceof ZodError) {
-                    setErrors(error.errors.map(error => error.message));
-                } else {
-                    setErrors([error]);
-                }
-            });
+                    setErrors(getValidationError(error as ZodError | string));
+                });
         }
     }
 
