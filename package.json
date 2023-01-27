@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -22,6 +23,7 @@
     "@types/react-dom": "^18.0.9",
     "@types/testing-library__jest-dom": "github:zoontek/types-testing-library-vitest-dom",
     "@vitejs/plugin-react": "^3.0.0",
+    "@vitest/coverage-c8": "^0.28.2",
     "jsdom": "^21.1.0",
     "typescript": "^4.9.3",
     "vite": "^4.0.0",
