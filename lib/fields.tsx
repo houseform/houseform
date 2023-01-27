@@ -56,6 +56,9 @@ export function Field<T>(props: FieldRenderProps<T>) {
         onBlur
     });
 
+    /**
+     * Add mutable ref to formFieldsRef
+     */
     useLayoutEffect(() => {
         mutableRef.current.props = props;
         const newMutable = mutableRef.current;
@@ -66,6 +69,9 @@ export function Field<T>(props: FieldRenderProps<T>) {
         }
     }, [props]);
 
+    /**
+     * Sync the values with the mutable ref
+     */
     useLayoutEffect(() => {
         mutableRef.current.value = value;
     }, [value]);
@@ -86,6 +92,9 @@ export function Field<T>(props: FieldRenderProps<T>) {
         mutableRef.current.isTouched = isTouched;
     }, [isTouched]);
 
+    /**
+     * Recompute form errors when field errors change
+     */
     useLayoutEffect(() => {
         recomputeErrors();
     }, [errors, recomputeErrors]);
