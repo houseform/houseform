@@ -36,7 +36,7 @@ function FormComp<T>(props: FormProps<T>) {
     )
 
     const baseValue = useMemo(() => {
-        return {formFieldsRef, onSubmit: () => Promise.resolve(), errors, recomputeErrors, getFieldValue, onChangeListenerRefs }
+        return {formFieldsRef, submit: () => Promise.resolve(), errors, recomputeErrors, getFieldValue, onChangeListenerRefs }
     }, [formFieldsRef, errors, recomputeErrors, getFieldValue, onChangeListenerRefs])
 
     const submit = useCallback(async () => {

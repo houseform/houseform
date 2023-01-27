@@ -7,7 +7,7 @@ export const initialContext = {
         return undefined as void;
     },
     errors: [] as string[],
-    onSubmit: async () => {
+    submit: async () => {
         return undefined as void;
     },
     getFieldValue: (val: string) => {
