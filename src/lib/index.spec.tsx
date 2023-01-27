@@ -262,7 +262,6 @@ test("Field onChange can clear an error when resolved", async () => {
     expect(queryByText("This is an error")).not.toBeInTheDocument();
 });
 
-test.todo("Field can check for onChangeValidate errors on submit");
 test("Field can receive data from other fields", async () => {
     const {getByPlaceholderText, queryByText, getByText} = render(<Form onSubmit={(values) => {
         }}>
@@ -301,4 +300,48 @@ test("Field can receive data from other fields", async () => {
     await user.clear(getByPlaceholderText("Password Confirmation"))
     await user.type(getByPlaceholderText("Password Confirmation"), "testing123")
     expect(queryByText("Passwords must match")).not.toBeInTheDocument();
+});
+
+test("Field can check for onChangeValidate errors on submit", async () => {
+    const {getByPlaceholderText, queryByText, getByText} = render(<Form onSubmit={(values) => {
+        }}>
+            <Field<string> name="password" initialValue={"testing123"}>
+                {({value, onChange}) => (
+                    <input value={value} onChange={e => onChange(e.target.value)} placeholder={"Password"}/>
+                )}
+            </Field>
+            <Field<string> name="confirmpassword"
+                           onChangeValidate={(val, form) => {
+                               if (val === form.getFieldValue("password")!.value) {
+                                   return Promise.resolve(true);
+                               } else {
+                                   return Promise.reject("Passwords must match");
+                               }
+                           }}
+            >
+                {({value, onChange, errors}) => {
+                    return <div>
+                        <input value={value} onChange={e => onChange(e.target.value)}
+                               placeholder={"Password Confirmation"}/>
+                        {errors.map(error => <p>{error}</p>)}
+                    </div>
+                }}
+            </Field>
+            <SubmitField>
+                {({onSubmit}) => <button onClick={onSubmit}>Submit</button>}
+            </SubmitField>
+        </Form>
+    );
+
+    expect(queryByText("Passwords must match")).not.toBeInTheDocument();
+
+    await user.type(getByPlaceholderText("Password Confirmation"), "test")
+    expect(getByText("Passwords must match")).toBeInTheDocument();
+    await user.clear(getByPlaceholderText("Password Confirmation"))
+    await user.type(getByPlaceholderText("Password Confirmation"), "testing123")
+    expect(queryByText("Passwords must match")).not.toBeInTheDocument();
+    await user.type(getByPlaceholderText("Password"), "another")
+    expect(queryByText("Passwords must match")).not.toBeInTheDocument();
+    await user.click(getByText("Submit"))
+    expect(getByText("Passwords must match")).toBeInTheDocument();
 });
