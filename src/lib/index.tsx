@@ -73,22 +73,18 @@ export function Form<T>(props: PropsWithChildren<FormProps<T>>) {
         let values = {} as Record<string, T>;
 
         const validArrays = await Promise.all(formFieldsRef.current.map(async formField => {
-            if (formField.props.onChangeValidate) {
-                try {
-                    await validate(formField.value, baseValue, formField.props.onChangeValidate);
-                } catch (error) {
-                    formField.setErrors(getValidationError(error as ZodError | string));
-                    return false;
+            const runValidationType = async (type: "onChangeValidate" | "onSubmitValidate") => {
+                if (formField.props[type]) {
+                    try {
+                        await validate(formField.value, baseValue, formField.props[type]!);
+                    } catch (error) {
+                        formField.setErrors(getValidationError(error as ZodError | string));
+                        return false;
+                    }
                 }
             }
-            if (formField.props.onSubmitValidate) {
-                try {
-                    await validate(formField.value, baseValue, formField.props.onSubmitValidate);
-                } catch (error) {
-                    formField.setErrors(getValidationError(error as ZodError | string));
-                    return false;
-                }
-            }
+            await runValidationType("onChangeValidate");
+            await runValidationType("onSubmitValidate");
             if (formField.errors.length > 0) return false;
             values[formField.props.name] = formField.value;
             return true;
