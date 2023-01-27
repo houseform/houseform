@@ -11,8 +11,10 @@
 ## Installation
 
 ```
-npm install houseform
+npm install houseform zod
 ```
+
+> Zod is a peer dependency of this project.
 
 ## Example
 
