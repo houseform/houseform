@@ -7,6 +7,7 @@ import {getValidationError, validate} from "./utils";
 interface FieldRenderProps<T = any> extends FieldBase<T> {
     children: (props: FieldProps<T>) => JSX.Element;
     initialValue?: T;
+    listenTo?: string[];
 }
 
 export function Field<T>(props: FieldRenderProps<T>) {
@@ -15,6 +16,9 @@ export function Field<T>(props: FieldRenderProps<T>) {
     const {formFieldsRef, recomputeErrors} = formContext;
 
     const [value, _setValue] = useState<T>(props.initialValue ?? "" as T);
+    const valueRef = useRef(value);
+
+    valueRef.current = value;
     const [errors, setErrors] = useState<string[]>([]);
     const [isTouched, setIsTouched] = useState<boolean>(false);
     const [isDirty, setIsDirty] = useState<boolean>(false);
@@ -23,10 +27,7 @@ export function Field<T>(props: FieldRenderProps<T>) {
         setIsTouched(true);
     }, []);
 
-    const setValue = useCallback((val: T) => {
-        setIsDirty(true);
-        setIsTouched(true);
-        _setValue(val);
+    const runFieldValidation = useCallback((val: T) => {
         if (props.onChangeValidate) {
             validate(val, formContext, props.onChangeValidate)
                 .then(() => {
@@ -36,7 +37,14 @@ export function Field<T>(props: FieldRenderProps<T>) {
                     setErrors(getValidationError(error as ZodError | string));
                 });
         }
-    }, [formContext, props.onChangeValidate]);
+    }, [formContext, props.onChangeValidate])
+
+    const setValue = useCallback((val: T) => {
+        setIsDirty(true);
+        setIsTouched(true);
+        _setValue(val);
+        runFieldValidation(val);
+    }, [runFieldValidation]);
 
     const isValid = useMemo(() => {
         return errors.length === 0;
@@ -68,6 +76,39 @@ export function Field<T>(props: FieldRenderProps<T>) {
             formFieldsRef.current.slice(formFieldsRef.current.indexOf(newMutable), 1);
         }
     }, [props]);
+
+    /**
+     * Setup `listenTo` field listeners for this field
+     */
+    useLayoutEffect(() => {
+       if (!props.listenTo || props.listenTo.length === 0) return;
+
+       function listener() {
+           runFieldValidation(valueRef.current);
+       }
+
+       function addListenerToListenToItem(fieldName: string) {
+           // Make sure there's an array for the field
+           formContext.onChangeListenerRefs.current[fieldName] = formContext.onChangeListenerRefs.current[fieldName] ?? [];
+           // Add the listener
+           formContext.onChangeListenerRefs.current[fieldName].push(listener);
+           // Remove the listener
+           return () => {
+               formContext.onChangeListenerRefs.current[fieldName].slice(formContext.onChangeListenerRefs.current[fieldName].indexOf(listener), 1);
+           }
+       }
+
+       const fns = props.listenTo.map(addListenerToListenToItem);
+
+       return () => fns.forEach(fn => fn());
+    }, [formContext, props.listenTo, runFieldValidation]);
+
+    /**
+     * Call `listenTo` field subscribers for other fields
+     */
+    useLayoutEffect(() => {
+        formContext.onChangeListenerRefs.current[props.name]?.forEach(fn => fn());
+    }, [formContext, value, props.name]);
 
     /**
      * Sync the values with the mutable ref

@@ -27,9 +27,13 @@ export function Form<T>(props: PropsWithChildren<FormProps<T>>) {
         return formFieldsRef.current.find(field => field.props.name === name);
     }, [formFieldsRef]);
 
+    const onChangeListenerRefs = useRef(
+        {} as Record<string, (() => void)[]>
+    )
+
     const baseValue = useMemo(() => {
-        return {formFieldsRef, onSubmit: () => Promise.resolve(), errors, recomputeErrors, getFieldValue }
-    }, [formFieldsRef, errors, recomputeErrors, getFieldValue])
+        return {formFieldsRef, onSubmit: () => Promise.resolve(), errors, recomputeErrors, getFieldValue, onChangeListenerRefs }
+    }, [formFieldsRef, errors, recomputeErrors, getFieldValue, onChangeListenerRefs])
 
     const onSubmit = useCallback(async () => {
         let values = {} as Record<string, T>;

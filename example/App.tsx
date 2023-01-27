@@ -40,6 +40,7 @@ function App() {
                 }}
             </Field>
             <Field<string> name="confirmpassword"
+                           listenTo={["password"]}
                            onChangeValidate={(val, form) => {
                                  if (val === form.getFieldValue("password")!.value) {
                                       return Promise.resolve(true);

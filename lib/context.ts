@@ -12,7 +12,8 @@ export const initialContext = {
     },
     getFieldValue: (val: string) => {
         return undefined as FieldProps | undefined;
-    }
+    },
+    onChangeListenerRefs: {current: {} as Record<string, (() => void)[]>}
 };
 
 export const FormContext = createContext(initialContext);
