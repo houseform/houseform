@@ -11,9 +11,8 @@
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "zod": "^3.20.2"
+    "react": ">=16.8.0",
+    "zod": ">=3.9.0"
   },
   "devDependencies": {
     "react": "^18.2.0",
