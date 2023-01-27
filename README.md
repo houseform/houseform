@@ -150,17 +150,17 @@ A field is the primitive for every input that you'd like to display to the user.
 
 ### _Interface_ `FieldProps`
 
-| Property       | Type                                | Description                                                  |
-| -------------- | ----------------------------------- | ------------------------------------------------------------ |
-| `value`        | `T`                                 | `T` is the type of the Field that's passed to the `<Field<T>>` component. |
-| `setValue`     | `(val: T) => void`                  | A function useful to change the value of a field             |
-| `onBlur`       | `() => void`                        | A function expected to be passed to the `onBlur` element property. |
-| `errors`       | `string[]`                          | The list of errors currently applied to the field.           |
-| `setErrors`    | `(errors: string[]) => void`        | A way to set the errors present on the field.                |
-| `isValid`      | `boolean`                           | A helper property to check if `errors` is an empty array.    |
-| `isTouched`    | `boolean`                           | A boolean to say if the field has been focused and blurred, regardless of user input. |
-| `setIsTouched` | `(val: boolean) => void`            |                                                              |
-| `isDirty`      | `boolean`                           | A boolean to say if the field has had any kind of user input. |
-| `setIsDirty`   | `(val: boolean) => void`            |                                                              |
-| `props`        | [`FieldBase`](#interface_fieldbase) | The properties originally passed to a field from the component. |
+| Property       | Type                         | Description                                                  |
+| -------------- | ---------------------------- | ------------------------------------------------------------ |
+| `value`        | `T`                          | `T` is the type of the Field that's passed to the `<Field<T>>` component. |
+| `setValue`     | `(val: T) => void`           | A function useful to change the value of a field             |
+| `onBlur`       | `() => void`                 | A function expected to be passed to the `onBlur` element property. |
+| `errors`       | `string[]`                   | The list of errors currently applied to the field.           |
+| `setErrors`    | `(errors: string[]) => void` | A way to set the errors present on the field.                |
+| `isValid`      | `boolean`                    | A helper property to check if `errors` is an empty array.    |
+| `isTouched`    | `boolean`                    | A boolean to say if the field has been focused and blurred, regardless of user input. |
+| `setIsTouched` | `(val: boolean) => void`     |                                                              |
+| `isDirty`      | `boolean`                    | A boolean to say if the field has had any kind of user input. |
+| `setIsDirty`   | `(val: boolean) => void`     |                                                              |
+| `props`        | [`FieldProps`](#field-props) | The properties originally passed to a field from the component. |
 
