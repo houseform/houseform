@@ -1,5 +1,18 @@
-import {createContext, PropsWithChildren, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState} from "react";
+import {
+    createContext, memo,
+    PropsWithChildren,
+    useCallback,
+    useContext,
+    useLayoutEffect,
+    useReducer,
+    useRef,
+    useState
+} from "react";
 import {ZodError, ZodTypeAny} from "zod";
+
+function useForceUpdate(): () => void {
+    return useReducer(() => ({}), {})[1] as () => void // <- paste here
+}
 
 function validate<T>(val: T, validator: ZodTypeAny | ((val: T) => Promise<boolean>)) {
     if (validator instanceof Function) {
@@ -19,6 +32,10 @@ function getValidationError(error: ZodError | string) {
 
 const FormContext = createContext({
     formFieldsRef: {current: [] as FieldProps[]},
+    recomputeErrors: () => {
+        return undefined as void;
+    },
+    errors: [] as string[],
     onSubmit: async () => {
         return undefined as void;
     }
@@ -28,8 +45,13 @@ interface FormProps<T> {
     onSubmit: (values: Record<string, T>) => void;
 }
 
-export function Form<T>(props: PropsWithChildren<FormProps<T>>) {
+function FormBase<T>(props: PropsWithChildren<FormProps<T>>) {
+    const recomputeErrors = useForceUpdate();
     const formFieldsRef = useRef<FieldProps[]>([]);
+
+    const errors = formFieldsRef.current.reduce((acc, field) => {
+        return acc.concat(field.errors);
+    }, [] as string[]);
 
     const onSubmit = useCallback(async () => {
         let values = {} as Record<string, T>;
@@ -53,12 +75,16 @@ export function Form<T>(props: PropsWithChildren<FormProps<T>>) {
         props.onSubmit(values);
     }, [formFieldsRef, props.onSubmit]);
 
-    const value = useMemo(() => {
-        return {formFieldsRef, onSubmit};
-    }, [formFieldsRef, onSubmit]);
-
-    return <FormContext.Provider value={value}>{props.children}</FormContext.Provider>
+    return (
+        <FormContext.Provider
+            value={{formFieldsRef, onSubmit, errors, recomputeErrors}}
+        >
+            {props.children}
+        </FormContext.Provider>
+    )
 }
+
+export const Form = memo(FormBase);
 
 interface FieldBase<T = any> {
     name: string;
@@ -74,17 +100,18 @@ interface FieldProps<T = any> {
 }
 
 interface FieldRenderProps<T = any> extends FieldBase<T> {
-    // TODO: Pass `isValid`, pass `isTouched`, pass `isDirty`
+    // TODO: Pass `isTouched`, pass `isDirty`
     children: (props: {
         value: T,
         onChange: (val: T) => void,
         errors: string[]
+        isValid: boolean
     }) => JSX.Element;
     initialValue?: T;
 }
 
 export function Field<T>(props: FieldRenderProps<T>) {
-    const {formFieldsRef} = useContext(FormContext);
+    const {formFieldsRef, recomputeErrors} = useContext(FormContext);
 
     const [value, setValue] = useState<T>(props.initialValue ?? "" as T);
     const [errors, setErrors] = useState<string[]>([]);
@@ -93,9 +120,13 @@ export function Field<T>(props: FieldRenderProps<T>) {
         setValue(val);
         if (props.onChangeValidate) {
             validate(val, props.onChangeValidate)
-                .then(() => setErrors([]))
+                .then(() => {
+                    setErrors([])
+                    recomputeErrors();
+                })
                 .catch((error: string | ZodError) => {
                     setErrors(getValidationError(error as ZodError | string));
+                    recomputeErrors();
                 });
         }
     }
@@ -120,19 +151,20 @@ export function Field<T>(props: FieldRenderProps<T>) {
         mutableRef.current.errors = errors;
     }, [errors]);
 
-    return props.children({value, onChange, errors})
+    return props.children({value, onChange, errors, isValid: errors.length === 0})
 }
 
 interface SubmitFieldProps {
     children: (props: {
-        onSubmit: () => void
+        onSubmit: () => void;
+        isValid: boolean;
     }) => JSX.Element;
 }
 
 export function SubmitField(props: SubmitFieldProps) {
-    const {onSubmit} = useContext(FormContext);
+    const {onSubmit, errors} = useContext(FormContext);
 
-    // TODO: Pass `isValid`, pass `isTouched`, pass `isDirty`
+    // TODO: Pass `isTouched`, pass `isDirty`
 
-    return props.children({onSubmit});
+    return props.children({onSubmit, isValid: errors.length === 0});
 }

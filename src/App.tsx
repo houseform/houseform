@@ -30,7 +30,7 @@ function App() {
                 }}
             </Field>
             <SubmitField>
-                {({onSubmit}) => <button onClick={onSubmit}>Submit</button>}
+                {({onSubmit, isValid}) => <button disabled={!isValid} onClick={onSubmit}>Submit</button>}
             </SubmitField>
         </Form>
     )
