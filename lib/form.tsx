@@ -1,11 +1,11 @@
 import {PropsWithChildren, useCallback, useMemo, useRef, useState} from "react";
 import {ZodError} from "zod";
-import { FormContext } from "./context";
+import {FormContext, initialContext} from "./context";
 import {FieldProps} from "./types";
 import {getValidationError, validate} from "./utils";
 
 interface FormProps<T> {
-    onSubmit: (values: Record<string, T>) => void;
+    onSubmit: (values: Record<string, T>, form: typeof initialContext) => void;
 }
 
 export function Form<T>(props: PropsWithChildren<FormProps<T>>) {
@@ -54,7 +54,7 @@ export function Form<T>(props: PropsWithChildren<FormProps<T>>) {
 
         if (!validArrays.every(isValid => !!isValid)) return;
 
-        props.onSubmit(values);
+        props.onSubmit(values, baseValue);
     }, [formFieldsRef, props.onSubmit]);
 
     const value = useMemo(() => {
