@@ -295,6 +295,26 @@ test("Field can check for onChangeValidate errors on submit", async () => {
 
 test.todo("Is touched should be set");
 
-test.todo("Is dirty should be set");
+test("Is dirty should be set", async () => {
+    const {getByPlaceholderText, queryByText, getByText} = render(
+        <Form onSubmit={(values) => {}}>
+            <Field<string> name="email" initialValue="">
+                {({value, setValue, isDirty}) => (
+                    <div>
+                        <input placeholder="Email" value={value} onChange={e => setValue(e.target.value)}/>
+                        {isDirty && <p>Dirty</p>}
+                    </div>
+                )}
+            </Field>
+        </Form>
+    );
+
+    expect(queryByText("Dirty")).not.toBeInTheDocument();
+
+    await user.type(getByPlaceholderText("Email"), "test");
+
+    expect(getByText("Dirty")).toBeInTheDocument();
+});
+
 
 test.todo("If a derived field is modified, then the original field is changed, it should revalidate the derived field");
