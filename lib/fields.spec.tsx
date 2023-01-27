@@ -337,4 +337,43 @@ test("Is dirty should be set", async () => {
 });
 
 
-test.todo("If a derived field is modified, then the original field is changed, it should revalidate the derived field");
+test("Field can listen for changes in other fields to validate on multiple field changes", async () => {
+    const {getByPlaceholderText, queryByText, getByText} = render(<Form onSubmit={(values) => {
+        }}>
+            <Field<string> name="password" initialValue={"testing123"}>
+                {({value, setValue}) => (
+                    <input value={value} onChange={e => setValue(e.target.value)} placeholder={"Password"}/>
+                )}
+            </Field>
+            <Field<string> name="confirmpassword"
+                           listenTo={["password"]}
+                           onChangeValidate={(val, form) => {
+                               if (val === form.getFieldValue("password")!.value) {
+                                   return Promise.resolve(true);
+                               } else {
+                                   return Promise.reject("Passwords must match");
+                               }
+                           }}
+            >
+                {({value, setValue, errors}) => {
+                    return <div>
+                        <input value={value} onChange={e => setValue(e.target.value)}
+                               placeholder={"Password Confirmation"}/>
+                        {errors.map(error => <p key={error}>{error}</p>)}
+                    </div>
+                }}
+            </Field>
+            <SubmitField>
+                {({onSubmit}) => <button onClick={onSubmit}>Submit</button>}
+            </SubmitField>
+        </Form>
+    );
+
+    expect(queryByText("Passwords must match")).not.toBeInTheDocument();
+
+    await user.type(getByPlaceholderText("Password Confirmation"), "testing123")
+    expect(queryByText("Passwords must match")).not.toBeInTheDocument();
+    await user.clear(getByPlaceholderText("Password"))
+    await user.type(getByPlaceholderText("Password"), "other")
+    expect(getByText("Passwords must match")).toBeInTheDocument();
+});
