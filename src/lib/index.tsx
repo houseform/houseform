@@ -1,18 +1,14 @@
 import {
-    createContext, memo,
+    createContext,
     PropsWithChildren,
     useCallback,
     useContext,
     useLayoutEffect,
-    useReducer,
+    useMemo,
     useRef,
     useState
 } from "react";
 import {ZodError, ZodTypeAny} from "zod";
-
-function useForceUpdate(): () => void {
-    return useReducer(() => ({}), {})[1] as () => void // <- paste here
-}
 
 function validate<T>(val: T, validator: ZodTypeAny | ((val: T) => Promise<boolean>)) {
     if (validator instanceof Function) {
@@ -45,13 +41,20 @@ interface FormProps<T> {
     onSubmit: (values: Record<string, T>) => void;
 }
 
-function FormBase<T>(props: PropsWithChildren<FormProps<T>>) {
-    const recomputeErrors = useForceUpdate();
+export function Form<T>(props: PropsWithChildren<FormProps<T>>) {
     const formFieldsRef = useRef<FieldProps[]>([]);
 
-    const errors = formFieldsRef.current.reduce((acc, field) => {
-        return acc.concat(field.errors);
-    }, [] as string[]);
+    const getErrors = useCallback(() => {
+        return formFieldsRef.current.reduce((acc, field) => {
+            return acc.concat(field.errors);
+        }, [] as string[]);
+    }, [formFieldsRef]);
+
+    const [errors, setErrors] = useState(getErrors());
+
+    const recomputeErrors = useCallback(() => {
+        setErrors(getErrors());
+    }, [getErrors]);
 
     const onSubmit = useCallback(async () => {
         let values = {} as Record<string, T>;
@@ -62,6 +65,7 @@ function FormBase<T>(props: PropsWithChildren<FormProps<T>>) {
                     await validate(formField.value, formField.props.onSubmitValidate);
                 } catch (error) {
                     formField.setErrors(getValidationError(error as ZodError | string));
+                    recomputeErrors();
                     return false;
                 }
             }
@@ -73,18 +77,20 @@ function FormBase<T>(props: PropsWithChildren<FormProps<T>>) {
         if (!validArrays.every(isValid => !!isValid)) return;
 
         props.onSubmit(values);
-    }, [formFieldsRef, props.onSubmit]);
+    }, [formFieldsRef, props.onSubmit, recomputeErrors]);
+
+    const value = useMemo(() => {
+        return {formFieldsRef, onSubmit, errors, recomputeErrors}
+    }, [formFieldsRef, onSubmit, errors, recomputeErrors])
 
     return (
         <FormContext.Provider
-            value={{formFieldsRef, onSubmit, errors, recomputeErrors}}
+            value={value}
         >
             {props.children}
         </FormContext.Provider>
     )
 }
-
-export const Form = memo(FormBase);
 
 interface FieldBase<T = any> {
     name: string;
