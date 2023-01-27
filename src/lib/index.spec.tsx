@@ -160,4 +160,30 @@ test("SubmitField should show isValid proper", async () => {
     expect(getByText("Is not valid")).toBeInTheDocument();
 });
 
-test.todo("onSubmitValidate should work")
+test("onSubmitValidate should work", async () => {
+    const {getByText, getByPlaceholderText, queryByText} = render(<Form onSubmit={() => {}}>
+        <Field<string> name={"email"} onSubmitValidate={() => Promise.reject("Not valid")}>
+            {({value, onChange, errors}) => (
+                <div>
+                    <input placeholder="Email" value={value} onChange={e => onChange(e.target.value)}/>
+                    {errors.map(error => <p key={error}>{error}</p>)}
+                </div>
+            )}
+        </Field>
+        <SubmitField>
+            {({onSubmit}) => <button onClick={onSubmit}>Submit</button>}
+        </SubmitField>
+    </Form>);
+
+    expect(queryByText("Not valid")).not.toBeInTheDocument();
+
+    await user.type(getByPlaceholderText("Email"), "test");
+
+    expect(queryByText("Not valid")).not.toBeInTheDocument();
+
+    await user.click(getByText("Submit"));
+
+    expect(getByText("Not valid")).toBeInTheDocument();
+})
+
+test.todo("onChange can clear an error when resolved")
