@@ -10,9 +10,25 @@ import {
 } from "react";
 import {ZodError, ZodTypeAny} from "zod";
 
-function validate<T>(val: T, validator: ZodTypeAny | ((val: T) => Promise<boolean>)) {
+const initialContext = {
+    formFieldsRef: {current: [] as FieldProps[]},
+    recomputeErrors: () => {
+        return undefined as void;
+    },
+    errors: [] as string[],
+    onSubmit: async () => {
+        return undefined as void;
+    },
+    getFieldValue: (val: string) => {
+        return undefined as FieldProps | undefined;
+    }
+};
+
+const FormContext = createContext(initialContext);
+
+function validate<T>(val: T, form: typeof initialContext, validator: ZodTypeAny | ((val: T, form: typeof initialContext) => Promise<boolean>)) {
     if (validator instanceof Function) {
-        return validator(val);
+        return validator(val, form);
     } else {
         return validator.parseAsync(val);
     }
@@ -25,17 +41,6 @@ function getValidationError(error: ZodError | string) {
         return [error];
     }
 }
-
-const FormContext = createContext({
-    formFieldsRef: {current: [] as FieldProps[]},
-    recomputeErrors: () => {
-        return undefined as void;
-    },
-    errors: [] as string[],
-    onSubmit: async () => {
-        return undefined as void;
-    }
-});
 
 interface FormProps<T> {
     onSubmit: (values: Record<string, T>) => void;
@@ -56,13 +61,21 @@ export function Form<T>(props: PropsWithChildren<FormProps<T>>) {
         setErrors(getErrors());
     }, [getErrors]);
 
+    const getFieldValue = useCallback((name: string) => {
+        return formFieldsRef.current.find(field => field.props.name === name);
+    }, [formFieldsRef]);
+
+    const baseValue = useMemo(() => {
+        return {formFieldsRef, onSubmit: () => Promise.resolve(), errors, recomputeErrors, getFieldValue }
+    }, [formFieldsRef, errors, recomputeErrors, getFieldValue])
+
     const onSubmit = useCallback(async () => {
         let values = {} as Record<string, T>;
 
         const validArrays = await Promise.all(formFieldsRef.current.map(async formField => {
             if (formField.props.onSubmitValidate) {
                 try {
-                    await validate(formField.value, formField.props.onSubmitValidate);
+                    await validate(formField.value, baseValue, formField.props.onSubmitValidate);
                 } catch (error) {
                     formField.setErrors(getValidationError(error as ZodError | string));
                     return false;
@@ -79,8 +92,8 @@ export function Form<T>(props: PropsWithChildren<FormProps<T>>) {
     }, [formFieldsRef, props.onSubmit]);
 
     const value = useMemo(() => {
-        return {formFieldsRef, onSubmit, errors, recomputeErrors}
-    }, [formFieldsRef, onSubmit, errors, recomputeErrors])
+        return {...baseValue, onSubmit }
+    }, [baseValue, onSubmit])
 
     return (
         <FormContext.Provider
@@ -93,8 +106,8 @@ export function Form<T>(props: PropsWithChildren<FormProps<T>>) {
 
 interface FieldBase<T = any> {
     name: string;
-    onChangeValidate?: ZodTypeAny | ((val: T) => Promise<boolean>);
-    onSubmitValidate?: ZodTypeAny | ((val: T) => Promise<boolean>);
+    onChangeValidate?: ZodTypeAny | ((val: T, form: typeof initialContext) => Promise<boolean>);
+    onSubmitValidate?: ZodTypeAny | ((val: T, form: typeof initialContext) => Promise<boolean>);
 }
 
 interface FieldProps<T = any> {
@@ -107,16 +120,18 @@ interface FieldProps<T = any> {
 interface FieldRenderProps<T = any> extends FieldBase<T> {
     // TODO: Pass `isTouched`, pass `isDirty`
     children: (props: {
-        value: T,
-        onChange: (val: T) => void,
-        errors: string[]
-        isValid: boolean
+        value: T;
+        onChange: (val: T) => void;
+        errors: string[];
+        isValid: boolean;
     }) => JSX.Element;
     initialValue?: T;
 }
 
 export function Field<T>(props: FieldRenderProps<T>) {
-    const {formFieldsRef, recomputeErrors} = useContext(FormContext);
+    const formContext = useContext(FormContext);
+
+    const {formFieldsRef, recomputeErrors} = formContext;
 
     const [value, setValue] = useState<T>(props.initialValue ?? "" as T);
     const [errors, setErrors] = useState<string[]>([]);
@@ -124,7 +139,7 @@ export function Field<T>(props: FieldRenderProps<T>) {
     const onChange = (val: T) => {
         setValue(val);
         if (props.onChangeValidate) {
-            validate(val, props.onChangeValidate)
+            validate(val, formContext, props.onChangeValidate)
                 .then(() => {
                     setErrors([])
                 })

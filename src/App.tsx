@@ -16,7 +16,7 @@ function isEmailUnique(val: string) {
 
 function App() {
     return (
-        <Form onSubmit={(values: any) => {
+        <Form onSubmit={(values) => {
             alert("Form was submitted with: " + JSON.stringify(values));
         }}>
             <Field name="email"
@@ -25,6 +25,32 @@ function App() {
                 {({value, onChange, errors}) => {
                     return <div>
                         <input value={value} onChange={e => onChange(e.target.value)} placeholder={"Email"}/>
+                        {errors.map(error => <p>{error}</p>)}
+                    </div>
+                }}
+            </Field>
+            <Field<string> name="password"
+                           onChangeValidate={z.string().min(8, "Must be at least 8 characters long")}
+            >
+                {({value, onChange, errors}) => {
+                    return <div>
+                        <input value={value} onChange={e => onChange(e.target.value)} placeholder={"Password"} type="password"/>
+                        {errors.map(error => <p>{error}</p>)}
+                    </div>
+                }}
+            </Field>
+            <Field<string> name="confirmpassword"
+                           onChangeValidate={(val, form) => {
+                                 if (val === form.getFieldValue("password")!.value) {
+                                      return Promise.resolve(true);
+                                 } else {
+                                      return Promise.reject("Passwords must match");
+                                 }
+                           }}
+            >
+                {({value, onChange, errors}) => {
+                    return <div>
+                        <input value={value} onChange={e => onChange(e.target.value)} placeholder={"Password Confirmation"} type="password"/>
                         {errors.map(error => <p>{error}</p>)}
                     </div>
                 }}
