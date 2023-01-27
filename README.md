@@ -81,3 +81,65 @@ function App() {
     )
 }
 ```
+
+## Documentation
+
+### Form
+
+The `Form` component is the main component of this library. It is responsible for managing the state of the form and
+must be the parent of all `Field` components.
+
+The `Form` component takes the following props:
+
+| Method     | Parameters | Expected Return                        | Description |
+|------------|--- |-----------------------------------------| --- |
+| `onSubmit` | `Record<string, any>`, [`FormContext`](#interface-formcontext) | | The function to call when the form is submitted. The first argument is the values of a form submitted. It might look something like:<br />`{email: "test@example.com", password: "Hunter2!", confirmpassword: "Hunter2!"}` |
+| `children` | [`FormState`](#interface-formstate) | `JSX.Element` | This is the component child function to pass, which accepts the arguments for FormState. |
+
+An example `Form` usage is:
+
+```jsx
+<Form onSubmit={() => {}}>
+{({submit}) => <button onClick={submit}>Submit</button>}
+</Form>
+```
+
+#### _Interface_ `FormState`
+
+These are the properties that are passed to the `<Form>` component's child function.
+
+
+| Property  | Type         | Description                                                  |
+| --------- | ------------ | ------------------------------------------------------------ |
+| `submit`  | `() => void` | The function to run when you're ready to submit your form. This function will not do anything if there are `errors` on the form. |
+| `isValid` | `boolean`    | A boolean to check if the form is valid or not.              |
+
+#### _Interface_ `FormContext`
+
+This is the second argument passed to the `<Form>` `onSubmit` function and the second argument to all [`<Field>` `onXValidate` property functions](#field):
+
+| Property        | Type                               | Description                                                  |
+| --------------- | ---------------------------------- | ------------------------------------------------------------ |
+| `errors`        | `string[]`                         | A list of all errors present on the form. When an empty array, the form is valid. |
+| `getFieldValue` | `(fieldName: sting) => FieldProps` | Takes the field name and returns a [`FieldProp`](#interface-fieldprop) representation of the named field. |
+
+
+### Field
+
+
+#### _Interface_ `FieldProp`
+
+| Property       | Type                                | Description                                                  |
+| -------------- | ----------------------------------- | ------------------------------------------------------------ |
+| `value`        | `T`                                 | `T` is the type of the Field that's passed to the `<Field<T>>` component. |
+| `setValue`     | `(val: T) => void`                  | A function useful to change the value of a field             |
+| `onBlur`       | `() => void`                        | A function expected to be passed to the `onBlur` element property. |
+| `errors`       | `string[]`                          | The list of errors currently applied to the field.           |
+| `setErrors`    | `(errors: string[]) => void`        | A way to set the errors present on the field.                |
+| `isValid`      | `boolean`                           | A helper property to check if `errors` is an empty array.    |
+| `isTouched`    | `boolean`                           | A boolean to say if the field has been focused and blurred, regardless of user input. |
+| `setIsTouched` | `(val: boolean) => void`            |                                                              |
+| `isDirty`      | `boolean`                           | A boolean to say if the field has had any kind of user input. |
+| `setIsDirty`   | `(val: boolean) => void`            |                                                              |
+| `props`        | [`FieldBase`](#interface_fieldbase) | The properties originally passed to a field from the component. |
+

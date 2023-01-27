@@ -4,12 +4,14 @@ import {FormContext, initialContext} from "./context";
 import {FieldProps} from "./types";
 import {getValidationError, validate} from "./utils";
 
+interface FormState {
+    submit: () => void;
+    isValid: boolean;
+}
+
 interface FormProps<T> {
     onSubmit: (values: Record<string, T>, form: typeof initialContext) => void;
-    children: (props: {
-        submit: () => void;
-        isValid: boolean;
-    }) => JSX.Element;
+    children: (props: FormState) => JSX.Element;
 }
 
 function FormComp<T>(props: FormProps<T>) {
