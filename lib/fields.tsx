@@ -43,8 +43,14 @@ export function Field<T>(props: FieldRenderProps<T>) {
         setIsDirty(true);
         setIsTouched(true);
         _setValue(val);
+
+        /**
+         * Call `listenTo` field subscribers for other fields
+         */
+        formContext.onChangeListenerRefs.current[props.name]?.forEach(fn => fn());
+
         runFieldValidation(val);
-    }, [runFieldValidation]);
+    }, [runFieldValidation, formContext, props.name]);
 
     const isValid = useMemo(() => {
         return errors.length === 0;
@@ -84,6 +90,7 @@ export function Field<T>(props: FieldRenderProps<T>) {
        if (!props.listenTo || props.listenTo.length === 0) return;
 
        function listener() {
+           console.log("listener called");
            runFieldValidation(valueRef.current);
        }
 
@@ -94,7 +101,7 @@ export function Field<T>(props: FieldRenderProps<T>) {
            formContext.onChangeListenerRefs.current[fieldName].push(listener);
            // Remove the listener
            return () => {
-               formContext.onChangeListenerRefs.current[fieldName].slice(formContext.onChangeListenerRefs.current[fieldName].indexOf(listener), 1);
+               formContext.onChangeListenerRefs.current[fieldName].splice(formContext.onChangeListenerRefs.current[fieldName].indexOf(listener), 1);
            }
        }
 
@@ -102,13 +109,6 @@ export function Field<T>(props: FieldRenderProps<T>) {
 
        return () => fns.forEach(fn => fn());
     }, [formContext, props.listenTo, runFieldValidation]);
-
-    /**
-     * Call `listenTo` field subscribers for other fields
-     */
-    useLayoutEffect(() => {
-        formContext.onChangeListenerRefs.current[props.name]?.forEach(fn => fn());
-    }, [formContext, value, props.name]);
 
     /**
      * Sync the values with the mutable ref
