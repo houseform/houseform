@@ -138,6 +138,26 @@ test("Form should submit with values in tact", async () => {
     `);
 });
 
-test.todo("SubmitField should show isValid proper")
+test("SubmitField should show isValid proper", async () => {
+    const {getByText, getByPlaceholderText} = render(<Form onSubmit={() => {}}>
+        <Field<string> name={"email"} onChangeValidate={() => Promise.reject("Not valid")} initialValue="test@example.com">
+            {({value, onChange, errors}) => (
+                <div>
+                    <input placeholder="Email" value={value} onChange={e => onChange(e.target.value)}/>
+                    {errors.map(error => <p key={error}>{error}</p>)}
+                </div>
+            )}
+        </Field>
+        <SubmitField>
+            {({isValid}) => <p>{isValid ? "Is valid" : "Is not valid"}</p>}
+        </SubmitField>
+    </Form>);
+
+    expect(getByText("Is valid")).toBeInTheDocument();
+
+    await user.type(getByPlaceholderText("Email"), "test");
+
+    expect(getByText("Is not valid")).toBeInTheDocument();
+});
 
 test.todo("onSubmitValidate should work")
