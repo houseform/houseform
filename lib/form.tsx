@@ -39,14 +39,16 @@ export function Form<T>(props: PropsWithChildren<FormProps<T>>) {
                 if (formField.props[type]) {
                     try {
                         await validate(formField.value, baseValue, formField.props[type]!);
+                        return true;
                     } catch (error) {
                         formField.setErrors(getValidationError(error as ZodError | string));
                         return false;
                     }
                 }
-            }
-            await runValidationType("onChangeValidate");
-            await runValidationType("onSubmitValidate");
+            };
+            const onChangeRes = await runValidationType("onChangeValidate");
+            const onSubmitRes = await runValidationType("onSubmitValidate");
+            if (!onChangeRes || !onSubmitRes) return false;
             if (formField.errors.length > 0) return false;
             values[formField.props.name] = formField.value;
             return true;

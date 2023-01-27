@@ -25,7 +25,7 @@ function App() {
                 {({value, setValue, onBlur, errors}) => {
                     return <div>
                         <input value={value} onBlur={onBlur} onChange={e => setValue(e.target.value)} placeholder={"Email"}/>
-                        {errors.map(error => <p>{error}</p>)}
+                        {errors.map(error => <p key={error}>{error}</p>)}
                     </div>
                 }}
             </Field>
@@ -35,7 +35,7 @@ function App() {
                 {({value, setValue, onBlur, errors}) => {
                     return <div>
                         <input value={value} onBlur={onBlur} onChange={e => setValue(e.target.value)} placeholder={"Password"} type="password"/>
-                        {errors.map(error => <p>{error}</p>)}
+                        {errors.map(error => <p key={error}>{error}</p>)}
                     </div>
                 }}
             </Field>
@@ -51,7 +51,7 @@ function App() {
                 {({value, setValue, onBlur, errors}) => {
                     return <div>
                         <input value={value} onBlur={onBlur} onChange={e => setValue(e.target.value)} placeholder={"Password Confirmation"} type="password"/>
-                        {errors.map(error => <p>{error}</p>)}
+                        {errors.map(error => <p key={error}>{error}</p>)}
                     </div>
                 }}
             </Field>

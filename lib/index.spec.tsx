@@ -336,6 +336,12 @@ test("Field can check for onChangeValidate errors on submit", async () => {
     expect(getByText("Passwords must match")).toBeInTheDocument();
 });
 
+test("Form should not submit if there are errors with onChangeValidate");
+
+test.todo("Form should not submit if there are errors with onSubmitValidate");
+
 test.todo("Is touched should be set");
 
 test.todo("Is dirty should be set");
+
+test.todo("If a derived field is modified, then the original field is changed, it should revalidate the derived field");
