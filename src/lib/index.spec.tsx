@@ -54,3 +54,23 @@ test("Field should allow changing value", async () => {
 
     expect(emailInput).toHaveValue("test@example.com");
 });
+
+
+test("Field should show errors with async onChange validator function", async () => {
+    const {getByPlaceholderText, queryByText, getByText} = render(<Form onSubmit={(_) => {}}>
+        <Field<string> name={"email"} initialValue="" onChangeValidate={() => Promise.reject("This should show up")}>
+            {({value, onChange, errors}) => (
+                <div>
+                    <input placeholder="Email" value={value} onChange={e => onChange(e.target.value)}/>
+                    {errors.map(error => <p key={error}>{error}</p>)}
+                </div>
+            )}
+        </Field>
+    </Form>);
+
+    expect(queryByText("This should show up")).not.toBeInTheDocument();
+
+    await user.type(getByPlaceholderText("Email"), "test");
+
+    expect(getByText("This should show up")).toBeInTheDocument();
+});
