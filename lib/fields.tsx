@@ -159,20 +159,3 @@ function FieldComp<T>(props: FieldRenderProps<T>) {
 }
 
 export const Field = memo(FieldComp) as typeof FieldComp;
-
-interface SubmitFieldProps {
-    children: (props: {
-        onSubmit: () => void;
-        isValid: boolean;
-    }) => JSX.Element;
-}
-
-function SubmitFieldComp(props: SubmitFieldProps) {
-    const {onSubmit, errors} = useContext(FormContext);
-
-    // TODO: Pass `isTouched`, pass `isDirty`
-
-    return props.children({onSubmit, isValid: errors.length === 0});
-}
-
-export const SubmitField = memo(SubmitFieldComp) as typeof SubmitFieldComp;

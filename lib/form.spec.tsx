@@ -1,14 +1,16 @@
 import {expect, test} from "vitest";
 import {useState} from "react";
 import {Form} from "./form";
-import {Field, SubmitField} from "./fields";
+import {Field} from "./fields";
 import {render, waitFor} from "@testing-library/react";
-import { z } from "zod";
+import {z} from "zod";
 
 test("Form should render children", () => {
     const {getByText} = render(<Form onSubmit={(_) => {
     }}>
-        <div>Test</div>
+        {() =>
+            <div>Test</div>
+        }
     </Form>)
 
     expect(getByText("Test")).toBeInTheDocument();
@@ -22,12 +24,14 @@ test("Form should submit with values in tact", async () => {
 
         return (
             <Form onSubmit={(values) => setValues(JSON.stringify(values))}>
-                <Field<string> name={"email"} initialValue="test@example.com">
-                    {() => <></>}
-                </Field>
-                <SubmitField>
-                    {({onSubmit}) => <button onClick={onSubmit}>Submit</button>}
-                </SubmitField>
+                {({submit}) => (
+                    <>
+                        <Field<string> name={"email"} initialValue="test@example.com">
+                            {() => <></>}
+                        </Field>
+                        <button onClick={submit}>Submit</button>
+                    </>
+                )}
             </Form>
         )
     }
@@ -53,12 +57,12 @@ test("Form should not submit if there are errors with onChangeValidate", async (
 
         return (
             <Form onSubmit={(values) => setValues(JSON.stringify(values))}>
-                <Field<string> name={"email"} initialValue="" onChangeValidate={z.string().min(1)}>
-                    {() => <></>}
-                </Field>
-                <SubmitField>
-                    {({onSubmit}) => <button onClick={onSubmit}>Submit</button>}
-                </SubmitField>
+                {({submit}) => (<>
+                    <Field<string> name={"email"} initialValue="" onChangeValidate={z.string().min(1)}>
+                        {() => <></>}
+                    </Field>
+                    <button onClick={submit}>Submit</button>
+                </>)}
             </Form>
         )
     }
@@ -78,12 +82,12 @@ test("Form should not submit if there are errors with onSubmitValidate", async (
 
         return (
             <Form onSubmit={(values) => setValues(JSON.stringify(values))}>
-                <Field<string> name={"email"} initialValue="" onSubmitValidate={z.string().min(1)}>
-                    {() => <></>}
-                </Field>
-                <SubmitField>
-                    {({onSubmit}) => <button onClick={onSubmit}>Submit</button>}
-                </SubmitField>
+                {({submit}) => (<>
+                    <Field<string> name={"email"} initialValue="" onSubmitValidate={z.string().min(1)}>
+                        {() => <></>}
+                    </Field>
+                    <button onClick={submit}>Submit</button>
+                </>)}
             </Form>
         )
     }
@@ -94,3 +98,29 @@ test("Form should not submit if there are errors with onSubmitValidate", async (
 
     expect(getByText("Submit")).toBeInTheDocument();
 });
+
+
+test("Form should show isValid proper", async () => {
+    const {getByText, getByPlaceholderText} = render(<Form onSubmit={() => {
+    }}>
+        {({isValid}) => (<>
+            <Field<string> name={"email"} onChangeValidate={() => Promise.reject("Not valid")}
+                           initialValue="test@example.com">
+                {({value, setValue, errors}) => (
+                    <div>
+                        <input placeholder="Email" value={value} onChange={e => setValue(e.target.value)}/>
+                        {errors.map(error => <p key={error}>{error}</p>)}
+                    </div>
+                )}
+            </Field>
+            <p>{isValid ? "Is valid" : "Is not valid"}</p>
+        </>)}
+    </Form>);
+
+    expect(getByText("Is valid")).toBeInTheDocument();
+
+    await user.type(getByPlaceholderText("Email"), "test");
+
+    expect(getByText("Is not valid")).toBeInTheDocument();
+});
+

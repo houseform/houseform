@@ -6,9 +6,13 @@ import {getValidationError, validate} from "./utils";
 
 interface FormProps<T> {
     onSubmit: (values: Record<string, T>, form: typeof initialContext) => void;
+    children: (props: {
+        submit: () => void;
+        isValid: boolean;
+    }) => JSX.Element;
 }
 
-function FormComp<T>(props: PropsWithChildren<FormProps<T>>) {
+function FormComp<T>(props: FormProps<T>) {
     const formFieldsRef = useRef<FieldProps[]>([]);
 
     const getErrors = useCallback(() => {
@@ -35,7 +39,7 @@ function FormComp<T>(props: PropsWithChildren<FormProps<T>>) {
         return {formFieldsRef, onSubmit: () => Promise.resolve(), errors, recomputeErrors, getFieldValue, onChangeListenerRefs }
     }, [formFieldsRef, errors, recomputeErrors, getFieldValue, onChangeListenerRefs])
 
-    const onSubmit = useCallback(async () => {
+    const submit = useCallback(async () => {
         let values = {} as Record<string, T>;
 
         const validArrays = await Promise.all(formFieldsRef.current.map(async formField => {
@@ -63,14 +67,21 @@ function FormComp<T>(props: PropsWithChildren<FormProps<T>>) {
     }, [formFieldsRef, props.onSubmit]);
 
     const value = useMemo(() => {
-        return {...baseValue, onSubmit }
-    }, [baseValue, onSubmit])
+        return {...baseValue, submit }
+    }, [baseValue, submit])
+
+    const children = useMemo(() => {
+        return props.children({
+            submit,
+            isValid: errors.length === 0
+        })
+    }, [props.children, submit, errors]);
 
     return (
         <FormContext.Provider
             value={value}
         >
-            {props.children}
+            {children}
         </FormContext.Provider>
     )
 }
