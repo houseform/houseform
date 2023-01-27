@@ -1,17 +1,11 @@
 import {ZodError} from "zod";
-import {useContext, useLayoutEffect, useRef, useState} from "react";
+import {useCallback, useContext, useLayoutEffect, useMemo, useRef, useState} from "react";
 import {FieldBase, FieldProps} from "./types";
 import {FormContext} from "./context";
 import {getValidationError, validate} from "./utils";
 
 interface FieldRenderProps<T = any> extends FieldBase<T> {
-    // TODO: Pass `isTouched`, pass `isDirty`
-    children: (props: {
-        value: T;
-        onChange: (val: T) => void;
-        errors: string[];
-        isValid: boolean;
-    }) => JSX.Element;
+    children: (props: FieldProps<T>) => JSX.Element;
     initialValue?: T;
 }
 
@@ -20,11 +14,19 @@ export function Field<T>(props: FieldRenderProps<T>) {
 
     const {formFieldsRef, recomputeErrors} = formContext;
 
-    const [value, setValue] = useState<T>(props.initialValue ?? "" as T);
+    const [value, _setValue] = useState<T>(props.initialValue ?? "" as T);
     const [errors, setErrors] = useState<string[]>([]);
+    const [isTouched, setIsTouched] = useState<boolean>(false);
+    const [isDirty, setIsDirty] = useState<boolean>(false);
 
-    const onChange = (val: T) => {
-        setValue(val);
+    const onBlur = useCallback(() => {
+        setIsTouched(true);
+    }, []);
+
+    const setValue = useCallback((val: T) => {
+        setIsDirty(true);
+        setIsTouched(true);
+        _setValue(val);
         if (props.onChangeValidate) {
             validate(val, formContext, props.onChangeValidate)
                 .then(() => {
@@ -34,9 +36,25 @@ export function Field<T>(props: FieldRenderProps<T>) {
                     setErrors(getValidationError(error as ZodError | string));
                 });
         }
-    }
+    }, [formContext, props.onChangeValidate]);
 
-    const mutableRef = useRef<FieldProps<T>>({value, props, setErrors, errors});
+    const isValid = useMemo(() => {
+        return errors.length === 0;
+    }, [errors]);
+
+    const mutableRef = useRef<FieldProps<T>>({
+        value,
+        props,
+        setErrors,
+        errors,
+        setIsDirty,
+        setIsTouched,
+        setValue,
+        isTouched,
+        isDirty,
+        isValid,
+        onBlur
+    });
 
     useLayoutEffect(() => {
         mutableRef.current.props = props;
@@ -57,10 +75,34 @@ export function Field<T>(props: FieldRenderProps<T>) {
     }, [errors]);
 
     useLayoutEffect(() => {
+        mutableRef.current.isDirty = isDirty;
+    }, [isDirty]);
+
+    useLayoutEffect(() => {
+        mutableRef.current.isValid = isValid;
+    }, [isValid]);
+
+    useLayoutEffect(() => {
+        mutableRef.current.isTouched = isTouched;
+    }, [isTouched]);
+
+    useLayoutEffect(() => {
         recomputeErrors();
     }, [errors, recomputeErrors]);
 
-    return props.children({value, onChange, errors, isValid: errors.length === 0})
+    return props.children({
+        value,
+        props,
+        setErrors,
+        errors,
+        setIsDirty,
+        setIsTouched,
+        setValue,
+        isTouched,
+        isDirty,
+        isValid,
+        onBlur
+    })
 }
 
 interface SubmitFieldProps {

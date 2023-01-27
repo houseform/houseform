@@ -9,7 +9,14 @@ export interface FieldBase<T = any> {
 
 export interface FieldProps<T = any> {
     value: T;
+    setValue: (val: T) => void;
+    onBlur: () => void;
     props: FieldBase<T>;
     setErrors: (error: string[]) => void;
     errors: string[];
+    isValid: boolean;
+    setIsTouched: (val: boolean) => void;
+    isTouched: boolean;
+    setIsDirty: (val: boolean) => void;
+    isDirty: boolean;
 }

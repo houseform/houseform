@@ -46,8 +46,8 @@ test("Field should allow changing value", async () => {
     const {getByPlaceholderText} = render(<Form onSubmit={(_) => {
     }}>
         <Field<string> name={"email"} initialValue="">
-            {({value, onChange}) => (
-                <input placeholder="Email" value={value} onChange={e => onChange(e.target.value)}/>
+            {({value, setValue}) => (
+                <input placeholder="Email" value={value} onChange={e => setValue(e.target.value)}/>
             )}
         </Field>
     </Form>);
@@ -65,9 +65,9 @@ test("Field should show errors with async onChange validator function", async ()
     const {getByPlaceholderText, queryByText, getByText} = render(<Form onSubmit={(_) => {
     }}>
         <Field<string> name={"email"} initialValue="" onChangeValidate={() => Promise.reject("This should show up")}>
-            {({value, onChange, errors}) => (
+            {({value, setValue, errors}) => (
                 <div>
-                    <input placeholder="Email" value={value} onChange={e => onChange(e.target.value)}/>
+                    <input placeholder="Email" value={value} onChange={e => setValue(e.target.value)}/>
                     {errors.map(error => <p key={error}>{error}</p>)}
                 </div>
             )}
@@ -85,9 +85,9 @@ test("Field should not show errors with valid input on an async onChange validat
     const {getByPlaceholderText, queryByText, getByText} = render(<Form onSubmit={(_) => {
     }}>
         <Field<string> name={"email"} initialValue="" onChangeValidate={() => Promise.resolve(true)}>
-            {({value, onChange, errors}) => (
+            {({value, setValue, errors}) => (
                 <div>
-                    <input placeholder="Email" value={value} onChange={e => onChange(e.target.value)}/>
+                    <input placeholder="Email" value={value} onChange={e => setValue(e.target.value)}/>
                     {errors.map(error => <p key={error}>This is an error</p>)}
                 </div>
             )}
@@ -106,9 +106,9 @@ test("Field should show errors with async onChange validator zod usage", async (
     }}>
         <Field<string> name={"email"} initialValue=""
                        onChangeValidate={z.string().email("You must input a valid email")}>
-            {({value, onChange, errors}) => (
+            {({value, setValue, errors}) => (
                 <div>
-                    <input placeholder="Email" value={value} onChange={e => onChange(e.target.value)}/>
+                    <input placeholder="Email" value={value} onChange={e => setValue(e.target.value)}/>
                     {errors.map(error => <p key={error}>{error}</p>)}
                 </div>
             )}
@@ -127,9 +127,9 @@ test("Field should not show errors with async onChange validator zod usage", asy
     }}>
         <Field<string> name={"email"} initialValue=""
                        onChangeValidate={z.string().email("You must input a valid email")}>
-            {({value, onChange, errors}) => (
+            {({value, setValue, errors}) => (
                 <div>
-                    <input placeholder="Email" value={value} onChange={e => onChange(e.target.value)}/>
+                    <input placeholder="Email" value={value} onChange={e => setValue(e.target.value)}/>
                     {errors.map(error => <p key={error}>{error}</p>)}
                 </div>
             )}
@@ -179,9 +179,9 @@ test("SubmitField should show isValid proper", async () => {
     }}>
         <Field<string> name={"email"} onChangeValidate={() => Promise.reject("Not valid")}
                        initialValue="test@example.com">
-            {({value, onChange, errors}) => (
+            {({value, setValue, errors}) => (
                 <div>
-                    <input placeholder="Email" value={value} onChange={e => onChange(e.target.value)}/>
+                    <input placeholder="Email" value={value} onChange={e => setValue(e.target.value)}/>
                     {errors.map(error => <p key={error}>{error}</p>)}
                 </div>
             )}
@@ -202,9 +202,9 @@ test("onSubmitValidate should work", async () => {
     const {getByText, getByPlaceholderText, queryByText} = render(<Form onSubmit={() => {
     }}>
         <Field<string> name={"email"} onSubmitValidate={() => Promise.reject("Not valid")}>
-            {({value, onChange, errors}) => (
+            {({value, setValue, errors}) => (
                 <div>
-                    <input placeholder="Email" value={value} onChange={e => onChange(e.target.value)}/>
+                    <input placeholder="Email" value={value} onChange={e => setValue(e.target.value)}/>
                     {errors.map(error => <p key={error}>{error}</p>)}
                 </div>
             )}
@@ -230,9 +230,9 @@ test("Field onChange can clear an error when resolved", async () => {
     }}>
         <Field<string> name={"email"} initialValue=""
                        onChangeValidate={(val) => val.startsWith("true") ? Promise.resolve(true) : Promise.reject("This is an error")}>
-            {({value, onChange, errors}) => (
+            {({value, setValue, errors}) => (
                 <div>
-                    <input placeholder="Email" value={value} onChange={e => onChange(e.target.value)}/>
+                    <input placeholder="Email" value={value} onChange={e => setValue(e.target.value)}/>
                     {errors.map(error => <p key={error}>{error}</p>)}
                 </div>
             )}
@@ -256,8 +256,8 @@ test("Field can receive data from other fields", async () => {
     const {getByPlaceholderText, queryByText, getByText} = render(<Form onSubmit={(values) => {
         }}>
             <Field<string> name="password" initialValue={"testing123"}>
-                {({value, onChange}) => (
-                    <input value={value} onChange={e => onChange(e.target.value)} placeholder={"Password"}/>
+                {({value, setValue}) => (
+                    <input value={value} onChange={e => setValue(e.target.value)} placeholder={"Password"}/>
                 )}
             </Field>
             <Field<string> name="confirmpassword"
@@ -269,9 +269,9 @@ test("Field can receive data from other fields", async () => {
                                }
                            }}
             >
-                {({value, onChange, errors}) => {
+                {({value, setValue, errors}) => {
                     return <div>
-                        <input value={value} onChange={e => onChange(e.target.value)}
+                        <input value={value} onChange={e => setValue(e.target.value)}
                                placeholder={"Password Confirmation"}/>
                         {errors.map(error => <p>{error}</p>)}
                     </div>
@@ -296,8 +296,8 @@ test("Field can check for onChangeValidate errors on submit", async () => {
     const {getByPlaceholderText, queryByText, getByText} = render(<Form onSubmit={(values) => {
         }}>
             <Field<string> name="password" initialValue={"testing123"}>
-                {({value, onChange}) => (
-                    <input value={value} onChange={e => onChange(e.target.value)} placeholder={"Password"}/>
+                {({value, setValue}) => (
+                    <input value={value} onChange={e => setValue(e.target.value)} placeholder={"Password"}/>
                 )}
             </Field>
             <Field<string> name="confirmpassword"
@@ -309,9 +309,9 @@ test("Field can check for onChangeValidate errors on submit", async () => {
                                }
                            }}
             >
-                {({value, onChange, errors}) => {
+                {({value, setValue, errors}) => {
                     return <div>
-                        <input value={value} onChange={e => onChange(e.target.value)}
+                        <input value={value} onChange={e => setValue(e.target.value)}
                                placeholder={"Password Confirmation"}/>
                         {errors.map(error => <p>{error}</p>)}
                     </div>
@@ -335,3 +335,7 @@ test("Field can check for onChangeValidate errors on submit", async () => {
     await user.click(getByText("Submit"))
     expect(getByText("Passwords must match")).toBeInTheDocument();
 });
+
+test.todo("Is touched should be set");
+
+test.todo("Is dirty should be set");

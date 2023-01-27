@@ -25,9 +25,9 @@ function App() {
             <Field name="email"
                    onChangeValidate={z.string().email("This must be an email")}
                    onSubmitValidate={isEmailUnique}>
-                {({value, onChange, errors}) => {
+                {({value, setValue, errors}) => {
                     return <div>
-                        <input value={value} onChange={e => onChange(e.target.value)} placeholder={"Email"}/>
+                        <input value={value} onChange={e => setValue(e.target.value)} placeholder={"Email"}/>
                         {errors.map(error => <p>{error}</p>)}
                     </div>
                 }}
@@ -35,25 +35,25 @@ function App() {
             <Field<string> name="password"
                            onChangeValidate={z.string().min(8, "Must be at least 8 characters long")}
             >
-                {({value, onChange, errors}) => {
+                {({value, setValue, errors}) => {
                     return <div>
-                        <input value={value} onChange={e => onChange(e.target.value)} placeholder={"Password"} type="password"/>
+                        <input value={value} onChange={e => setValue(e.target.value)} placeholder={"Password"} type="password"/>
                         {errors.map(error => <p>{error}</p>)}
                     </div>
                 }}
             </Field>
             <Field<string> name="confirmpassword"
                            onChangeValidate={(val, form) => {
-                                 if (val === form.getFieldValue("password")!.value) {
-                                      return Promise.resolve(true);
-                                 } else {
-                                      return Promise.reject("Passwords must match");
-                                 }
+                               if (val === form.getFieldValue("password")!.value) {
+                                   return Promise.resolve(true);
+                               } else {
+                                   return Promise.reject("Passwords must match");
+                               }
                            }}
             >
-                {({value, onChange, errors}) => {
+                {({value, setValue, errors}) => {
                     return <div>
-                        <input value={value} onChange={e => onChange(e.target.value)} placeholder={"Password Confirmation"} type="password"/>
+                        <input value={value} onChange={e => setValue(e.target.value)} placeholder={"Password Confirmation"} type="password"/>
                         {errors.map(error => <p>{error}</p>)}
                     </div>
                 }}
