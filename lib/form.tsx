@@ -36,14 +36,13 @@ export function Form<T>(props: PropsWithChildren<FormProps<T>>) {
 
         const validArrays = await Promise.all(formFieldsRef.current.map(async formField => {
             const runValidationType = async (type: "onChangeValidate" | "onSubmitValidate") => {
-                if (formField.props[type]) {
-                    try {
-                        await validate(formField.value, baseValue, formField.props[type]!);
-                        return true;
-                    } catch (error) {
-                        formField.setErrors(getValidationError(error as ZodError | string));
-                        return false;
-                    }
+                if (!formField.props[type]) return true;
+                try {
+                    await validate(formField.value, baseValue, formField.props[type]!);
+                    return true;
+                } catch (error) {
+                    formField.setErrors(getValidationError(error as ZodError | string));
+                    return false;
                 }
             };
             const onChangeRes = await runValidationType("onChangeValidate");

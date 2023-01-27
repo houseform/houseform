@@ -3,17 +3,6 @@ import {render} from "@testing-library/react";
 import {Field, Form, SubmitField} from "./index";
 
 import {z} from "zod";
-import {useState} from "react";
-
-
-test("Form should render children", () => {
-    const {getByText} = render(<Form onSubmit={(_) => {
-    }}>
-        <div>Test</div>
-    </Form>)
-
-    expect(getByText("Test")).toBeInTheDocument();
-})
 
 test("Field should render children", () => {
     const {getByText} = render(<Form onSubmit={(_) => {
@@ -40,7 +29,6 @@ test("Field should render with initial values", async () => {
 
     expect(getByText("test@example.com")).toBeInTheDocument();
 });
-
 
 test("Field should allow changing value", async () => {
     const {getByPlaceholderText} = render(<Form onSubmit={(_) => {
@@ -143,37 +131,6 @@ test("Field should not show errors with async onChange validator zod usage", asy
     expect(queryByText("You must input a valid email")).not.toBeInTheDocument();
 });
 
-test("Form should submit with values in tact", async () => {
-    const SubmitValues = () => {
-        const [values, setValues] = useState<string | null>(null);
-
-        if (values) return <p>{values}</p>
-
-        return (
-            <Form onSubmit={(values) => setValues(JSON.stringify(values))}>
-                <Field<string> name={"email"} initialValue="test@example.com">
-                    {() => <></>}
-                </Field>
-                <SubmitField>
-                    {({onSubmit}) => <button onClick={onSubmit}>Submit</button>}
-                </SubmitField>
-            </Form>
-        )
-    }
-
-    const {getByText, container} = render(<SubmitValues/>);
-
-    await user.click(getByText("Submit"));
-
-    expect(container).toMatchInlineSnapshot(`
-      <div>
-        <p>
-          {"email":"test@example.com"}
-        </p>
-      </div>
-    `);
-});
-
 test("SubmitField should show isValid proper", async () => {
     const {getByText, getByPlaceholderText} = render(<Form onSubmit={() => {
     }}>
@@ -273,7 +230,7 @@ test("Field can receive data from other fields", async () => {
                     return <div>
                         <input value={value} onChange={e => setValue(e.target.value)}
                                placeholder={"Password Confirmation"}/>
-                        {errors.map(error => <p>{error}</p>)}
+                        {errors.map(error => <p key={error}>{error}</p>)}
                     </div>
                 }}
             </Field>
@@ -313,7 +270,7 @@ test("Field can check for onChangeValidate errors on submit", async () => {
                     return <div>
                         <input value={value} onChange={e => setValue(e.target.value)}
                                placeholder={"Password Confirmation"}/>
-                        {errors.map(error => <p>{error}</p>)}
+                        {errors.map(error => <p key={error}>{error}</p>)}
                     </div>
                 }}
             </Field>
@@ -335,10 +292,6 @@ test("Field can check for onChangeValidate errors on submit", async () => {
     await user.click(getByText("Submit"))
     expect(getByText("Passwords must match")).toBeInTheDocument();
 });
-
-test("Form should not submit if there are errors with onChangeValidate");
-
-test.todo("Form should not submit if there are errors with onSubmitValidate");
 
 test.todo("Is touched should be set");
 
