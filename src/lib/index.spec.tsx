@@ -1,14 +1,14 @@
 // @vitest-environment jsdom
 import {afterEach, expect, test} from "vitest";
 import {render, cleanup} from "@testing-library/react";
-import {Field, Form} from "./index";
+import {Field, Form, SubmitField} from "./index";
 
 import matchers from "@testing-library/jest-dom/matchers";
 import userEvent from "@testing-library/user-event";
 import { z } from "zod";
+import {useState} from "react";
 
 expect.extend(matchers);
-
 
 const user = userEvent.setup()
 
@@ -38,6 +38,19 @@ test("Field should render children", () => {
     expect(getByText("Test")).toBeInTheDocument();
 })
 
+test("Field should render with initial values", async () => {
+    const {getByText} = render(<Form onSubmit={(_) => {}}>
+        <Field<string> name={"email"} initialValue="test@example.com">
+            {({value}) => (
+                <p>{value}</p>
+            )}
+        </Field>
+    </Form>);
+
+    expect(getByText("test@example.com")).toBeInTheDocument();
+});
+
+
 test("Field should allow changing value", async () => {
     const {getByPlaceholderText} = render(<Form onSubmit={(_) => {}}>
         <Field<string> name={"email"} initialValue="">
@@ -55,7 +68,6 @@ test("Field should allow changing value", async () => {
 
     expect(emailInput).toHaveValue("test@example.com");
 });
-
 
 test("Field should show errors with async onChange validator function", async () => {
     const {getByPlaceholderText, queryByText, getByText} = render(<Form onSubmit={(_) => {}}>
@@ -76,8 +88,6 @@ test("Field should show errors with async onChange validator function", async ()
     expect(getByText("This should show up")).toBeInTheDocument();
 });
 
-
-
 test("Field should show errors with async onChange validator function", async () => {
     const {getByPlaceholderText, queryByText, getByText} = render(<Form onSubmit={(_) => {}}>
         <Field<string> name={"email"} initialValue="" onChangeValidate={z.string().email("You must input a valid email")}>
@@ -96,3 +106,38 @@ test("Field should show errors with async onChange validator function", async ()
 
     expect(getByText("You must input a valid email")).toBeInTheDocument();
 });
+
+test("Form should submit with values in tact", async () => {
+    const SubmitValues = () => {
+        const [values, setValues] = useState<string | null>(null);
+
+        if (values) return <p>{values}</p>
+
+        return (
+            <Form onSubmit={(values) => setValues(JSON.stringify(values))}>
+                <Field<string> name={"email"} initialValue="test@example.com">
+                    {() => <></>}
+                </Field>
+                <SubmitField>
+                    {({onSubmit}) => <button onClick={onSubmit}>Submit</button>}
+                </SubmitField>
+            </Form>
+        )
+    }
+
+    const {getByText, container} = render(<SubmitValues/>);
+
+    await user.click(getByText("Submit"));
+
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        <p>
+          {"email":"test@example.com"}
+        </p>
+      </div>
+    `);
+});
+
+test.todo("SubmitField should show isValid proper")
+
+test.todo("onSubmitValidate should work")
