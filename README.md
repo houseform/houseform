@@ -27,24 +27,27 @@ function App() {
             <Field name="email"
                    onChangeValidate={z.string().email("This must be an email")}
                    onSubmitValidate={isEmailUnique}>
-                {({value, setValue, errors}) => {
+                {({value, setValue, onBlur, errors, isTouched, isDirty}) => {
                     return <div>
-                        <input value={value} onChange={e => setValue(e.target.value)} placeholder={"Email"}/>
-                        {errors.map(error => <p>{error}</p>)}
+                        <input value={value} onBlur={onBlur} onChange={e => setValue(e.target.value)} placeholder={"Email"}/>
+                        {errors.map(error => <p key={error}>{error}</p>)}
+                        {isTouched && <p>Is Touched</p>}
+                        {isDirty && <p>Is Dirty</p>}
                     </div>
                 }}
             </Field>
             <Field<string> name="password"
                            onChangeValidate={z.string().min(8, "Must be at least 8 characters long")}
             >
-                {({value, setValue, errors}) => {
+                {({value, setValue, onBlur, errors}) => {
                     return <div>
-                        <input value={value} onChange={e => setValue(e.target.value)} placeholder={"Password"} type="password"/>
-                        {errors.map(error => <p>{error}</p>)}
+                        <input value={value} onBlur={onBlur} onChange={e => setValue(e.target.value)} placeholder={"Password"} type="password"/>
+                        {errors.map(error => <p key={error}>{error}</p>)}
                     </div>
                 }}
             </Field>
             <Field<string> name="confirmpassword"
+                           listenTo={["password"]}
                            onChangeValidate={(val, form) => {
                                if (val === form.getFieldValue("password")!.value) {
                                    return Promise.resolve(true);
@@ -53,10 +56,10 @@ function App() {
                                }
                            }}
             >
-                {({value, setValue, errors}) => {
+                {({value, setValue, onBlur, errors}) => {
                     return <div>
-                        <input value={value} onChange={e => setValue(e.target.value)} placeholder={"Password Confirmation"} type="password"/>
-                        {errors.map(error => <p>{error}</p>)}
+                        <input value={value} onBlur={onBlur} onChange={e => setValue(e.target.value)} placeholder={"Password Confirmation"} type="password"/>
+                        {errors.map(error => <p key={error}>{error}</p>)}
                     </div>
                 }}
             </Field>
