@@ -45,9 +45,13 @@ export function Field<T>(props: FieldRenderProps<T>) {
         _setValue(val);
 
         /**
-         * Call `listenTo` field subscribers for other fields
+         * Call `listenTo` field subscribers for other fields.
+         *
+         * Placed into a `setTimeout` so that the `setValue` call can finish before the `onChangeListenerRefs` are called.
          */
-        formContext.onChangeListenerRefs.current[props.name]?.forEach(fn => fn());
+        setTimeout(() => {
+            formContext.onChangeListenerRefs.current[props.name]?.forEach(fn => fn());
+        }, 0);
 
         runFieldValidation(val);
     }, [runFieldValidation, formContext, props.name]);
@@ -90,7 +94,6 @@ export function Field<T>(props: FieldRenderProps<T>) {
        if (!props.listenTo || props.listenTo.length === 0) return;
 
        function listener() {
-           console.log("listener called");
            runFieldValidation(valueRef.current);
        }
 
