@@ -1,20 +1,10 @@
-// @vitest-environment jsdom
-import {afterEach, expect, test} from "vitest";
-import {render, cleanup} from "@testing-library/react";
+import {expect, test} from "vitest";
+import {render} from "@testing-library/react";
 import {Field, Form, SubmitField} from "./index";
 
-import matchers from "@testing-library/jest-dom/matchers";
-import userEvent from "@testing-library/user-event";
 import {z} from "zod";
 import {useState} from "react";
 
-expect.extend(matchers);
-
-const user = userEvent.setup()
-
-afterEach(() => {
-    cleanup();
-})
 
 test("Form should render children", () => {
     const {getByText} = render(<Form onSubmit={(_) => {
