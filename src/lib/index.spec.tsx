@@ -5,6 +5,7 @@ import {Field, Form} from "./index";
 
 import matchers from "@testing-library/jest-dom/matchers";
 import userEvent from "@testing-library/user-event";
+import { z } from "zod";
 
 expect.extend(matchers);
 
@@ -73,4 +74,25 @@ test("Field should show errors with async onChange validator function", async ()
     await user.type(getByPlaceholderText("Email"), "test");
 
     expect(getByText("This should show up")).toBeInTheDocument();
+});
+
+
+
+test("Field should show errors with async onChange validator function", async () => {
+    const {getByPlaceholderText, queryByText, getByText} = render(<Form onSubmit={(_) => {}}>
+        <Field<string> name={"email"} initialValue="" onChangeValidate={z.string().email("You must input a valid email")}>
+            {({value, onChange, errors}) => (
+                <div>
+                    <input placeholder="Email" value={value} onChange={e => onChange(e.target.value)}/>
+                    {errors.map(error => <p key={error}>{error}</p>)}
+                </div>
+            )}
+        </Field>
+    </Form>);
+
+    expect(queryByText("You must input a valid email")).not.toBeInTheDocument();
+
+    await user.type(getByPlaceholderText("Email"), "test");
+
+    expect(getByText("You must input a valid email")).toBeInTheDocument();
 });
