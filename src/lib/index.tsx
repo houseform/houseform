@@ -65,7 +65,6 @@ export function Form<T>(props: PropsWithChildren<FormProps<T>>) {
                     await validate(formField.value, formField.props.onSubmitValidate);
                 } catch (error) {
                     formField.setErrors(getValidationError(error as ZodError | string));
-                    recomputeErrors();
                     return false;
                 }
             }
@@ -77,7 +76,7 @@ export function Form<T>(props: PropsWithChildren<FormProps<T>>) {
         if (!validArrays.every(isValid => !!isValid)) return;
 
         props.onSubmit(values);
-    }, [formFieldsRef, props.onSubmit, recomputeErrors]);
+    }, [formFieldsRef, props.onSubmit]);
 
     const value = useMemo(() => {
         return {formFieldsRef, onSubmit, errors, recomputeErrors}
@@ -128,12 +127,10 @@ export function Field<T>(props: FieldRenderProps<T>) {
             validate(val, props.onChangeValidate)
                 .then(() => {
                     setErrors([])
-                    recomputeErrors();
                 })
                 .catch((error: string | ZodError) => {
                     setErrors(getValidationError(error as ZodError | string));
-                    recomputeErrors();
-                });
+               });
         }
     }
 
@@ -156,6 +153,10 @@ export function Field<T>(props: FieldRenderProps<T>) {
     useLayoutEffect(() => {
         mutableRef.current.errors = errors;
     }, [errors]);
+
+    useLayoutEffect(() => {
+        recomputeErrors();
+    }, [errors, recomputeErrors]);
 
     return props.children({value, onChange, errors, isValid: errors.length === 0})
 }
