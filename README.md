@@ -1,12 +1,5 @@
 <div align="center">
-<h1>UniForm</h1>
-
-<img
-    height="320"
-    width="320"
-    alt="A unicorn holding a clipboard with a form inside"
-    src="./assets/logo.svg"
-/>
+<h1>HouseForm</h1>
 
 <p>Simple to use React forms, where your validation and UI code live together in harmony.</p>
 
@@ -18,7 +11,7 @@
 ## Installation
 
 ```
-npm install uniform
+npm install houseform
 ```
 
 ## Example
