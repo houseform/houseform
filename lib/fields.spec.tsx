@@ -1,5 +1,5 @@
 import {expect, test} from "vitest";
-import {render} from "@testing-library/react";
+import {render, waitFor} from "@testing-library/react";
 import {Field, Form, SubmitField} from "./index";
 
 import {z} from "zod";
@@ -293,7 +293,27 @@ test("Field can check for onChangeValidate errors on submit", async () => {
     expect(getByText("Passwords must match")).toBeInTheDocument();
 });
 
-test.todo("Is touched should be set");
+test("Is touched should be set", async () => {
+    const {getByPlaceholderText, queryByText, getByText} = render(
+        <Form onSubmit={(values) => {}}>
+            <Field<string> name="email" initialValue="">
+                {({value, setValue, onBlur, isTouched}) => (
+                    <div>
+                        <input placeholder="Email" onBlur={onBlur} value={value} onChange={e => setValue(e.target.value)}/>
+                        {isTouched && <p>Touched</p>}
+                    </div>
+                )}
+            </Field>
+        </Form>
+    );
+
+    expect(queryByText("Touched")).not.toBeInTheDocument();
+
+    getByPlaceholderText("Email").focus();
+    getByPlaceholderText("Email").blur();
+
+    await waitFor(() => expect(getByText("Touched")).toBeInTheDocument());
+});
 
 test("Is dirty should be set", async () => {
     const {getByPlaceholderText, queryByText, getByText} = render(
