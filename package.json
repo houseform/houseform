@@ -1,14 +1,14 @@
 {
   "name": "uniform",
-  "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1-alpha.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "test": "vitest",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -28,5 +28,20 @@
     "typescript": "^4.9.3",
     "vite": "^4.0.0",
     "vitest": "^0.28.2"
+  },
+  "files": [
+    "dist",
+    "lib",
+    "package.json",
+    "README.md",
+    "assets"
+  ],
+  "main": "./dist/uniform.umd.cjs",
+  "module": "./dist/uniform.js",
+  "exports": {
+    ".": {
+      "import": "./dist/uniform.js",
+      "require": "./dist/uniform.umd.cjs"
+    }
   }
 }

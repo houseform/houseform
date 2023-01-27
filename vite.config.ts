@@ -12,5 +12,20 @@ export default defineConfig({
     alias: {
       'uniform': resolve(__dirname, "./lib")
     }
-  }
+  },
+  build: {
+    lib: {
+      entry: resolve(__dirname, 'lib/index.ts'),
+      name: 'UniForm',
+      fileName: 'uniform',
+    },
+    rollupOptions: {
+      external: ['react'],
+      output: {
+        globals: {
+          react: 'React',
+        },
+      },
+    },
+  },
 })
