@@ -1,4 +1,4 @@
-import {PropsWithChildren, useCallback, useMemo, useRef, useState} from "react";
+import {memo, PropsWithChildren, useCallback, useMemo, useRef, useState} from "react";
 import {ZodError} from "zod";
 import {FormContext, initialContext} from "./context";
 import {FieldProps} from "./types";
@@ -8,7 +8,7 @@ interface FormProps<T> {
     onSubmit: (values: Record<string, T>, form: typeof initialContext) => void;
 }
 
-export function Form<T>(props: PropsWithChildren<FormProps<T>>) {
+function FormComp<T>(props: PropsWithChildren<FormProps<T>>) {
     const formFieldsRef = useRef<FieldProps[]>([]);
 
     const getErrors = useCallback(() => {
@@ -74,3 +74,5 @@ export function Form<T>(props: PropsWithChildren<FormProps<T>>) {
         </FormContext.Provider>
     )
 }
+
+export const Form = memo(FormComp) as typeof FormComp;

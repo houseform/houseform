@@ -1,5 +1,5 @@
 import {ZodError} from "zod";
-import {useCallback, useContext, useLayoutEffect, useMemo, useRef, useState} from "react";
+import {memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState} from "react";
 import {FieldBase, FieldProps} from "./types";
 import {FormContext} from "./context";
 import {getValidationError, validate} from "./utils";
@@ -10,7 +10,7 @@ interface FieldRenderProps<T = any> extends FieldBase<T> {
     listenTo?: string[];
 }
 
-export function Field<T>(props: FieldRenderProps<T>) {
+function FieldComp<T>(props: FieldRenderProps<T>) {
     const formContext = useContext(FormContext);
 
     const {formFieldsRef, recomputeErrors} = formContext;
@@ -158,6 +158,8 @@ export function Field<T>(props: FieldRenderProps<T>) {
     })
 }
 
+export const Field = memo(FieldComp) as typeof FieldComp;
+
 interface SubmitFieldProps {
     children: (props: {
         onSubmit: () => void;
@@ -165,10 +167,12 @@ interface SubmitFieldProps {
     }) => JSX.Element;
 }
 
-export function SubmitField(props: SubmitFieldProps) {
+function SubmitFieldComp(props: SubmitFieldProps) {
     const {onSubmit, errors} = useContext(FormContext);
 
     // TODO: Pass `isTouched`, pass `isDirty`
 
     return props.children({onSubmit, isValid: errors.length === 0});
 }
+
+export const SubmitField = memo(SubmitFieldComp) as typeof SubmitFieldComp;
