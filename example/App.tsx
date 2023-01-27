@@ -1,4 +1,4 @@
-import {Field, Form, SubmitField} from "./lib";
+import {Field, Form, SubmitField} from "uniform";
 import {z} from 'zod';
 
 function isEmailUnique(val: string) {
