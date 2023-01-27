@@ -15,7 +15,7 @@ src="./assets/logo.svg"
 
 > This is a work in progress library. Docs are still being written.
 
-## Installation
+# Installation
 
 ```
 npm install houseform zod
@@ -23,7 +23,7 @@ npm install houseform zod
 
 > Zod is a peer dependency of this project.
 
-## Example
+# Example
 
 ```tsx
 function App() {
@@ -82,19 +82,12 @@ function App() {
 }
 ```
 
-## Documentation
+# Documentation
 
-### Form
+## Form
 
 The `Form` component is the main component of this library. It is responsible for managing the state of the form and
 must be the parent of all `Field` components.
-
-The `Form` component takes the following props:
-
-| Method     | Parameters | Expected Return                        | Description |
-|------------|--- |-----------------------------------------| --- |
-| `onSubmit` | `Record<string, any>`, [`FormContext`](#interface-formcontext) | | The function to call when the form is submitted. The first argument is the values of a form submitted. It might look something like:<br />`{email: "test@example.com", password: "Hunter2!", confirmpassword: "Hunter2!"}` |
-| `children` | [`FormState`](#interface-formstate) | `JSX.Element` | This is the component child function to pass, which accepts the arguments for FormState. |
 
 An example `Form` usage is:
 
@@ -104,7 +97,16 @@ An example `Form` usage is:
 </Form>
 ```
 
-#### _Interface_ `FormState`
+### Form Props
+
+The `Form` component takes the following props:
+
+| Method     | Parameters | Expected Return                        | Description |
+|------------|--- |-----------------------------------------| --- |
+| `onSubmit` | `Record<string, any>`, [`FormContext`](#interface-formcontext) | | The function to call when the form is submitted. The first argument is the values of a form submitted. It might look something like:<br />`{email: "test@example.com", password: "Hunter2!", confirmpassword: "Hunter2!"}` |
+| `children` | [`FormState`](#interface-formstate) | `JSX.Element` | This is the component child function to pass, which accepts the arguments for FormState. |
+
+### _Interface_ `FormState`
 
 These are the properties that are passed to the `<Form>` component's child function.
 
@@ -114,20 +116,39 @@ These are the properties that are passed to the `<Form>` component's child funct
 | `submit`  | `() => void` | The function to run when you're ready to submit your form. This function will not do anything if there are `errors` on the form. |
 | `isValid` | `boolean`    | A boolean to check if the form is valid or not.              |
 
-#### _Interface_ `FormContext`
+### _Interface_ `FormContext`
 
 This is the second argument passed to the `<Form>` `onSubmit` function and the second argument to all [`<Field>` `onXValidate` property functions](#field):
 
 | Property        | Type                               | Description                                                  |
 | --------------- | ---------------------------------- | ------------------------------------------------------------ |
 | `errors`        | `string[]`                         | A list of all errors present on the form. When an empty array, the form is valid. |
-| `getFieldValue` | `(fieldName: sting) => FieldProps` | Takes the field name and returns a [`FieldProp`](#interface-fieldprop) representation of the named field. |
+| `getFieldValue` | `(fieldName: sting) => FieldProps` | Takes the field name and returns a [`FieldProp`](#interface-fieldprops) representation of the named field. |
+
+## Field
+
+A field is the primitive for every input that you'd like to display to the user. This is what an example `Field` looks like:
+
+```jsx
+<Field<string> name="username" initialValue={""}>
+    {({value, setValue}) => (
+        <input value={value} onChange={e => setValue(e.target.value)} placeholder={"Username"}/>
+    )}
+</Field>
+```
+
+### Field Props
 
 
-### Field
+| Property       | Type                                    | Description                                                  |
+| -------------- | --------------------------------------- | ------------------------------------------------------------ |
+| `initialValue` | `T`                                     | The initial value of the form field.                         |
+| `listenTo`     | `string[]`                              | A list of form field names to listen to. When a listened field updates it's value, it will trigger the relevant `onChangeValidation` change detection. Useful when making one field depend on the validation of another. |
+| `children`     | `(props: FieldProps<T>) => JSX.Element` | Passed [`FieldProps`](#interface-fieldprops), expected to return a JSX element. |
 
 
-#### _Interface_ `FieldProp`
+
+### _Interface_ `FieldProps`
 
 | Property       | Type                                | Description                                                  |
 | -------------- | ----------------------------------- | ------------------------------------------------------------ |
