@@ -59,7 +59,9 @@
     "lib",
     "package.json",
     "README.md",
-    "assets"
+    "LICENSE",
+    "docs/**/*.md",
+    "docs/public/logo.svg"
   ],
   "main": "./dist/uniform.umd.cjs",
   "module": "./dist/uniform.js",
