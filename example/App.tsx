@@ -1,20 +1,7 @@
-import { Field, Form } from "uniform";
+import { Field, Form } from "houseform";
 import { z } from "zod";
 
-function isEmailUnique(val: string) {
-  return new Promise<boolean>((resolve, reject) => {
-    setTimeout(() => {
-      const isUnique = !val.startsWith("crutchcorn");
-      if (isUnique) {
-        resolve(true);
-      } else {
-        reject("That email is already taken");
-      }
-    }, 20);
-  });
-}
-
-function App() {
+export default function App() {
   return (
     <Form
       onSubmit={(values) => {
@@ -22,13 +9,16 @@ function App() {
       }}
     >
       {({ isValid, submit }) => (
-        <>
+        <form onSubmit={e => {
+          e.preventDefault();
+          submit();
+        }}>
           <Field
             name="email"
-            onChangeValidate={z.string().email("This must be an email")}
+            onBlurValidate={z.string().email("This must be an email")}
             onSubmitValidate={isEmailUnique}
           >
-            {({ value, setValue, onBlur, errors, isTouched, isDirty }) => {
+            {({ value, setValue, onBlur, errors }) => {
               return (
                 <div>
                   <input
@@ -40,8 +30,6 @@ function App() {
                   {errors.map((error) => (
                     <p key={error}>{error}</p>
                   ))}
-                  {isTouched && <p>Is Touched</p>}
-                  {isDirty && <p>Is Dirty</p>}
                 </div>
               );
             }}
@@ -80,7 +68,7 @@ function App() {
               }
             }}
           >
-            {({ value, setValue, onBlur, errors }) => {
+            {({ value, setValue, onBlur, errors, isTouched }) => {
               return (
                 <div>
                   <input
@@ -90,20 +78,31 @@ function App() {
                     placeholder={"Password Confirmation"}
                     type="password"
                   />
-                  {errors.map((error) => (
+                  {isTouched && errors.map((error) => (
                     <p key={error}>{error}</p>
                   ))}
                 </div>
               );
             }}
           </Field>
-          <button disabled={!isValid} onClick={submit}>
+          <button disabled={!isValid} type="submit">
             Submit
           </button>
-        </>
+        </form>
       )}
     </Form>
   );
 }
 
-export default App;
+function isEmailUnique(val: string) {
+  return new Promise<boolean>((resolve, reject) => {
+    setTimeout(() => {
+      const isUnique = !val.startsWith("crutchcorn");
+      if (isUnique) {
+        resolve(true);
+      } else {
+        reject("That email is already taken");
+      }
+    }, 20);
+  });
+}
