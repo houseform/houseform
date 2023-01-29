@@ -111,10 +111,12 @@ The `Form` component takes the following props:
 These are the properties that are passed to the `<Form>` component's child function.
 
 
-| Property  | Type         | Description                                                  |
-| --------- | ------------ | ------------------------------------------------------------ |
-| `submit`  | `() => void` | The function to run when you're ready to submit your form. This function will not do anything if there are `errors` on the form. |
-| `isValid` | `boolean`    | A boolean to check if the form is valid or not.              |
+| Property         | Type                     | Description                                                                                                                      |
+|------------------|--------------------------|----------------------------------------------------------------------------------------------------------------------------------|
+| `submit`         | `() => void`             | The function to run when you're ready to submit your form. This function will not do anything if there are `errors` on the form. |
+| `isValid`        | `boolean`                | A boolean to check if the form is valid or not.                                                                                  |
+| `isSubmitted`    | `boolean`                | A boolean to check if the form has had an attempted submission or not.                                                           |
+| `setIsSubmitted` | `(val: boolean) => void` | A method to reset the `isSubmitted` field                                                                                        |
 
 ### _Interface_ `FormContext`
 
