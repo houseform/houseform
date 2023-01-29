@@ -1,6 +1,7 @@
 import { createContext } from "react";
 import type { FieldProps } from "./types";
 
+/* c8 ignore start */
 export const initialContext = {
   formFieldsRef: { current: [] as FieldProps[] },
   recomputeErrors: () => {
@@ -22,5 +23,6 @@ export const initialContext = {
   onChangeListenerRefs: { current: {} as Record<string, (() => void)[]> },
   onBlurListenerRefs: { current: {} as Record<string, (() => void)[]> },
 };
+/* c8 ignore stop */
 
 export const FormContext = createContext(initialContext);
