@@ -18,7 +18,7 @@ src="./docs/public/logo.svg"
 [![Build Status](https://img.shields.io/github/actions/workflow/status/crutchcorn/houseform/build.yml?branch=main)](https://github.com/crutchcorn/cli-testing-library/actions/workflows/validate.yml?query=branch%3Amain)
 [![Test Status](https://img.shields.io/github/actions/workflow/status/crutchcorn/houseform/test.yml?branch=main&label=tests)](https://github.com/crutchcorn/cli-testing-library/actions/workflows/validate.yml?query=branch%3Amain)
 [![Pre-release](https://img.shields.io/npm/v/houseform.svg)](https://npm.im/houseform)
-[![gzip size](https://img.badgesize.io/https:/unpkg.com/browse/houseform@latest/dist/uniform.umd.cjs?compression=gzip)](https://unpkg.com/browse/houseform@latest/dist/uniform.umd.cjs)
+[![gzip size](https://img.badgesize.io/https:/unpkg.com/browse/houseform@latest/dist/houseform.umd.cjs?compression=gzip)](https://unpkg.com/browse/houseform@latest/dist/uniform.umd.cjs)
 [![license](https://badgen.now.sh/badge/license/MIT)](./LICENSE.md)
 
 </div>

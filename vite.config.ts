@@ -13,14 +13,14 @@ export default defineConfig({
   })],
   resolve: {
     alias: {
-      'uniform': resolve(__dirname, "./lib")
+      'houseform': resolve(__dirname, "./lib")
     }
   },
   build: {
     lib: {
       entry: resolve(__dirname, 'lib/index.ts'),
-      name: 'UniForm',
-      fileName: 'uniform',
+      name: 'HouseForm',
+      fileName: 'houseform',
     },
     rollupOptions: {
       external: ['react', "react/jsx-runtime", 'zod'],
