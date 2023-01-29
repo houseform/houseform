@@ -23,10 +23,11 @@ export default defineConfig({
       fileName: 'uniform',
     },
     rollupOptions: {
-      external: ['react', 'zod'],
+      external: ['react', "react/jsx-runtime", 'zod'],
       output: {
         globals: {
           react: 'React',
+          "react/jsx-runtime": 'jsxRuntime',
           zod: 'zod',
         },
       },
