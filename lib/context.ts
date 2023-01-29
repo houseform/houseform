@@ -6,6 +6,12 @@ export const initialContext = {
     recomputeErrors: () => {
         return undefined as void;
     },
+    recomputeIsDirty: () => {
+        return undefined as void;
+    },
+    recomputeIsTouched: () => {
+        return undefined as void;
+    },
     errors: [] as string[],
     submit: async () => {
         return undefined as void;

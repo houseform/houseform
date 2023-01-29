@@ -13,7 +13,7 @@ interface FieldRenderProps<T = any> extends FieldBase<T> {
 function FieldComp<T>(props: FieldRenderProps<T>) {
     const formContext = useContext(FormContext);
 
-    const {formFieldsRef, recomputeErrors} = formContext;
+    const {formFieldsRef, recomputeErrors, recomputeIsTouched, recomputeIsDirty} = formContext;
 
     const [value, _setValue] = useState<T>(props.initialValue ?? "" as T);
     const valueRef = useRef(value);
@@ -142,6 +142,14 @@ function FieldComp<T>(props: FieldRenderProps<T>) {
     useLayoutEffect(() => {
         recomputeErrors();
     }, [errors, recomputeErrors]);
+
+    useLayoutEffect(() => {
+        recomputeIsTouched();
+    }, [isTouched, recomputeErrors]);
+
+    useLayoutEffect(() => {
+        recomputeIsDirty();
+    }, [isDirty, recomputeErrors]);
 
     return props.children({
         value,

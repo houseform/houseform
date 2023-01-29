@@ -8,6 +8,8 @@ interface FormState {
     submit: () => void;
     errors: string[];
     isValid: boolean;
+    isDirty: boolean;
+    isTouched: boolean;
     isSubmitted: boolean;
     setIsSubmitted: (val: boolean) => void;
 }
@@ -34,9 +36,26 @@ function FormComp<T>(props: FormProps<T>) {
 
     const [isSubmitted, setIsSubmitted] = useState(false);
 
+    const getFieldBoolean = useCallback((booleanFieldName: keyof FieldProps) => {
+        return formFieldsRef.current.some(field => {
+            return !!field[booleanFieldName];
+        });
+    }, [formFieldsRef]);
+
+    const [isDirty, setIsDirty] = useState(getFieldBoolean("isDirty"));
+    const [isTouched, setIsTouched] = useState(getFieldBoolean("isTouched"));
+
     const recomputeErrors = useCallback(() => {
         setErrors(getErrors());
     }, [getErrors]);
+
+    const recomputeIsDirty = useCallback(() => {
+        setIsDirty(getFieldBoolean("isDirty"));
+    }, [getFieldBoolean]);
+
+    const recomputeIsTouched = useCallback(() => {
+        setIsTouched(getFieldBoolean("isTouched"));
+    }, [getFieldBoolean]);
 
     const getFieldValue = useCallback((name: string) => {
         return formFieldsRef.current.find(field => field.props.name === name);
@@ -47,8 +66,8 @@ function FormComp<T>(props: FormProps<T>) {
     )
 
     const baseValue = useMemo(() => {
-        return {formFieldsRef, submit: () => Promise.resolve(), errors, recomputeErrors, getFieldValue, onChangeListenerRefs }
-    }, [formFieldsRef, errors, recomputeErrors, getFieldValue, onChangeListenerRefs])
+        return {formFieldsRef, errors, recomputeErrors, getFieldValue, onChangeListenerRefs, recomputeIsDirty, recomputeIsTouched, submit: () => Promise.resolve() }
+    }, [formFieldsRef, errors, recomputeErrors, getFieldValue, onChangeListenerRefs, recomputeIsDirty, recomputeIsTouched])
 
     const submit = useCallback(async () => {
         setIsSubmitted(true);
@@ -88,9 +107,11 @@ function FormComp<T>(props: FormProps<T>) {
             errors,
             isSubmitted,
             setIsSubmitted,
-            isValid
+            isValid,
+            isDirty,
+            isTouched
         })
-    }, [props.children, submit, errors, isSubmitted, isValid]);
+    }, [props.children, submit, errors, isSubmitted, isValid, isDirty, isTouched]);
 
     return (
         <FormContext.Provider
