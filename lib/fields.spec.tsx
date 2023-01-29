@@ -509,7 +509,7 @@ test("Is dirty should be set", async () => {
   expect(getByText("Dirty")).toBeInTheDocument();
 });
 
-test("Field can listen for changes in other fields to validate on multiple field changes", async () => {
+test("Field can listen for changes in other fields to validate on multiple field changes - onChange", async () => {
   const { getByPlaceholderText, queryByText, getByText } = render(
     <Form onSubmit={(values) => {}}>
       {({ submit }) => (
@@ -562,4 +562,64 @@ test("Field can listen for changes in other fields to validate on multiple field
   await user.clear(getByPlaceholderText("Password"));
   await user.type(getByPlaceholderText("Password"), "other");
   expect(getByText("Passwords must match")).toBeInTheDocument();
+});
+
+
+test("Field can listen for changes in other fields to validate on multiple field changes - onBlur", async () => {
+  const { getByPlaceholderText, queryByText, findByText } = render(
+      <Form onSubmit={(values) => {}}>
+        {({ submit }) => (
+            <>
+              <Field<string> name="password" initialValue={"testing123"}>
+                {({ value, setValue, onBlur }) => (
+                    <input
+                        value={value}
+                        onBlur={onBlur}
+                        onChange={(e) => setValue(e.target.value)}
+                        placeholder={"Password"}
+                    />
+                )}
+              </Field>
+              <Field<string>
+                  name="confirmpassword"
+                  listenTo={["password"]}
+                  onBlurValidate={(val, form) => {
+                    if (val === form.getFieldValue("password")!.value) {
+                      return Promise.resolve(true);
+                    } else {
+                      return Promise.reject("Passwords must match");
+                    }
+                  }}
+              >
+                {({ value, setValue, errors, onBlur }) => {
+                  return (
+                      <div>
+                        <input
+                            value={value}
+                            onChange={(e) => setValue(e.target.value)}
+                            placeholder={"Password Confirmation"}
+                            onBlur={onBlur}
+                        />
+                        {errors.map((error) => (
+                            <p key={error}>{error}</p>
+                        ))}
+                      </div>
+                  );
+                }}
+              </Field>
+              <button onClick={submit}>Submit</button>
+            </>
+        )}
+      </Form>
+  );
+
+  expect(queryByText("Passwords must match")).not.toBeInTheDocument();
+
+  await user.type(getByPlaceholderText("Password Confirmation"), "testing123");
+  fireEvent.blur(getByPlaceholderText("Password Confirmation"));
+  expect(queryByText("Passwords must match")).not.toBeInTheDocument();
+  await user.clear(getByPlaceholderText("Password"));
+  await user.type(getByPlaceholderText("Password"), "other");
+  fireEvent.blur(getByPlaceholderText("Password"));
+  expect(await findByText("Passwords must match")).toBeInTheDocument();
 });
