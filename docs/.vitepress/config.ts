@@ -14,7 +14,11 @@ export default defineConfig({
                         link: "/"
                     },
                     {
-                        text: "Reference",
+                        text: "Usage Guide",
+                        link: "/guide"
+                    },
+                    {
+                        text: "API Reference",
                         link: "/reference"
                     }
                 ]
