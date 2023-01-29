@@ -20,6 +20,7 @@ export const initialContext = {
     return undefined as FieldProps | undefined;
   },
   onChangeListenerRefs: { current: {} as Record<string, (() => void)[]> },
+  onBlurListenerRefs: { current: {} as Record<string, (() => void)[]> },
 };
 
 export const FormContext = createContext(initialContext);

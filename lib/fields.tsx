@@ -36,24 +36,41 @@ function FieldComp<T>(props: FieldRenderProps<T>) {
   const [isTouched, setIsTouched] = useState<boolean>(false);
   const [isDirty, setIsDirty] = useState<boolean>(false);
 
+  const runFieldValidation = useCallback(
+      (validationFnName: "onChangeValidate" | "onBlurValidate", val: T) => {
+        let validationFn = props.onChangeValidate;
+        if (validationFnName === "onBlurValidate") {
+          validationFn = props.onBlurValidate;
+        }
+        if (validationFn) {
+          validate(val, formContext, validationFn)
+              .then(() => {
+                setErrors([]);
+              })
+              .catch((error: string | ZodError) => {
+                setErrors(getValidationError(error as ZodError | string));
+              });
+        }
+      },
+      [formContext, props.onChangeValidate, props.onBlurValidate]
+  );
+
   const onBlur = useCallback(() => {
     setIsTouched(true);
-  }, []);
 
-  const runFieldValidation = useCallback(
-    (val: T) => {
-      if (props.onChangeValidate) {
-        validate(val, formContext, props.onChangeValidate)
-          .then(() => {
-            setErrors([]);
-          })
-          .catch((error: string | ZodError) => {
-            setErrors(getValidationError(error as ZodError | string));
-          });
-      }
-    },
-    [formContext, props.onChangeValidate]
-  );
+    /**
+     * Call `listenTo` field subscribers for other fields.
+     *
+     * Placed into a `setTimeout` so that the `setValue` call can finish before the `onChangeListenerRefs` are called.
+     */
+    setTimeout(() => {
+      formContext.onBlurListenerRefs.current[props.name]?.forEach((fn) =>
+          fn()
+      );
+    }, 0);
+
+    runFieldValidation("onBlurValidate", valueRef.current);
+  }, []);
 
   const setValue = useCallback(
     (val: T) => {
@@ -72,7 +89,7 @@ function FieldComp<T>(props: FieldRenderProps<T>) {
         );
       }, 0);
 
-      runFieldValidation(val);
+      runFieldValidation("onChangeValidate", val);
     },
     [runFieldValidation, formContext, props.name]
   );
@@ -114,26 +131,34 @@ function FieldComp<T>(props: FieldRenderProps<T>) {
   useLayoutEffect(() => {
     if (!props.listenTo || props.listenTo.length === 0) return;
 
-    function listener() {
-      runFieldValidation(valueRef.current);
+    function onChangeListener() {
+      runFieldValidation('onChangeValidate', valueRef.current);
     }
 
-    function addListenerToListenToItem(fieldName: string) {
+    function onBlurListener() {
+      runFieldValidation('onBlurValidate', valueRef.current);
+    }
+
+    function addListenerToListenToItem(refTypeName: 'onChangeListenerRefs' | 'onBlurListenerRefs', fieldName: string, listener: () => void) {
       // Make sure there's an array for the field
-      formContext.onChangeListenerRefs.current[fieldName] =
-        formContext.onChangeListenerRefs.current[fieldName] ?? [];
+      formContext[refTypeName].current[fieldName] =
+        formContext[refTypeName].current[fieldName] ?? [];
       // Add the listener
-      formContext.onChangeListenerRefs.current[fieldName].push(listener);
+      formContext[refTypeName].current[fieldName].push(listener);
       // Remove the listener
       return () => {
-        formContext.onChangeListenerRefs.current[fieldName].splice(
-          formContext.onChangeListenerRefs.current[fieldName].indexOf(listener),
+        formContext[refTypeName].current[fieldName].splice(
+          formContext[refTypeName].current[fieldName].indexOf(listener),
           1
         );
       };
     }
 
-    const fns = props.listenTo.map(addListenerToListenToItem);
+    const fns = props.listenTo.flatMap(fieldName => {
+      const onChangeFunctions = addListenerToListenToItem('onChangeListenerRefs', fieldName, onChangeListener)
+      const onBlurFunctions = addListenerToListenToItem('onBlurListenerRefs', fieldName, onBlurListener)
+      return [onChangeFunctions, onBlurFunctions];
+    });
 
     return () => fns.forEach((fn) => fn());
   }, [formContext, props.listenTo, runFieldValidation]);

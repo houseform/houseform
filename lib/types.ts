@@ -6,6 +6,9 @@ export interface FieldBase<T = any> {
   onChangeValidate?:
     | ZodTypeAny
     | ((val: T, form: typeof initialContext) => Promise<boolean>);
+  onBlurValidate?:
+    | ZodTypeAny
+    | ((val: T, form: typeof initialContext) => Promise<boolean>);
   onSubmitValidate?:
     | ZodTypeAny
     | ((val: T, form: typeof initialContext) => Promise<boolean>);

@@ -75,6 +75,7 @@ function FormComp<T>(props: FormProps<T>) {
   );
 
   const onChangeListenerRefs = useRef({} as Record<string, (() => void)[]>);
+  const onBlurListenerRefs = useRef({} as Record<string, (() => void)[]>);
 
   const baseValue = useMemo(() => {
     return {
@@ -83,6 +84,7 @@ function FormComp<T>(props: FormProps<T>) {
       recomputeErrors,
       getFieldValue,
       onChangeListenerRefs,
+      onBlurListenerRefs,
       recomputeIsDirty,
       recomputeIsTouched,
       submit: () => Promise.resolve(),
@@ -93,6 +95,7 @@ function FormComp<T>(props: FormProps<T>) {
     recomputeErrors,
     getFieldValue,
     onChangeListenerRefs,
+    onBlurListenerRefs,
     recomputeIsDirty,
     recomputeIsTouched,
   ]);
