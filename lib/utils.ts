@@ -1,12 +1,12 @@
 import { ZodError, ZodTypeAny } from "zod";
-import { initialContext } from "./context";
+import {FormContext, initialContext} from "./context";
 
 export function validate<T>(
   val: T,
-  form: typeof initialContext,
+  form: FormContext<T>,
   validator:
     | ZodTypeAny
-    | ((val: T, form: typeof initialContext) => Promise<boolean>)
+    | ((val: T, form: FormContext<T>) => Promise<boolean>)
 ) {
   if (validator instanceof Function) {
     return validator(val, form);

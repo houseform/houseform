@@ -1,9 +1,10 @@
 import { expect, test } from "vitest";
-import { useState } from "react";
+import {useRef, useState} from "react";
 import { Form } from "./form";
 import { Field } from "./fields";
 import { render, waitFor } from "@testing-library/react";
 import { z } from "zod";
+import {FormContext} from "./context";
 
 test("Form should render children", () => {
   const { getByText } = render(
@@ -267,4 +268,37 @@ test("Form should reset isDirty when all touched fields are not touched anymore"
   expect(await findByText("Form is dirty")).toBeInTheDocument();
   await user.click(getByText("Undirty a field"));
   expect(getByText("Form is not dirty")).toBeInTheDocument();
+});
+
+test("Form should have context passed to ref", async () => {
+  const Comp = () => {
+    const formRef = useRef<FormContext>(undefined!);
+
+    const [val, setVal] = useState("");
+
+    if (val) return <p>{val}</p>
+
+    return (
+        <div>
+        <Form onSubmit={() => {}} ref={formRef}>
+          {() => (
+                <Field name={"test"} initialValue="Test">
+                  {() => (
+                      <div>
+                      </div>
+                  )}
+                </Field>
+          )}
+        </Form>
+          <button onClick={() => setVal(formRef.current.getFieldValue('test')?.value)}>Submit</button>
+        </div>
+    )
+  }
+  const { getByText, queryByText, findByText } = render(
+      <Comp/>
+  );
+
+  expect(queryByText('Test')).not.toBeInTheDocument();
+  await user.click(getByText("Submit"));
+  expect(await findByText("Test")).toBeInTheDocument();
 });

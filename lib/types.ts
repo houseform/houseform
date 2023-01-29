@@ -1,17 +1,18 @@
 import { ZodTypeAny } from "zod";
 import type { initialContext } from "./context";
+import {FormContext} from "./context";
 
 export interface FieldBase<T = any> {
   name: string;
   onChangeValidate?:
     | ZodTypeAny
-    | ((val: T, form: typeof initialContext) => Promise<boolean>);
+    | ((val: T, form: FormContext<T>) => Promise<boolean>);
   onBlurValidate?:
     | ZodTypeAny
-    | ((val: T, form: typeof initialContext) => Promise<boolean>);
+    | ((val: T, form: FormContext<T>) => Promise<boolean>);
   onSubmitValidate?:
     | ZodTypeAny
-    | ((val: T, form: typeof initialContext) => Promise<boolean>);
+    | ((val: T, form: FormContext<T>) => Promise<boolean>);
 }
 
 export interface FieldProps<T = any> {

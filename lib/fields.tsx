@@ -12,7 +12,7 @@ import { FieldBase, FieldProps } from "./types";
 import { FormContext } from "./context";
 import { getValidationError, validate } from "./utils";
 
-interface FieldRenderProps<T = any> extends FieldBase<T> {
+export interface FieldRenderProps<T = any> extends FieldBase<T> {
   children: (props: FieldProps<T>) => JSX.Element;
   initialValue?: T;
   listenTo?: string[];

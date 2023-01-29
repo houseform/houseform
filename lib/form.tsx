@@ -1,7 +1,9 @@
 import {
+  ForwardedRef,
+  forwardRef,
   memo,
-  PropsWithChildren,
   useCallback,
+  useImperativeHandle,
   useMemo,
   useRef,
   useState,
@@ -11,7 +13,7 @@ import { FormContext, initialContext } from "./context";
 import { FieldProps } from "./types";
 import { getValidationError, validate } from "./utils";
 
-interface FormState {
+export interface FormState {
   submit: () => void;
   errors: string[];
   isValid: boolean;
@@ -21,12 +23,15 @@ interface FormState {
   setIsSubmitted: (val: boolean) => void;
 }
 
-interface FormProps<T> {
-  onSubmit: (values: Record<string, T>, form: typeof initialContext) => void;
+export interface FormProps<T> {
+  onSubmit: (values: Record<string, T>, form: FormContext<T>) => void;
   children: (props: FormState) => JSX.Element;
 }
 
-function FormComp<T>(props: FormProps<T>) {
+function FormComp<T>(
+  props: FormProps<T>,
+  ref: ForwardedRef<FormContext<T>>
+) {
   const formFieldsRef = useRef<FieldProps[]>([]);
 
   const getErrors = useCallback(() => {
@@ -139,6 +144,8 @@ function FormComp<T>(props: FormProps<T>) {
     return { ...baseValue, submit };
   }, [baseValue, submit]);
 
+  useImperativeHandle(ref, () => value, [value]);
+
   const children = useMemo(() => {
     return props.children({
       submit,
@@ -162,4 +169,6 @@ function FormComp<T>(props: FormProps<T>) {
   return <FormContext.Provider value={value}>{children}</FormContext.Provider>;
 }
 
-export const Form = memo(FormComp) as typeof FormComp;
+export const Form = memo(forwardRef(FormComp)) as <T>(
+  props: FormProps<T> & { ref?: ForwardedRef<FormContext<T>> }
+) => ReturnType<typeof FormComp>;
