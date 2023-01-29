@@ -25,3 +25,6 @@ dist-ssr
 
 # Coverage
 coverage/
+
+# Vitepress
+docs/.vitepress/cache/

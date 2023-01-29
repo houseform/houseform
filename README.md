@@ -5,7 +5,7 @@
 height="320"
 width="320"
 alt="A ledger with a house shape"
-src="./assets/logo.svg"
+src="./docs/public/logo.svg"
 />
 
 <p>Simple to use React forms, where your validation and UI code live together in harmony.</p>
