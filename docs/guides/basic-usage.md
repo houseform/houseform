@@ -1,4 +1,4 @@
-# Usage Guides
+# Basic Usage
 
 Every form in HouseForm starts with a `<Form>` component:
 
@@ -180,32 +180,8 @@ function isEmailUnique(val: string) {
 
 If resolved, it will validate; Otherwise it will pass the rejection explanation to the `errors` property of the `<Field>`.
 
-## Usage with HTML forms
 
-> This section is still being written.
 
-<!-- Wrap in `form` -->
 
-## Usage with React Native
 
-> This section is still being written.
 
-<!-- No change -->
-
-## How to link two elements together
-
-> This section is still being written.
-
-<!-- listenTo={[""]} -->
-
-## Set an error from form submit function
-
-> This section is still being written.
-
-<!-- onSubmit={(_, form) => form.getFieldValue('fieldName').setError} -->
-
-## TypeScript Usage
-
-> This section is still being written.
-
-<!-- Mention generic passing to `<Field<string>>` -->
