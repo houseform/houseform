@@ -61,7 +61,7 @@ const App = () => (
                 {({value, setValue, onBlur}) => (
                 	<input value={value} onChange={e => setValue(e.target.value)} onBlur={onBlur}/>
                 )}
-             </Field>			
+             </Field>
 			<button onClick={submit}>Submit</button>
 		</div>}
 	</Form>
@@ -82,7 +82,71 @@ If you had a second `<Field>` component rendered with `name="email"` you would s
 
 ## Adding field validation
 
+Now that we have a field, a form, and can receive values from the form's submission - let's add some validation!
 
+Validation in HouseForm is done on a per-field basis:
+
+```jsx
+import {z} from "zod";
+
+// ...
+ 
+<Field name="username" initialValue={""} onChangeValidate={z.string().min(3, "Your username must have at least three characters")}>
+    {({value, setValue, onBlur, errors}) => (
+	    <input value={value} onChange={e => setValue(e.target.value)} onBlur={onBlur}/>
+        {errors.map(error => <p key={error}>{error}</p>)}
+    )}
+</Field>
+```
+
+This field, for example, will validate the user's input whenever they type a value. If said input is less than three characters, [Zod](https://github.com/colinhacks/zod) will run its validation and present the error to the user via the `errors.map` logic.
+
+## Alternative forms of validation
+
+Validation as the user is typing is not always the most ideal form of validation, however. Luckily, HouseForm supports two other methods of validation:
+
+1. On blur via `onBlurValidate`
+
+```jsx
+<Field name="username" initialValue={""} onBlurValidate={z.string().min(3, "Your username must have at least three characters")}>
+    {({value, setValue, onBlur, errors}) => (
+	    <input value={value} onChange={e => setValue(e.target.value)} onBlur={onBlur}/>
+        {errors.map(error => <p key={error}>{error}</p>)}
+    )}
+</Field>
+```
+
+> This will only run validation when the user has blurred the field.
+
+2. On submit via `onSubmitValidate`
+
+```jsx
+<Field name="username" initialValue={""} onSubmitValidate={z.string().min(3, "Your username must have at least three characters")}>
+    {({value, setValue, onBlur, errors}) => (
+	    <input value={value} onChange={e => setValue(e.target.value)} onBlur={onBlur}/>
+        {errors.map(error => <p key={error}>{error}</p>)}
+    )}
+</Field>
+```
+
+> This will only run validation when the user submits the form.
+
+### Validate only once touched
+
+While HouseForm does not provide an explicit method to validate only once touched, you may reproduce this behavior using the `isTouched` property passed to each field's child function:
+
+```jsx
+<Field name="username" initialValue={""} onChangeValidate={z.string().min(3, "Your username must have at least three characters")}>
+    {({value, setValue, onBlur, errors, isTouched}) => (
+	    <input value={value} onChange={e => setValue(e.target.value)} onBlur={onBlur}/>
+        {isTouched && errors.map(error => <p key={error}>{error}</p>)}
+    )}
+</Field>
+```
+
+### Async function validation
+
+> This section is still being written.
 
 ## Usage with HTML forms
 
