@@ -63,13 +63,13 @@
     "docs/**/*.md",
     "docs/public/logo.svg"
   ],
-  "main": "./dist/uniform.umd.cjs",
-  "module": "./dist/uniform.js",
+  "main": "./dist/houseform.umd.cjs",
+  "module": "./dist/houseform.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/uniform.js",
-      "require": "./dist/uniform.umd.cjs",
+      "import": "./dist/houseform.js",
+      "require": "./dist/houseform.umd.cjs",
       "types": "./dist/index.d.ts"
     }
   },
