@@ -6,7 +6,10 @@ import {getValidationError, validate} from "./utils";
 
 interface FormState {
     submit: () => void;
+    errors: string[];
     isValid: boolean;
+    isSubmitted: boolean;
+    setIsSubmitted: (val: boolean) => void;
 }
 
 interface FormProps<T> {
@@ -25,6 +28,12 @@ function FormComp<T>(props: FormProps<T>) {
 
     const [errors, setErrors] = useState(getErrors());
 
+    const isValid = useMemo(() => {
+        return errors.length === 0;
+    }, [errors]);
+
+    const [isSubmitted, setIsSubmitted] = useState(false);
+
     const recomputeErrors = useCallback(() => {
         setErrors(getErrors());
     }, [getErrors]);
@@ -42,6 +51,7 @@ function FormComp<T>(props: FormProps<T>) {
     }, [formFieldsRef, errors, recomputeErrors, getFieldValue, onChangeListenerRefs])
 
     const submit = useCallback(async () => {
+        setIsSubmitted(true);
         let values = {} as Record<string, T>;
 
         const validArrays = await Promise.all(formFieldsRef.current.map(async formField => {
@@ -75,9 +85,12 @@ function FormComp<T>(props: FormProps<T>) {
     const children = useMemo(() => {
         return props.children({
             submit,
-            isValid: errors.length === 0
+            errors,
+            isSubmitted,
+            setIsSubmitted,
+            isValid
         })
-    }, [props.children, submit, errors]);
+    }, [props.children, submit, errors, isSubmitted, isValid]);
 
     return (
         <FormContext.Provider

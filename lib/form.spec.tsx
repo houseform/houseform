@@ -124,3 +124,19 @@ test("Form should show isValid proper", async () => {
     expect(getByText("Is not valid")).toBeInTheDocument();
 });
 
+test("Form should show isSubmitted proper", async () => {
+    const {getByText, findByText} = render(<Form onSubmit={() => {
+    }}>
+        {({isSubmitted, submit}) => (<>
+            <button onClick={submit}>Submit</button>
+            <p>{isSubmitted ? "Submitted" : "Not submitted"}</p>
+        </>)}
+    </Form>);
+
+    expect(getByText("Not submitted")).toBeInTheDocument();
+
+    await user.click(getByText("Submit"));
+
+    expect(await findByText("Submitted")).toBeInTheDocument();
+});
+
