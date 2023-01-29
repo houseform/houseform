@@ -22,7 +22,7 @@ specifiers:
   typescript: ^4.9.3
   vite: ^4.0.0
   vite-plugin-dts: ^1.7.1
-  vitepress: 1.0.0-alpha.41
+  vitepress: 1.0.0-alpha.43
   vitest: ^0.28.2
   vue: ^3.2.45
   zod: ^3.20.2
@@ -49,7 +49,7 @@ devDependencies:
   typescript: 4.9.4
   vite: 4.0.4
   vite-plugin-dts: 1.7.1_vite@4.0.4
-  vitepress: 1.0.0-alpha.41_5ndqzdd6t4rivxsukjv3i3ak2q
+  vitepress: 1.0.0-alpha.43_5ndqzdd6t4rivxsukjv3i3ak2q
   vitest: 0.28.2_jsdom@21.1.0
   vue: 3.2.45
   zod: 3.20.2
@@ -71,6 +71,9 @@ packages:
     peerDependencies:
       '@algolia/client-search': '>= 4.9.1 < 6'
       algoliasearch: '>= 4.9.1 < 6'
+    peerDependenciesMeta:
+      '@algolia/client-search':
+        optional: true
     dependencies:
       '@algolia/autocomplete-shared': 1.7.4
       algoliasearch: 4.14.3
@@ -2039,6 +2042,9 @@ packages:
     engines: {node: '>=12', npm: '>=6'}
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
+    peerDependenciesMeta:
+      '@testing-library/dom':
+        optional: true
     dev: true
 
   /@tootallnate/once/2.0.0:
@@ -3408,6 +3414,11 @@ packages:
       '@babel/plugin-syntax-flow': ^7.14.5
       '@babel/plugin-transform-react-jsx': ^7.14.9
       eslint: ^8.1.0
+    peerDependenciesMeta:
+      '@babel/plugin-syntax-flow':
+        optional: true
+      '@babel/plugin-transform-react-jsx':
+        optional: true
     dependencies:
       eslint: 8.33.0
       lodash: 4.17.21
@@ -5664,8 +5675,8 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vitepress/1.0.0-alpha.41_5ndqzdd6t4rivxsukjv3i3ak2q:
-    resolution: {integrity: sha512-fsSHCyxJVnAf4/BSxiZBoGaqFtdLurYDsL5qvZ3xXx6WO4WAqWuh5dX2ch1Gv0keMQkbiVcgkhln3bNiQqrulQ==}
+  /vitepress/1.0.0-alpha.43_5ndqzdd6t4rivxsukjv3i3ak2q:
+    resolution: {integrity: sha512-bguPWYojF371vIfTY8jGmKeFroRe6UVGmDp3+PjTnVq57wTlz9x88OKm6KKF4l/1D7GugkHex5X9wNcOdCmCiQ==}
     hasBin: true
     dependencies:
       '@docsearch/css': 3.3.2
