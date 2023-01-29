@@ -1,229 +1,270 @@
-import {expect, test} from "vitest";
-import {useState} from "react";
-import {Form} from "./form";
-import {Field} from "./fields";
-import {render, waitFor} from "@testing-library/react";
-import {z} from "zod";
+import { expect, test } from "vitest";
+import { useState } from "react";
+import { Form } from "./form";
+import { Field } from "./fields";
+import { render, waitFor } from "@testing-library/react";
+import { z } from "zod";
 
 test("Form should render children", () => {
-    const {getByText} = render(<Form onSubmit={(_) => {
-    }}>
-        {() =>
-            <div>Test</div>
-        }
-    </Form>)
+  const { getByText } = render(
+    <Form onSubmit={(_) => {}}>{() => <div>Test</div>}</Form>
+  );
 
-    expect(getByText("Test")).toBeInTheDocument();
-})
+  expect(getByText("Test")).toBeInTheDocument();
+});
 
 test("Form should submit with values in tact", async () => {
-    const SubmitValues = () => {
-        const [values, setValues] = useState<string | null>(null);
+  const SubmitValues = () => {
+    const [values, setValues] = useState<string | null>(null);
 
-        if (values) return <p>{values}</p>
+    if (values) return <p>{values}</p>;
 
-        return (
-            <Form onSubmit={(values) => setValues(JSON.stringify(values))}>
-                {({submit}) => (
-                    <>
-                        <Field<string> name={"email"} initialValue="test@example.com">
-                            {() => <></>}
-                        </Field>
-                        <button onClick={submit}>Submit</button>
-                    </>
-                )}
-            </Form>
-        )
-    }
+    return (
+      <Form onSubmit={(values) => setValues(JSON.stringify(values))}>
+        {({ submit }) => (
+          <>
+            <Field<string> name={"email"} initialValue="test@example.com">
+              {() => <></>}
+            </Field>
+            <button onClick={submit}>Submit</button>
+          </>
+        )}
+      </Form>
+    );
+  };
 
-    const {getByText, container} = render(<SubmitValues/>);
+  const { getByText, container } = render(<SubmitValues />);
 
-    await user.click(getByText("Submit"));
+  await user.click(getByText("Submit"));
 
-    await waitFor(() => expect(container).toMatchInlineSnapshot(`
+  await waitFor(() =>
+    expect(container).toMatchInlineSnapshot(`
       <div>
         <p>
           {"email":"test@example.com"}
         </p>
       </div>
-    `));
+    `)
+  );
 });
 
 test("Form should not submit if there are errors with onChangeValidate", async () => {
-    const SubmitValues = () => {
-        const [values, setValues] = useState<string | null>(null);
+  const SubmitValues = () => {
+    const [values, setValues] = useState<string | null>(null);
 
-        if (values) return <p>{values}</p>
+    if (values) return <p>{values}</p>;
 
-        return (
-            <Form onSubmit={(values) => setValues(JSON.stringify(values))}>
-                {({submit}) => (<>
-                    <Field<string> name={"email"} initialValue="" onChangeValidate={z.string().min(1)}>
-                        {() => <></>}
-                    </Field>
-                    <button onClick={submit}>Submit</button>
-                </>)}
-            </Form>
-        )
-    }
+    return (
+      <Form onSubmit={(values) => setValues(JSON.stringify(values))}>
+        {({ submit }) => (
+          <>
+            <Field<string>
+              name={"email"}
+              initialValue=""
+              onChangeValidate={z.string().min(1)}
+            >
+              {() => <></>}
+            </Field>
+            <button onClick={submit}>Submit</button>
+          </>
+        )}
+      </Form>
+    );
+  };
 
-    const {getByText} = render(<SubmitValues/>);
+  const { getByText } = render(<SubmitValues />);
 
-    await user.click(getByText("Submit"));
+  await user.click(getByText("Submit"));
 
-    expect(getByText("Submit")).toBeInTheDocument();
+  expect(getByText("Submit")).toBeInTheDocument();
 });
 
 test("Form should not submit if there are errors with onSubmitValidate", async () => {
-    const SubmitValues = () => {
-        const [values, setValues] = useState<string | null>(null);
+  const SubmitValues = () => {
+    const [values, setValues] = useState<string | null>(null);
 
-        if (values) return <p>{values}</p>
+    if (values) return <p>{values}</p>;
 
-        return (
-            <Form onSubmit={(values) => setValues(JSON.stringify(values))}>
-                {({submit}) => (<>
-                    <Field<string> name={"email"} initialValue="" onSubmitValidate={z.string().min(1)}>
-                        {() => <></>}
-                    </Field>
-                    <button onClick={submit}>Submit</button>
-                </>)}
-            </Form>
-        )
-    }
+    return (
+      <Form onSubmit={(values) => setValues(JSON.stringify(values))}>
+        {({ submit }) => (
+          <>
+            <Field<string>
+              name={"email"}
+              initialValue=""
+              onSubmitValidate={z.string().min(1)}
+            >
+              {() => <></>}
+            </Field>
+            <button onClick={submit}>Submit</button>
+          </>
+        )}
+      </Form>
+    );
+  };
 
-    const {getByText} = render(<SubmitValues/>);
+  const { getByText } = render(<SubmitValues />);
 
-    await user.click(getByText("Submit"));
+  await user.click(getByText("Submit"));
 
-    expect(getByText("Submit")).toBeInTheDocument();
+  expect(getByText("Submit")).toBeInTheDocument();
 });
 
-
 test("Form should show isValid proper", async () => {
-    const {getByText, getByPlaceholderText} = render(<Form onSubmit={() => {
-    }}>
-        {({isValid}) => (<>
-            <Field<string> name={"email"} onChangeValidate={() => Promise.reject("Not valid")}
-                           initialValue="test@example.com">
-                {({value, setValue, errors}) => (
-                    <div>
-                        <input placeholder="Email" value={value} onChange={e => setValue(e.target.value)}/>
-                        {errors.map(error => <p key={error}>{error}</p>)}
-                    </div>
-                )}
-            </Field>
-            <p>{isValid ? "Is valid" : "Is not valid"}</p>
-        </>)}
-    </Form>);
+  const { getByText, getByPlaceholderText } = render(
+    <Form onSubmit={() => {}}>
+      {({ isValid }) => (
+        <>
+          <Field<string>
+            name={"email"}
+            onChangeValidate={() => Promise.reject("Not valid")}
+            initialValue="test@example.com"
+          >
+            {({ value, setValue, errors }) => (
+              <div>
+                <input
+                  placeholder="Email"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+                {errors.map((error) => (
+                  <p key={error}>{error}</p>
+                ))}
+              </div>
+            )}
+          </Field>
+          <p>{isValid ? "Is valid" : "Is not valid"}</p>
+        </>
+      )}
+    </Form>
+  );
 
-    expect(getByText("Is valid")).toBeInTheDocument();
+  expect(getByText("Is valid")).toBeInTheDocument();
 
-    await user.type(getByPlaceholderText("Email"), "test");
+  await user.type(getByPlaceholderText("Email"), "test");
 
-    expect(getByText("Is not valid")).toBeInTheDocument();
+  expect(getByText("Is not valid")).toBeInTheDocument();
 });
 
 test("Form should show isSubmitted proper", async () => {
-    const {getByText, findByText} = render(<Form onSubmit={() => {
-    }}>
-        {({isSubmitted, submit}) => (<>
-            <button onClick={submit}>Submit</button>
-            <p>{isSubmitted ? "Submitted" : "Not submitted"}</p>
-        </>)}
-    </Form>);
+  const { getByText, findByText } = render(
+    <Form onSubmit={() => {}}>
+      {({ isSubmitted, submit }) => (
+        <>
+          <button onClick={submit}>Submit</button>
+          <p>{isSubmitted ? "Submitted" : "Not submitted"}</p>
+        </>
+      )}
+    </Form>
+  );
 
-    expect(getByText("Not submitted")).toBeInTheDocument();
+  expect(getByText("Not submitted")).toBeInTheDocument();
 
-    await user.click(getByText("Submit"));
+  await user.click(getByText("Submit"));
 
-    expect(await findByText("Submitted")).toBeInTheDocument();
+  expect(await findByText("Submitted")).toBeInTheDocument();
 });
 
 test("Form should show isTouched proper", async () => {
-    const {getByText, findByText} = render(<Form onSubmit={() => {
-    }}>
-        {({isTouched, submit}) => (<>
-            <Field name={"test"}>
-                {({onBlur}) =>
-                    <button onClick={() => onBlur()}>Touch a field</button>
-                }
-            </Field>
-            <button onClick={submit}>Submit</button>
-            <p>{isTouched ? "Form is touched" : "Form is not touched"}</p>
-        </>)}
-    </Form>);
+  const { getByText, findByText } = render(
+    <Form onSubmit={() => {}}>
+      {({ isTouched, submit }) => (
+        <>
+          <Field name={"test"}>
+            {({ onBlur }) => (
+              <button onClick={() => onBlur()}>Touch a field</button>
+            )}
+          </Field>
+          <button onClick={submit}>Submit</button>
+          <p>{isTouched ? "Form is touched" : "Form is not touched"}</p>
+        </>
+      )}
+    </Form>
+  );
 
-    expect(getByText("Form is not touched")).toBeInTheDocument();
+  expect(getByText("Form is not touched")).toBeInTheDocument();
 
-    await user.click(getByText("Touch a field"));
+  await user.click(getByText("Touch a field"));
 
-    expect(await findByText("Form is touched")).toBeInTheDocument();
+  expect(await findByText("Form is touched")).toBeInTheDocument();
 });
 
 test("Form should reset isTouched when all touched fields are not touched anymore", async () => {
-    const {getByText, findByText} = render(<Form onSubmit={() => {
-    }}>
-        {({isTouched, submit}) => (<>
-            <Field name={"test"}>
-                {({onBlur, setIsTouched}) =>
-                    <div>
-                        <button onClick={() => onBlur()}>Touch a field</button>
-                        <button onClick={() => setIsTouched(false)}>Untouch a field</button>
-                    </div>
-                }
-            </Field>
-            <button onClick={submit}>Submit</button>
-            <p>{isTouched ? "Form is touched" : "Form is not touched"}</p>
-        </>)}
-    </Form>);
+  const { getByText, findByText } = render(
+    <Form onSubmit={() => {}}>
+      {({ isTouched, submit }) => (
+        <>
+          <Field name={"test"}>
+            {({ onBlur, setIsTouched }) => (
+              <div>
+                <button onClick={() => onBlur()}>Touch a field</button>
+                <button onClick={() => setIsTouched(false)}>
+                  Untouch a field
+                </button>
+              </div>
+            )}
+          </Field>
+          <button onClick={submit}>Submit</button>
+          <p>{isTouched ? "Form is touched" : "Form is not touched"}</p>
+        </>
+      )}
+    </Form>
+  );
 
-    await user.click(getByText("Touch a field"));
-    expect(await findByText("Form is touched")).toBeInTheDocument();
-    await user.click(getByText("Untouch a field"));
-    expect(getByText("Form is not touched")).toBeInTheDocument();
+  await user.click(getByText("Touch a field"));
+  expect(await findByText("Form is touched")).toBeInTheDocument();
+  await user.click(getByText("Untouch a field"));
+  expect(getByText("Form is not touched")).toBeInTheDocument();
 });
 
 test("Form should show isDirty proper", async () => {
-    const {getByText, findByText} = render(<Form onSubmit={() => {
-    }}>
-        {({isDirty, submit}) => (<>
-            <Field name={"test"}>
-                {({setValue}) =>
-                    <button onClick={() => setValue("Test")}>Dirty a field</button>
-                }
-            </Field>
-            <button onClick={submit}>Submit</button>
-            <p>{isDirty ? "Form is dirty" : "Form is not dirty"}</p>
-        </>)}
-    </Form>);
+  const { getByText, findByText } = render(
+    <Form onSubmit={() => {}}>
+      {({ isDirty, submit }) => (
+        <>
+          <Field name={"test"}>
+            {({ setValue }) => (
+              <button onClick={() => setValue("Test")}>Dirty a field</button>
+            )}
+          </Field>
+          <button onClick={submit}>Submit</button>
+          <p>{isDirty ? "Form is dirty" : "Form is not dirty"}</p>
+        </>
+      )}
+    </Form>
+  );
 
-    expect(getByText("Form is not dirty")).toBeInTheDocument();
+  expect(getByText("Form is not dirty")).toBeInTheDocument();
 
-    await user.click(getByText("Dirty a field"));
+  await user.click(getByText("Dirty a field"));
 
-    expect(await findByText("Form is dirty")).toBeInTheDocument();
+  expect(await findByText("Form is dirty")).toBeInTheDocument();
 });
 
 test("Form should reset isDirty when all touched fields are not touched anymore", async () => {
-    const {getByText, findByText} = render(<Form onSubmit={() => {
-    }}>
-        {({isDirty, submit}) => (<>
-            <Field name={"test"}>
-                {({setValue, setIsDirty}) =>
-                    <div>
-                        <button onClick={() => setValue("Test")}>Dirty a field</button>
-                        <button onClick={() => setIsDirty(false)}>Undirty a field</button>
-                    </div>
-                }
-            </Field>
-            <button onClick={submit}>Submit</button>
-            <p>{isDirty ? "Form is dirty" : "Form is not dirty"}</p>
-        </>)}
-    </Form>);
+  const { getByText, findByText } = render(
+    <Form onSubmit={() => {}}>
+      {({ isDirty, submit }) => (
+        <>
+          <Field name={"test"}>
+            {({ setValue, setIsDirty }) => (
+              <div>
+                <button onClick={() => setValue("Test")}>Dirty a field</button>
+                <button onClick={() => setIsDirty(false)}>
+                  Undirty a field
+                </button>
+              </div>
+            )}
+          </Field>
+          <button onClick={submit}>Submit</button>
+          <p>{isDirty ? "Form is dirty" : "Form is not dirty"}</p>
+        </>
+      )}
+    </Form>
+  );
 
-    await user.click(getByText("Dirty a field"));
-    expect(await findByText("Form is dirty")).toBeInTheDocument();
-    await user.click(getByText("Undirty a field"));
-    expect(getByText("Form is not dirty")).toBeInTheDocument();
+  await user.click(getByText("Dirty a field"));
+  expect(await findByText("Form is dirty")).toBeInTheDocument();
+  await user.click(getByText("Undirty a field"));
+  expect(getByText("Form is not dirty")).toBeInTheDocument();
 });

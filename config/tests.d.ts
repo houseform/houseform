@@ -1,7 +1,7 @@
-import {UserEvent} from "@testing-library/user-event";
+import { UserEvent } from "@testing-library/user-event";
 
 declare global {
-    var user: UserEvent
+  var user: UserEvent;
 }
 
-export {}
+export {};
