@@ -1,8 +1,9 @@
 import { ZodError } from "zod";
 import {
+  ForwardedRef, forwardRef,
   memo,
   useCallback,
-  useContext,
+  useContext, useImperativeHandle,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -11,6 +12,7 @@ import {
 import { FieldBase, FieldProps } from "./types";
 import { FormContext } from "./context";
 import { getValidationError, validate } from "./utils";
+import {FormProps} from "./form";
 
 export interface FieldRenderProps<T = any> extends FieldBase<T> {
   children: (props: FieldProps<T>) => JSX.Element;
@@ -18,7 +20,10 @@ export interface FieldRenderProps<T = any> extends FieldBase<T> {
   listenTo?: string[];
 }
 
-function FieldComp<T>(props: FieldRenderProps<T>) {
+function FieldComp<T>(
+    props: FieldRenderProps<T>,
+    ref: ForwardedRef<FieldProps<T>>
+) {
   const formContext = useContext(FormContext);
 
   const {
@@ -201,19 +206,27 @@ function FieldComp<T>(props: FieldRenderProps<T>) {
     recomputeIsDirty();
   }, [isDirty, recomputeErrors]);
 
-  return props.children({
-    value,
-    props,
-    setErrors,
-    errors,
-    setIsDirty,
-    setIsTouched,
-    setValue,
-    isTouched,
-    isDirty,
-    isValid,
-    onBlur,
-  });
+  const childValue = useMemo(() => {
+    return {
+      value,
+      props,
+      setErrors,
+      errors,
+      setIsDirty,
+      setIsTouched,
+      setValue,
+      isTouched,
+      isDirty,
+      isValid,
+      onBlur,
+    }
+  }, [value, props, setErrors, errors, setIsDirty, setIsTouched, setValue, isTouched, isDirty, isValid, onBlur]);
+
+  useImperativeHandle(ref, () => childValue, [childValue]);
+
+  return props.children(childValue);
 }
 
-export const Field = memo(FieldComp) as typeof FieldComp;
+export const Field = memo(forwardRef(FieldComp)) as <T>(
+    props: FieldRenderProps<T> & { ref?: ForwardedRef<FieldProps<T>> }
+) => ReturnType<typeof FieldComp>;

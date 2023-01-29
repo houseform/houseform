@@ -1,8 +1,9 @@
 import { expect, test } from "vitest";
 import {fireEvent, render, waitFor} from "@testing-library/react";
-import { Field, Form } from "./index";
+import {Field, FieldProps, Form, FormContext, FormProps} from "./index";
 
 import { z } from "zod";
+import {useRef, useState} from "react";
 
 test("Field should render children", () => {
   const { getByText } = render(
@@ -622,4 +623,37 @@ test("Field can listen for changes in other fields to validate on multiple field
   await user.type(getByPlaceholderText("Password"), "other");
   fireEvent.blur(getByPlaceholderText("Password"));
   expect(await findByText("Passwords must match")).toBeInTheDocument();
+});
+
+test("Field should have render props passed to ref", async () => {
+  const Comp = () => {
+    const fieldRef = useRef<FieldProps>(undefined!);
+
+    const [val, setVal] = useState("");
+
+    if (val) return <p>{val}</p>
+
+    return (
+        <div>
+          <Form onSubmit={() => {}}>
+            {() => (
+                <Field name={"test"} initialValue="Test" ref={fieldRef}>
+                  {() => (
+                      <div>
+                      </div>
+                  )}
+                </Field>
+            )}
+          </Form>
+          <button onClick={() => setVal(fieldRef.current?.value)}>Submit</button>
+        </div>
+    )
+  }
+  const { getByText, queryByText, findByText } = render(
+      <Comp/>
+  );
+
+  expect(queryByText('Test')).not.toBeInTheDocument();
+  await user.click(getByText("Submit"));
+  expect(await findByText("Test")).toBeInTheDocument();
 });
