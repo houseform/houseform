@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { render, waitFor } from "@testing-library/react";
+import {fireEvent, render, waitFor} from "@testing-library/react";
 import { Field, Form } from "./index";
 
 import { z } from "zod";
@@ -151,6 +151,44 @@ test("Field should show errors with async onChange validator zod usage", async (
   await user.type(getByPlaceholderText("Email"), "test");
 
   expect(getByText("You must input a valid email")).toBeInTheDocument();
+});
+
+test("Field should show errors with async onBlur validator zod usage", async () => {
+  const { getByPlaceholderText, queryByText, findByText } = render(
+      <Form onSubmit={(_) => {}}>
+        {() => (
+            <Field<string>
+                name={"email"}
+                initialValue=""
+                onBlurValidate={z.string().email("You must input a valid email")}
+            >
+              {({ value, setValue, errors , onBlur}) => (
+                  <div>
+                    <input
+                        placeholder="Email"
+                        value={value}
+                        onBlur={onBlur}
+                        onChange={(e) => setValue(e.target.value)}
+                    />
+                    {errors.map((error) => (
+                        <p key={error}>There was an error: {error}</p>
+                    ))}
+                  </div>
+              )}
+            </Field>
+        )}
+      </Form>
+  );
+
+  expect(queryByText(/There was an error/)).not.toBeInTheDocument();
+
+  fireEvent.change(getByPlaceholderText("Email"), { target: { value: "test" } });
+
+  expect(queryByText(/There was an error/)).not.toBeInTheDocument();
+
+  fireEvent.blur(getByPlaceholderText("Email"));
+
+  expect(await findByText(/There was an error/)).toBeInTheDocument();
 });
 
 test("Field should not show errors with async onChange validator zod usage", async () => {
@@ -410,7 +448,7 @@ test("Field can check for onBlurValidate errors on submit", async () => {
     </Form>
   );
 
-  expect(queryByText("There was an error")).not.toBeInTheDocument();
+  expect(queryByText(/There was an error/)).not.toBeInTheDocument();
   await user.click(getByText("Submit"));
   expect(getByText(/There was an error/)).toBeInTheDocument();
 });
