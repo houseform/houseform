@@ -107,7 +107,7 @@ function FormComp<T>(props: FormProps<T>) {
     const validArrays = await Promise.all(
       formFieldsRef.current.map(async (formField) => {
         const runValidationType = async (
-          type: "onChangeValidate" | "onSubmitValidate"
+          type: "onChangeValidate" | "onSubmitValidate" | "onBlurValidate"
         ) => {
           if (!formField.props[type]) return true;
           try {
@@ -119,8 +119,11 @@ function FormComp<T>(props: FormProps<T>) {
           }
         };
         const onChangeRes = await runValidationType("onChangeValidate");
+        if (!onChangeRes) return false;
+        const onBlurRes = await runValidationType("onBlurValidate");
+        if (!onBlurRes) return false;
         const onSubmitRes = await runValidationType("onSubmitValidate");
-        if (!onChangeRes || !onSubmitRes) return false;
+        if (!onSubmitRes) return false;
         if (formField.errors.length > 0) return false;
         values[formField.props.name] = formField.value;
         return true;

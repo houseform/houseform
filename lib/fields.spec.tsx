@@ -380,6 +380,41 @@ test("Field can check for onChangeValidate errors on submit", async () => {
   expect(getByText("Passwords must match")).toBeInTheDocument();
 });
 
+test("Field can check for onBlurValidate errors on submit", async () => {
+  const { getByText, queryByText } = render(
+    <Form onSubmit={(values) => {}}>
+      {({ submit }) => (
+        <>
+          <Field<string>
+            name="test"
+            initialValue=""
+            onBlurValidate={z.string().min(3)}
+          >
+            {({ value, setValue, errors }) => (
+              // I'm intentionally not using the onBlur function here to test this
+              <div>
+                <input
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                  placeholder={"Test"}
+                />
+                {errors.map((error) => (
+                  <p key={error}>There was an error: {error}</p>
+                ))}
+              </div>
+            )}
+          </Field>
+          <button onClick={submit}>Submit</button>
+        </>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("There was an error")).not.toBeInTheDocument();
+  await user.click(getByText("Submit"));
+  expect(getByText(/There was an error/)).toBeInTheDocument();
+});
+
 test("Is touched should be set", async () => {
   const { getByPlaceholderText, queryByText, getByText } = render(
     <Form onSubmit={(values) => {}}>
