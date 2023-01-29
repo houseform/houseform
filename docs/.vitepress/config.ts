@@ -1,11 +1,28 @@
 import {defineConfig} from 'vitepress'
 
+const { description, version } = require('../../package.json')
+
 export default defineConfig({
     title: 'HouseForm',
-    description: 'Simple to use React forms, where your validation and UI code live together in harmony.',
+    description: description,
     base: "/houseform/",
     themeConfig: {
         logo: '/logo.svg',
+        socialLinks: [
+            { icon: 'github', link: 'https://github.com/crutchcorn/houseform' },
+        ],
+        nav: [
+            {text: "Home", link: "/"},
+            {text: "Reference", link: "/reference"},
+            {
+                text: version,
+                items: [
+                    // Change to `Changelog` when we have one
+                    { text: 'Releases', link: 'https://github.com/crutchcorn/houseform/tags' },
+                    { text: 'Contributing', link: 'https://github.com/crutchcorn/houseform/blob/main/CONTRIBUTING.md' },
+                ]
+            },
+        ],
         sidebar: [
             {
                 text: "Docs", items: [
