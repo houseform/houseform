@@ -146,7 +146,39 @@ While HouseForm does not provide an explicit method to validate only once touche
 
 ### Async function validation
 
-> This section is still being written.
+While it's recommended to use Zod to do input validation in HouseForm, sometimes applications have more custom requirements. This is why we provide a method of using an asynchronous function to validate a field. To do this, pass a function to any of the `onXYZValidate` `<Field>` properties:
+
+```jsx
+<Field name="email" initialValue={""} onChangeValidate={async value => {return await isEmailUnique(value)}}>
+    {({value, setValue, onBlur, errors, isTouched}) => (
+	    <input value={value} onChange={e => setValue(e.target.value)} onBlur={onBlur}/>
+        {isTouched && errors.map(error => <p key={error}>{error}</p>)}
+    )}
+</Field>
+```
+
+Here, we expect the async function to do one of two things:
+
+1. Resolve `true`
+2. Reject with a string explaining why it was rejected
+
+```typescript
+// This is simulating a check against a database
+function isEmailUnique(val: string) {
+  return new Promise<boolean>((resolve, reject) => {
+    setTimeout(() => {
+      const isUnique = !val.startsWith("crutchcorn");
+      if (isUnique) {
+        resolve(true);
+      } else {
+        reject("That email is already taken");
+      }
+    }, 20);
+  });
+}
+```
+
+If resolved, it will validate; Otherwise it will pass the rejection explanation to the `errors` property of the `<Field>`.
 
 ## Usage with HTML forms
 
@@ -171,3 +203,9 @@ While HouseForm does not provide an explicit method to validate only once touche
 > This section is still being written.
 
 <!-- onSubmit={(_, form) => form.getFieldValue('fieldName').setError} -->
+
+## TypeScript Usage
+
+> This section is still being written.
+
+<!-- Mention generic passing to `<Field<string>>` -->
