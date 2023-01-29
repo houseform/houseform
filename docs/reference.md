@@ -1,4 +1,8 @@
-# Form
+# API Reference
+
+This is the no-frills versions of the docs. Very little is explained here, but if you're looking for very-specific usage, this is the place for you.
+
+## Form
 
 The `Form` component is the main component of this library. It is responsible for managing the state of the form and
 must be the parent of all `Field` components.
@@ -11,7 +15,7 @@ An example `Form` usage is:
 </Form>
 ```
 
-## Form Props
+### Form Props
 
 The `Form` component takes the following props:
 
@@ -20,7 +24,7 @@ The `Form` component takes the following props:
 | `onSubmit` | `Record<string, any>`, [`FormContext`](#interface-formcontext) |                 | The function to call when the form is submitted. The first argument is the values of a form submitted. It might look something like:<br />`{email: "test@example.com", password: "Hunter2!", confirmpassword: "Hunter2!"}` |
 | `children` | [`FormState`](#interface-formstate)                          | `JSX.Element`   | This is the component child function to pass, which accepts the arguments for FormState. |
 
-## _Interface_ `FormState`
+### _Interface_ `FormState`
 
 These are the properties that are passed to the `<Form>` component's child function.
 
@@ -35,7 +39,7 @@ These are the properties that are passed to the `<Form>` component's child funct
 | `isDirty`        | `boolean`                | A boolean to check if any of the form fields are dirty or not. |
 | `isTouched`      | `boolean`                | A boolean to check if any of the form fields have been touched or not. |
 
-## _Interface_ `FormContext`
+### _Interface_ `FormContext`
 
 This is the second argument passed to the `<Form>` `onSubmit` function and the second argument to all [`<Field>` `onXValidate` property functions](#field):
 
@@ -44,7 +48,7 @@ This is the second argument passed to the `<Form>` `onSubmit` function and the s
 | `errors`        | `string[]`                         | A list of all errors present on the form. When an empty array, the form is valid. |
 | `getFieldValue` | `(fieldName: sting) => FieldProps` | Takes the field name and returns a [`FieldProp`](#interface-fieldprops) representation of the named field. |
 
-# Field
+## Field
 
 A field is the primitive for every input that you'd like to display to the user. This is what an example `Field` looks like:
 
@@ -56,7 +60,7 @@ A field is the primitive for every input that you'd like to display to the user.
 </Field>
 ```
 
-## Field Props
+### Field Props
 
 | Property           | Type                                                         | Description                                                  |
 | ------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
@@ -67,7 +71,7 @@ A field is the primitive for every input that you'd like to display to the user.
 | `onBlurValidate`   | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the user has blurred the field. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error. |
 | `onSubmitValidate` | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the user has submitted the form. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error. |
 
-## _Interface_ `FieldProps`
+### _Interface_ `FieldProps`
 
 | Property       | Type                         | Description                                                  |
 | -------------- | ---------------------------- | ------------------------------------------------------------ |
