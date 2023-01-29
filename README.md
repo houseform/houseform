@@ -114,9 +114,12 @@ These are the properties that are passed to the `<Form>` component's child funct
 | Property         | Type                     | Description                                                                                                                      |
 |------------------|--------------------------|----------------------------------------------------------------------------------------------------------------------------------|
 | `submit`         | `() => void`             | The function to run when you're ready to submit your form. This function will not do anything if there are `errors` on the form. |
+| `errors`         | `string[]`               | An array of all errors on all form fields.                                                                                       |
 | `isValid`        | `boolean`                | A boolean to check if the form is valid or not.                                                                                  |
 | `isSubmitted`    | `boolean`                | A boolean to check if the form has had an attempted submission or not.                                                           |
 | `setIsSubmitted` | `(val: boolean) => void` | A method to reset the `isSubmitted` field                                                                                        |
+| `isDirty`        | `boolean`                | A boolean to check if any of the form fields are dirty or not.                                                                   |
+| `isTouched`      | `boolean`                | A boolean to check if any of the form fields have been touched or not.                                                           |
 
 ### _Interface_ `FormContext`
 
