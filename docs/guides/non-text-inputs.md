@@ -4,6 +4,8 @@
 
 <!-- Radio buttons, select -->
 
+## Radio Inputs
+
 The following is an example of a HouseForm form capable of handling a radio input:
 
 ```jsx
@@ -79,4 +81,69 @@ export default function App() {
 }
 ```
 
- 
+ ## Select Dropdowns
+
+The following is a select field example in HouseForm:
+
+```jsx
+import { Field, Form } from "houseform";
+import { z } from "zod";
+
+export default function App() {
+  return (
+    <Form>
+      {({ submit }) => (
+        <div>
+          <Field<string>
+            name="email"
+            onChangeValidate={z.union(
+              [
+                z.literal("ds3"),
+                z.literal("bloodborne"),
+                z.literal("sekiro"),
+                z.literal("eldenring"),
+              ],
+              {
+                errorMap: () => ({ message: "You have invalid tastes in games... JK!" }),
+              }
+            )}
+          >
+            {({ value, setValue, onBlur, errors }) => {
+              return (
+                <div>
+                  <label htmlFor="games">
+                    What's the best FromSoftware game:
+                  </label>
+                  <select
+                    name="games"
+                    id="games"
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                    onBlur={onBlur}
+                  >
+                    <optgroup label="Dark Souls">
+                      <option value="ds1">Dark Souls</option>
+                      <option value="ds2">Dark Souls 2</option>
+                      <option value="ds3">Dark Souls 3</option>
+                    </optgroup>
+                    <optgroup label="SoulsLikes">
+                      <option value="eldenring">Elden Ring</option>
+                      <option value="sekiro">Sekiro</option>
+                      <option value="bloodborne">Bloodborne</option>
+                    </optgroup>
+                  </select>
+                  {errors.map((error) => (
+                    <p key={error}>{error}</p>
+                  ))}
+                </div>
+              );
+            }}
+          </Field>
+          <button onClick={submit}>Submit</button>
+        </div>
+      )}
+    </Form>
+  );
+}
+```
+
