@@ -13,7 +13,8 @@ export default defineConfig({
   })],
   resolve: {
     alias: {
-      'houseform': resolve(__dirname, "./lib")
+      'houseform': resolve(__dirname, "./lib"),
+      "react-native": "react-native-web"
     }
   },
   build: {
