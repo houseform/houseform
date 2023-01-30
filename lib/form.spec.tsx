@@ -377,3 +377,9 @@ test("Form submit should return `false` if not valid", async () => {
   expect(await findByText("False")).toBeInTheDocument();
 });
 
+test.todo("Field with dot notation should submit with deep object value");
+
+test.todo("Field with bracket notation should submit with deep object value");
+
+// <Field name={`test[other]`}> should be gotten with `getFieldValue('test.other')`
+test.todo("Form's `getFieldValue` should show dot notation for incorrect syntax")
