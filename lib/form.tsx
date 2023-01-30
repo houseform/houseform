@@ -24,7 +24,7 @@ export interface FormState {
 }
 
 export interface FormProps<T> {
-  onSubmit: (values: Record<string, T>, form: FormContext<T>) => void;
+  onSubmit?: (values: Record<string, T>, form: FormContext<T>) => void;
   children: (props: FormState) => JSX.Element;
 }
 
@@ -137,7 +137,7 @@ function FormComp<T>(
 
     if (!validArrays.every((isValid) => !!isValid)) return false;
 
-    props.onSubmit(values, baseValue);
+    props.onSubmit?.(values, baseValue);
     return true;
   }, [formFieldsRef, props.onSubmit]);
 
