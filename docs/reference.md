@@ -43,10 +43,10 @@ These are the properties that are passed to the `<Form>` component's child funct
 
 This is the second argument passed to the `<Form>` `onSubmit` function and the second argument to all [`<Field>` `onXValidate` property functions](#field):
 
-| Property        | Type                               | Description                                                  |
-| --------------- | ---------------------------------- | ------------------------------------------------------------ |
-| `errors`        | `string[]`                         | A list of all errors present on the form. When an empty array, the form is valid. |
-| `getFieldValue` | `(fieldName: sting) => FieldProps` | Takes the field name and returns a [`FieldProp`](#interface-fieldprops) representation of the named field. |
+| Property        | Type                                  | Description                                                                                                   |
+| --------------- |---------------------------------------|---------------------------------------------------------------------------------------------------------------|
+| `errors`        | `string[]`                            | A list of all errors present on the form. When an empty array, the form is valid.                             |
+| `getFieldValue` | `(fieldName: sting) => FieldInstance` | Takes the field name and returns a [`FieldProp`](#interface-fieldinstance) representation of the named field. |
 
 ## Field
 
@@ -62,16 +62,16 @@ A field is the primitive for every input that you'd like to display to the user.
 
 ### Field Props
 
-| Property           | Type                                                         | Description                                                  |
-| ------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| `initialValue`     | `T`                                                          | The initial value of the form field.                         |
+| Property           | Type                                                         | Description                                                                                                                                                                                                              |
+| ------------------ | ------------------------------------------------------------ |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `initialValue`     | `T`                                                          | The initial value of the form field.                                                                                                                                                                                     |
 | `listenTo`         | `string[]`                                                   | A list of form field names to listen to. When a listened field updates it's value, it will trigger the relevant `onChangeValidation` change detection. Useful when making one field depend on the validation of another. |
-| `children`         | `(props: FieldProps<T>) => JSX.Element`                      | Passed [`FieldProps`](#interface-fieldprops), expected to return a JSX element. |
-| `onChangeValidate` | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the user has changed the field value. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error. |
-| `onBlurValidate`   | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the user has blurred the field. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error. |
-| `onSubmitValidate` | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the user has submitted the form. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error. |
+| `children`         | `(props: FieldInstance<T>) => JSX.Element`                      | Passed [`FieldInstance`](#interface-fieldinstance), expected to return a JSX element.                                                                                                                                       |
+| `onChangeValidate` | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the user has changed the field value. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error.                                     |
+| `onBlurValidate`   | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the user has blurred the field. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error.                                           |
+| `onSubmitValidate` | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the user has submitted the form. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error.                                          |
 
-### _Interface_ `FieldProps`
+### _Interface_ `FieldInstance`
 
 | Property       | Type                         | Description                                                  |
 | -------------- | ---------------------------- | ------------------------------------------------------------ |

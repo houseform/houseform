@@ -11,19 +11,19 @@ import {
   useRef,
   useState,
 } from "react";
-import { FieldBase, FieldProps } from "./types";
+import { FieldInstanceProps, FieldInstance } from "./types";
 import { FormContext } from "./context";
 import { getValidationError, stringToPath, validate } from "./utils";
 
-export interface FieldRenderProps<T = any> extends FieldBase<T> {
-  children: (props: FieldProps<T>) => JSX.Element;
+export interface FieldRenderProps<T = any> extends FieldInstanceProps<T> {
+  children: (props: FieldInstance<T>) => JSX.Element;
   initialValue?: T;
   listenTo?: string[];
 }
 
 function FieldComp<T>(
   props: FieldRenderProps<T>,
-  ref: ForwardedRef<FieldProps<T>>
+  ref: ForwardedRef<FieldInstance<T>>
 ) {
   const formContext = useContext(FormContext);
 
@@ -108,7 +108,7 @@ function FieldComp<T>(
     return errors.length === 0;
   }, [errors]);
 
-  const mutableRef = useRef<FieldProps<T>>({
+  const mutableRef = useRef<FieldInstance<T>>({
     value,
     props,
     setErrors,
@@ -260,5 +260,5 @@ function FieldComp<T>(
 }
 
 export const Field = memo(forwardRef(FieldComp)) as <T>(
-  props: FieldRenderProps<T> & { ref?: ForwardedRef<FieldProps<T>> }
+  props: FieldRenderProps<T> & { ref?: ForwardedRef<FieldInstance<T>> }
 ) => ReturnType<typeof FieldComp>;

@@ -1,25 +1,22 @@
 import { ZodTypeAny } from "zod";
-import type { initialContext } from "./context";
-import {FormContext} from "./context";
+import { FormContext } from "./context";
 
-export interface FieldBase<T = any> {
+type ValidationFunction<T> =
+  | ZodTypeAny
+  | ((val: T, form: FormContext<T>) => Promise<boolean>);
+
+export interface FieldInstanceProps<T = any> {
   name: string;
-  onChangeValidate?:
-    | ZodTypeAny
-    | ((val: T, form: FormContext<T>) => Promise<boolean>);
-  onBlurValidate?:
-    | ZodTypeAny
-    | ((val: T, form: FormContext<T>) => Promise<boolean>);
-  onSubmitValidate?:
-    | ZodTypeAny
-    | ((val: T, form: FormContext<T>) => Promise<boolean>);
+  onChangeValidate?: ValidationFunction<T>;
+  onBlurValidate?: ValidationFunction<T>;
+  onSubmitValidate?: ValidationFunction<T>;
 }
 
-export interface FieldProps<T = any> {
+export interface FieldInstance<T = any> {
   value: T;
   setValue: (val: T) => void;
   onBlur: () => void;
-  props: FieldBase<T>;
+  props: FieldInstanceProps<T>;
   _normalizedDotName: string;
   setErrors: (error: string[]) => void;
   errors: string[];

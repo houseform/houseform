@@ -10,7 +10,7 @@ import {
 } from "react";
 import { ZodError } from "zod";
 import { FormContext, initialContext } from "./context";
-import { FieldProps } from "./types";
+import { FieldInstance } from "./types";
 import {fillPath, getValidationError, stringToPath, validate} from "./utils";
 
 export interface FormState {
@@ -32,7 +32,7 @@ function FormComp<T>(
   props: FormProps<T>,
   ref: ForwardedRef<FormContext<T>>
 ) {
-  const formFieldsRef = useRef<FieldProps[]>([]);
+  const formFieldsRef = useRef<FieldInstance[]>([]);
 
   const getErrors = useCallback(() => {
     return formFieldsRef.current.reduce((acc, field) => {
@@ -49,7 +49,7 @@ function FormComp<T>(
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const getFieldBoolean = useCallback(
-    (booleanFieldName: keyof FieldProps) => {
+    (booleanFieldName: keyof FieldInstance) => {
       return formFieldsRef.current.some((field) => {
         return !!field[booleanFieldName];
       });

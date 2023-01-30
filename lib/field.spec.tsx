@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import { fireEvent, render, waitFor } from "@testing-library/react";
-import { Field, FieldProps, Form } from "./index";
+import { Field, FieldInstance, Form } from "./index";
 
 import { z } from "zod";
 import { useRef, useState } from "react";
@@ -628,7 +628,7 @@ test("Field can listen for changes in other fields to validate on multiple field
 
 test("Field should have render props passed to ref", async () => {
   const Comp = () => {
-    const fieldRef = useRef<FieldProps>(undefined!);
+    const fieldRef = useRef<FieldInstance>(undefined!);
 
     const [val, setVal] = useState("");
 
