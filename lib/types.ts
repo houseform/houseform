@@ -20,6 +20,7 @@ export interface FieldProps<T = any> {
   setValue: (val: T) => void;
   onBlur: () => void;
   props: FieldBase<T>;
+  _normalizedDotName: string;
   setErrors: (error: string[]) => void;
   errors: string[];
   isValid: boolean;

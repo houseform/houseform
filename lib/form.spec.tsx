@@ -382,4 +382,35 @@ test.todo("Field with dot notation should submit with deep object value");
 test.todo("Field with bracket notation should submit with deep object value");
 
 // <Field name={`test[other]`}> should be gotten with `getFieldValue('test.other')`
-test.todo("Form's `getFieldValue` should show dot notation for incorrect syntax")
+test("Form's `getFieldValue` should show dot notation for incorrect syntax", async () => {
+  const Comp = () => {
+    const formRef = useRef<FormContext>(undefined!);
+
+    const [val, setVal] = useState("");
+
+    if (val) return <p>{val}</p>
+
+    return (
+        <div>
+          <Form onSubmit={() => {}} ref={formRef}>
+            {() => (
+                <Field name={"test.other"} initialValue="Test">
+                  {() => (
+                      <div>
+                      </div>
+                  )}
+                </Field>
+            )}
+          </Form>
+          <button onClick={() => setVal(formRef.current.getFieldValue('test["other"]')?.value)}>Submit</button>
+        </div>
+    )
+  }
+  const { getByText, queryByText, findByText } = render(
+      <Comp/>
+  );
+
+  expect(queryByText('Test')).not.toBeInTheDocument();
+  await user.click(getByText("Submit"));
+  expect(await findByText("Test")).toBeInTheDocument();
+});

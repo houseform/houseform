@@ -6,11 +6,11 @@ test("stringToPath to adapt dot notation", () => {
 });
 
 test("stringToPath to adapt bracket notation", () => {
-    expect(stringToPath('test[one][other]')).toStrictEqual(['test', 'one', 'other']);
+    expect(stringToPath('test["one"]["other"]')).toStrictEqual(['test', 'one', 'other']);
 });
 
 test("stringToPath to adapt a mix of dot and bracket notation", () => {
-    expect(stringToPath('test[one].other')).toStrictEqual(['test', 'one', 'other']);
+    expect(stringToPath('test["one"].other')).toStrictEqual(['test', 'one', 'other']);
 });
 
 test("fillPath should add a key to an object", () => {

@@ -1,9 +1,11 @@
 import { ZodError } from "zod";
 import {
-  ForwardedRef, forwardRef,
+  ForwardedRef,
+  forwardRef,
   memo,
   useCallback,
-  useContext, useImperativeHandle,
+  useContext,
+  useImperativeHandle,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -11,8 +13,7 @@ import {
 } from "react";
 import { FieldBase, FieldProps } from "./types";
 import { FormContext } from "./context";
-import { getValidationError, validate } from "./utils";
-import {FormProps} from "./form";
+import { getValidationError, stringToPath, validate } from "./utils";
 
 export interface FieldRenderProps<T = any> extends FieldBase<T> {
   children: (props: FieldProps<T>) => JSX.Element;
@@ -21,8 +22,8 @@ export interface FieldRenderProps<T = any> extends FieldBase<T> {
 }
 
 function FieldComp<T>(
-    props: FieldRenderProps<T>,
-    ref: ForwardedRef<FieldProps<T>>
+  props: FieldRenderProps<T>,
+  ref: ForwardedRef<FieldProps<T>>
 ) {
   const formContext = useContext(FormContext);
 
@@ -33,6 +34,12 @@ function FieldComp<T>(
     recomputeIsDirty,
   } = formContext;
 
+  const { name } = props;
+
+  const _normalizedDotName = useMemo(() => {
+    return stringToPath(name).join(".");
+  }, [name]);
+
   const [value, _setValue] = useState<T>(props.initialValue ?? ("" as T));
   const valueRef = useRef(value);
 
@@ -42,22 +49,22 @@ function FieldComp<T>(
   const [isDirty, setIsDirty] = useState<boolean>(false);
 
   const runFieldValidation = useCallback(
-      (validationFnName: "onChangeValidate" | "onBlurValidate", val: T) => {
-        let validationFn = props.onChangeValidate;
-        if (validationFnName === "onBlurValidate") {
-          validationFn = props.onBlurValidate;
-        }
-        if (validationFn) {
-          validate(val, formContext, validationFn)
-              .then(() => {
-                setErrors([]);
-              })
-              .catch((error: string | ZodError) => {
-                setErrors(getValidationError(error as ZodError | string));
-              });
-        }
-      },
-      [formContext, props.onChangeValidate, props.onBlurValidate]
+    (validationFnName: "onChangeValidate" | "onBlurValidate", val: T) => {
+      let validationFn = props.onChangeValidate;
+      if (validationFnName === "onBlurValidate") {
+        validationFn = props.onBlurValidate;
+      }
+      if (validationFn) {
+        validate(val, formContext, validationFn)
+          .then(() => {
+            setErrors([]);
+          })
+          .catch((error: string | ZodError) => {
+            setErrors(getValidationError(error as ZodError | string));
+          });
+      }
+    },
+    [formContext, props.onChangeValidate, props.onBlurValidate]
   );
 
   const onBlur = useCallback(() => {
@@ -69,9 +76,7 @@ function FieldComp<T>(
      * Placed into a `setTimeout` so that the `setValue` call can finish before the `onChangeListenerRefs` are called.
      */
     setTimeout(() => {
-      formContext.onBlurListenerRefs.current[props.name]?.forEach((fn) =>
-          fn()
-      );
+      formContext.onBlurListenerRefs.current[props.name]?.forEach((fn) => fn());
     }, 0);
 
     runFieldValidation("onBlurValidate", valueRef.current);
@@ -115,6 +120,7 @@ function FieldComp<T>(
     isDirty,
     isValid,
     onBlur,
+    _normalizedDotName,
   });
 
   /**
@@ -137,14 +143,18 @@ function FieldComp<T>(
     if (!props.listenTo || props.listenTo.length === 0) return;
 
     function onChangeListener() {
-      runFieldValidation('onChangeValidate', valueRef.current);
+      runFieldValidation("onChangeValidate", valueRef.current);
     }
 
     function onBlurListener() {
-      runFieldValidation('onBlurValidate', valueRef.current);
+      runFieldValidation("onBlurValidate", valueRef.current);
     }
 
-    function addListenerToListenToItem(refTypeName: 'onChangeListenerRefs' | 'onBlurListenerRefs', fieldName: string, listener: () => void) {
+    function addListenerToListenToItem(
+      refTypeName: "onChangeListenerRefs" | "onBlurListenerRefs",
+      fieldName: string,
+      listener: () => void
+    ) {
       // Make sure there's an array for the field
       formContext[refTypeName].current[fieldName] =
         formContext[refTypeName].current[fieldName] ?? [];
@@ -159,9 +169,17 @@ function FieldComp<T>(
       };
     }
 
-    const fns = props.listenTo.flatMap(fieldName => {
-      const onChangeFunctions = addListenerToListenToItem('onChangeListenerRefs', fieldName, onChangeListener)
-      const onBlurFunctions = addListenerToListenToItem('onBlurListenerRefs', fieldName, onBlurListener)
+    const fns = props.listenTo.flatMap((fieldName) => {
+      const onChangeFunctions = addListenerToListenToItem(
+        "onChangeListenerRefs",
+        fieldName,
+        onChangeListener
+      );
+      const onBlurFunctions = addListenerToListenToItem(
+        "onBlurListenerRefs",
+        fieldName,
+        onBlurListener
+      );
       return [onChangeFunctions, onBlurFunctions];
     });
 
@@ -219,8 +237,22 @@ function FieldComp<T>(
       isDirty,
       isValid,
       onBlur,
-    }
-  }, [value, props, setErrors, errors, setIsDirty, setIsTouched, setValue, isTouched, isDirty, isValid, onBlur]);
+      _normalizedDotName,
+    };
+  }, [
+    value,
+    props,
+    setErrors,
+    errors,
+    setIsDirty,
+    setIsTouched,
+    setValue,
+    isTouched,
+    isDirty,
+    isValid,
+    onBlur,
+    _normalizedDotName,
+  ]);
 
   useImperativeHandle(ref, () => childValue, [childValue]);
 
@@ -228,5 +260,5 @@ function FieldComp<T>(
 }
 
 export const Field = memo(forwardRef(FieldComp)) as <T>(
-    props: FieldRenderProps<T> & { ref?: ForwardedRef<FieldProps<T>> }
+  props: FieldRenderProps<T> & { ref?: ForwardedRef<FieldProps<T>> }
 ) => ReturnType<typeof FieldComp>;

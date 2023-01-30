@@ -11,7 +11,7 @@ import {
 import { ZodError } from "zod";
 import { FormContext, initialContext } from "./context";
 import { FieldProps } from "./types";
-import { getValidationError, validate } from "./utils";
+import {getValidationError, stringToPath, validate} from "./utils";
 
 export interface FormState {
   submit: () => Promise<boolean>;
@@ -74,7 +74,10 @@ function FormComp<T>(
 
   const getFieldValue = useCallback(
     (name: string) => {
-      return formFieldsRef.current.find((field) => field.props.name === name);
+      const found = formFieldsRef.current.find((field) => field.props.name === name);
+      if (found) return found;
+      const normalizedName = stringToPath(name).join(".");
+      return formFieldsRef.current.find((field) => field._normalizedDotName === normalizedName);
     },
     [formFieldsRef]
   );
