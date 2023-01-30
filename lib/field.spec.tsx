@@ -1,9 +1,9 @@
 import { expect, test } from "vitest";
-import {fireEvent, render, waitFor} from "@testing-library/react";
-import {Field, FieldProps, Form, FormContext, FormProps} from "./index";
+import { fireEvent, render, waitFor } from "@testing-library/react";
+import { Field, FieldProps, Form } from "./index";
 
 import { z } from "zod";
-import {useRef, useState} from "react";
+import { useRef, useState } from "react";
 
 test("Field should render children", () => {
   const { getByText } = render(
@@ -156,34 +156,36 @@ test("Field should show errors with async onChange validator zod usage", async (
 
 test("Field should show errors with async onBlur validator zod usage", async () => {
   const { getByPlaceholderText, queryByText, findByText } = render(
-      <Form onSubmit={(_) => {}}>
-        {() => (
-            <Field<string>
-                name={"email"}
-                initialValue=""
-                onBlurValidate={z.string().email("You must input a valid email")}
-            >
-              {({ value, setValue, errors , onBlur}) => (
-                  <div>
-                    <input
-                        placeholder="Email"
-                        value={value}
-                        onBlur={onBlur}
-                        onChange={(e) => setValue(e.target.value)}
-                    />
-                    {errors.map((error) => (
-                        <p key={error}>There was an error: {error}</p>
-                    ))}
-                  </div>
-              )}
-            </Field>
-        )}
-      </Form>
+    <Form onSubmit={(_) => {}}>
+      {() => (
+        <Field<string>
+          name={"email"}
+          initialValue=""
+          onBlurValidate={z.string().email("You must input a valid email")}
+        >
+          {({ value, setValue, errors, onBlur }) => (
+            <div>
+              <input
+                placeholder="Email"
+                value={value}
+                onBlur={onBlur}
+                onChange={(e) => setValue(e.target.value)}
+              />
+              {errors.map((error) => (
+                <p key={error}>There was an error: {error}</p>
+              ))}
+            </div>
+          )}
+        </Field>
+      )}
+    </Form>
   );
 
   expect(queryByText(/There was an error/)).not.toBeInTheDocument();
 
-  fireEvent.change(getByPlaceholderText("Email"), { target: { value: "test" } });
+  fireEvent.change(getByPlaceholderText("Email"), {
+    target: { value: "test" },
+  });
 
   expect(queryByText(/There was an error/)).not.toBeInTheDocument();
 
@@ -565,53 +567,52 @@ test("Field can listen for changes in other fields to validate on multiple field
   expect(getByText("Passwords must match")).toBeInTheDocument();
 });
 
-
 test("Field can listen for changes in other fields to validate on multiple field changes - onBlur", async () => {
   const { getByPlaceholderText, queryByText, findByText } = render(
-      <Form onSubmit={(values) => {}}>
-        {({ submit }) => (
-            <>
-              <Field<string> name="password" initialValue={"testing123"}>
-                {({ value, setValue, onBlur }) => (
-                    <input
-                        value={value}
-                        onBlur={onBlur}
-                        onChange={(e) => setValue(e.target.value)}
-                        placeholder={"Password"}
-                    />
-                )}
-              </Field>
-              <Field<string>
-                  name="confirmpassword"
-                  listenTo={["password"]}
-                  onBlurValidate={(val, form) => {
-                    if (val === form.getFieldValue("password")!.value) {
-                      return Promise.resolve(true);
-                    } else {
-                      return Promise.reject("Passwords must match");
-                    }
-                  }}
-              >
-                {({ value, setValue, errors, onBlur }) => {
-                  return (
-                      <div>
-                        <input
-                            value={value}
-                            onChange={(e) => setValue(e.target.value)}
-                            placeholder={"Password Confirmation"}
-                            onBlur={onBlur}
-                        />
-                        {errors.map((error) => (
-                            <p key={error}>{error}</p>
-                        ))}
-                      </div>
-                  );
-                }}
-              </Field>
-              <button onClick={submit}>Submit</button>
-            </>
-        )}
-      </Form>
+    <Form onSubmit={(values) => {}}>
+      {({ submit }) => (
+        <>
+          <Field<string> name="password" initialValue={"testing123"}>
+            {({ value, setValue, onBlur }) => (
+              <input
+                value={value}
+                onBlur={onBlur}
+                onChange={(e) => setValue(e.target.value)}
+                placeholder={"Password"}
+              />
+            )}
+          </Field>
+          <Field<string>
+            name="confirmpassword"
+            listenTo={["password"]}
+            onBlurValidate={(val, form) => {
+              if (val === form.getFieldValue("password")!.value) {
+                return Promise.resolve(true);
+              } else {
+                return Promise.reject("Passwords must match");
+              }
+            }}
+          >
+            {({ value, setValue, errors, onBlur }) => {
+              return (
+                <div>
+                  <input
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                    placeholder={"Password Confirmation"}
+                    onBlur={onBlur}
+                  />
+                  {errors.map((error) => (
+                    <p key={error}>{error}</p>
+                  ))}
+                </div>
+              );
+            }}
+          </Field>
+          <button onClick={submit}>Submit</button>
+        </>
+      )}
+    </Form>
   );
 
   expect(queryByText("Passwords must match")).not.toBeInTheDocument();
@@ -631,29 +632,24 @@ test("Field should have render props passed to ref", async () => {
 
     const [val, setVal] = useState("");
 
-    if (val) return <p>{val}</p>
+    if (val) return <p>{val}</p>;
 
     return (
-        <div>
-          <Form onSubmit={() => {}}>
-            {() => (
-                <Field name={"test"} initialValue="Test" ref={fieldRef}>
-                  {() => (
-                      <div>
-                      </div>
-                  )}
-                </Field>
-            )}
-          </Form>
-          <button onClick={() => setVal(fieldRef.current?.value)}>Submit</button>
-        </div>
-    )
-  }
-  const { getByText, queryByText, findByText } = render(
-      <Comp/>
-  );
+      <div>
+        <Form onSubmit={() => {}}>
+          {() => (
+            <Field name={"test"} initialValue="Test" ref={fieldRef}>
+              {() => <div></div>}
+            </Field>
+          )}
+        </Form>
+        <button onClick={() => setVal(fieldRef.current?.value)}>Submit</button>
+      </div>
+    );
+  };
+  const { getByText, queryByText, findByText } = render(<Comp />);
 
-  expect(queryByText('Test')).not.toBeInTheDocument();
+  expect(queryByText("Test")).not.toBeInTheDocument();
   await user.click(getByText("Submit"));
   expect(await findByText("Test")).toBeInTheDocument();
 });

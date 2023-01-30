@@ -1,10 +1,9 @@
 import { expect, test } from "vitest";
-import {useRef, useState} from "react";
-import { Form } from "./form";
-import { Field } from "./fields";
+import { useRef, useState } from "react";
+import { Form, Field } from "./index";
 import { render, waitFor } from "@testing-library/react";
 import { z } from "zod";
-import {FormContext} from "./context";
+import { FormContext } from "./context";
 
 test("Form should render children", () => {
   const { getByText } = render(
@@ -276,29 +275,28 @@ test("Form should have context passed to ref", async () => {
 
     const [val, setVal] = useState("");
 
-    if (val) return <p>{val}</p>
+    if (val) return <p>{val}</p>;
 
     return (
-        <div>
+      <div>
         <Form onSubmit={() => {}} ref={formRef}>
           {() => (
-                <Field name={"test"} initialValue="Test">
-                  {() => (
-                      <div>
-                      </div>
-                  )}
-                </Field>
+            <Field name={"test"} initialValue="Test">
+              {() => <div></div>}
+            </Field>
           )}
         </Form>
-          <button onClick={() => setVal(formRef.current.getFieldValue('test')?.value)}>Submit</button>
-        </div>
-    )
-  }
-  const { getByText, queryByText, findByText } = render(
-      <Comp/>
-  );
+        <button
+          onClick={() => setVal(formRef.current.getFieldValue("test")?.value)}
+        >
+          Submit
+        </button>
+      </div>
+    );
+  };
+  const { getByText, queryByText, findByText } = render(<Comp />);
 
-  expect(queryByText('Test')).not.toBeInTheDocument();
+  expect(queryByText("Test")).not.toBeInTheDocument();
   await user.click(getByText("Submit"));
   expect(await findByText("Test")).toBeInTheDocument();
 });
@@ -307,35 +305,32 @@ test("Form submit should return `true` if valid", async () => {
   const Comp = () => {
     const [val, setVal] = useState<boolean | null>(null);
 
-    if (val !== null) return <p>{val ? "True" : "False"}</p>
+    if (val !== null) return <p>{val ? "True" : "False"}</p>;
 
     return (
-        <div>
-          <Form onSubmit={() => {}}>
-            {({submit}) => (
-                <form onSubmit={async e => {
-                  e.preventDefault();
-                  const isValid = await submit();
-                  setVal(isValid);
-                }}>
-                  <Field name={"test"} initialValue="">
-                    {() => (
-                        <div>
-                        </div>
-                    )}
-                  </Field>
-                  <button type="submit">Submit</button>
-                </form>
-            )}
-          </Form>
-        </div>
-    )
-  }
-  const { getByText, queryByText, findByText } = render(
-      <Comp/>
-  );
+      <div>
+        <Form onSubmit={() => {}}>
+          {({ submit }) => (
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const isValid = await submit();
+                setVal(isValid);
+              }}
+            >
+              <Field name={"test"} initialValue="">
+                {() => <div></div>}
+              </Field>
+              <button type="submit">Submit</button>
+            </form>
+          )}
+        </Form>
+      </div>
+    );
+  };
+  const { getByText, queryByText, findByText } = render(<Comp />);
 
-  expect(queryByText('True')).not.toBeInTheDocument();
+  expect(queryByText("True")).not.toBeInTheDocument();
   await user.click(getByText("Submit"));
   expect(await findByText("True")).toBeInTheDocument();
 });
@@ -344,35 +339,36 @@ test("Form submit should return `false` if not valid", async () => {
   const Comp = () => {
     const [val, setVal] = useState<boolean | null>(null);
 
-    if (val !== null) return <p>{val ? "True" : "False"}</p>
+    if (val !== null) return <p>{val ? "True" : "False"}</p>;
 
     return (
-        <div>
-          <Form onSubmit={() => {}}>
-            {({submit}) => (
-                <form onSubmit={async e => {
-                  e.preventDefault();
-                  const isValid = await submit();
-                  setVal(isValid);
-                }}>
-                  <Field name={"test"} initialValue="" onChangeValidate={z.string().min(9)}>
-                    {() => (
-                        <div>
-                        </div>
-                    )}
-                  </Field>
-                  <button type="submit">Submit</button>
-                </form>
-            )}
-          </Form>
-        </div>
-    )
-  }
-  const { getByText, queryByText, findByText } = render(
-      <Comp/>
-  );
+      <div>
+        <Form onSubmit={() => {}}>
+          {({ submit }) => (
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const isValid = await submit();
+                setVal(isValid);
+              }}
+            >
+              <Field
+                name={"test"}
+                initialValue=""
+                onChangeValidate={z.string().min(9)}
+              >
+                {() => <div></div>}
+              </Field>
+              <button type="submit">Submit</button>
+            </form>
+          )}
+        </Form>
+      </div>
+    );
+  };
+  const { getByText, queryByText, findByText } = render(<Comp />);
 
-  expect(queryByText('False')).not.toBeInTheDocument();
+  expect(queryByText("False")).not.toBeInTheDocument();
   await user.click(getByText("Submit"));
   expect(await findByText("False")).toBeInTheDocument();
 });
@@ -384,16 +380,19 @@ test("Field with dot notation should submit with deep object value", async () =>
     if (values) return <p>{values}</p>;
 
     return (
-        <Form onSubmit={(values) => setValues(JSON.stringify(values))}>
-          {({ submit }) => (
-              <>
-                <Field<string> name={"test.other.email"} initialValue="test@example.com">
-                  {() => <></>}
-                </Field>
-                <button onClick={submit}>Submit</button>
-              </>
-          )}
-        </Form>
+      <Form onSubmit={(values) => setValues(JSON.stringify(values))}>
+        {({ submit }) => (
+          <>
+            <Field<string>
+              name={"test.other.email"}
+              initialValue="test@example.com"
+            >
+              {() => <></>}
+            </Field>
+            <button onClick={submit}>Submit</button>
+          </>
+        )}
+      </Form>
     );
   };
 
@@ -402,7 +401,7 @@ test("Field with dot notation should submit with deep object value", async () =>
   await user.click(getByText("Submit"));
 
   await waitFor(() =>
-      expect(container).toMatchInlineSnapshot(`
+    expect(container).toMatchInlineSnapshot(`
         <div>
           <p>
             {"test":{"other":{"email":"test@example.com"}}}
@@ -411,7 +410,6 @@ test("Field with dot notation should submit with deep object value", async () =>
       `)
   );
 });
-
 
 test("Field with bracket notation should submit with deep object value", async () => {
   const SubmitValues = () => {
@@ -420,16 +418,19 @@ test("Field with bracket notation should submit with deep object value", async (
     if (values) return <p>{values}</p>;
 
     return (
-        <Form onSubmit={(values) => setValues(JSON.stringify(values))}>
-          {({ submit }) => (
-              <>
-                <Field<string> name={"test['other']['email']"} initialValue="test@example.com">
-                  {() => <></>}
-                </Field>
-                <button onClick={submit}>Submit</button>
-              </>
-          )}
-        </Form>
+      <Form onSubmit={(values) => setValues(JSON.stringify(values))}>
+        {({ submit }) => (
+          <>
+            <Field<string>
+              name={"test['other']['email']"}
+              initialValue="test@example.com"
+            >
+              {() => <></>}
+            </Field>
+            <button onClick={submit}>Submit</button>
+          </>
+        )}
+      </Form>
     );
   };
 
@@ -438,7 +439,7 @@ test("Field with bracket notation should submit with deep object value", async (
   await user.click(getByText("Submit"));
 
   await waitFor(() =>
-      expect(container).toMatchInlineSnapshot(`
+    expect(container).toMatchInlineSnapshot(`
         <div>
           <p>
             {"test":{"other":{"email":"test@example.com"}}}
@@ -448,7 +449,6 @@ test("Field with bracket notation should submit with deep object value", async (
   );
 });
 
-
 // <Field name={`test[other]`}> should be gotten with `getFieldValue('test.other')`
 test("Form's `getFieldValue` should show dot notation for incorrect syntax", async () => {
   const Comp = () => {
@@ -456,29 +456,30 @@ test("Form's `getFieldValue` should show dot notation for incorrect syntax", asy
 
     const [val, setVal] = useState("");
 
-    if (val) return <p>{val}</p>
+    if (val) return <p>{val}</p>;
 
     return (
-        <div>
-          <Form onSubmit={() => {}} ref={formRef}>
-            {() => (
-                <Field name={"test.other"} initialValue="Test">
-                  {() => (
-                      <div>
-                      </div>
-                  )}
-                </Field>
-            )}
-          </Form>
-          <button onClick={() => setVal(formRef.current.getFieldValue('test["other"]')?.value)}>Submit</button>
-        </div>
-    )
-  }
-  const { getByText, queryByText, findByText } = render(
-      <Comp/>
-  );
+      <div>
+        <Form onSubmit={() => {}} ref={formRef}>
+          {() => (
+            <Field name={"test.other"} initialValue="Test">
+              {() => <div></div>}
+            </Field>
+          )}
+        </Form>
+        <button
+          onClick={() =>
+            setVal(formRef.current.getFieldValue('test["other"]')?.value)
+          }
+        >
+          Submit
+        </button>
+      </div>
+    );
+  };
+  const { getByText, queryByText, findByText } = render(<Comp />);
 
-  expect(queryByText('Test')).not.toBeInTheDocument();
+  expect(queryByText("Test")).not.toBeInTheDocument();
   await user.click(getByText("Submit"));
   expect(await findByText("Test")).toBeInTheDocument();
 });
