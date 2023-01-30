@@ -1,0 +1,1 @@
+import{_ as s,c as n,o as a,d as l}from"./app.dfd58d77.js";const i=JSON.parse('{"title":"Non-Text Inputs","description":"","frontmatter":{},"headers":[],"relativePath":"guides/non-text-inputs.md"}'),p={name:"guides/non-text-inputs.md"},o=l("",4),t=[o];function e(D,c,r,F,y,C){return a(),n("div",null,t)}const u=s(p,[["render",e]]);export{i as __pageData,u as default};
