@@ -48,6 +48,10 @@ export default defineConfig({
                                 link: "/guides/react-native"
                             },
                             {
+                                "text": "Non-Text Inputs",
+                                "link": "/guides/non-text-inputs"
+                            },
+                            {
                                 text: "Linked Fields",
                                 link: "/guides/linked-fields"
                             },
