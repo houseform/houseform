@@ -60,6 +60,10 @@ export default defineConfig({
                                 link: "/guides/linked-fields"
                             },
                             {
+                                text: "Nested Field Values",
+                                link: "/guides/nested-field-values"
+                            },
+                            {
                                 text: "Submission Errors",
                                 link: "/guides/submission-errors"
                             },
