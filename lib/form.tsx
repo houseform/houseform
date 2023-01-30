@@ -11,7 +11,7 @@ import {
 import { ZodError } from "zod";
 import { FormContext, initialContext } from "./context";
 import { FieldProps } from "./types";
-import {getValidationError, stringToPath, validate} from "./utils";
+import {fillPath, getValidationError, stringToPath, validate} from "./utils";
 
 export interface FormState {
   submit: () => Promise<boolean>;
@@ -133,7 +133,7 @@ function FormComp<T>(
         const onSubmitRes = await runValidationType("onSubmitValidate");
         if (!onSubmitRes) return false;
         if (formField.errors.length > 0) return false;
-        values[formField.props.name] = formField.value;
+        fillPath(values, formField.props.name, formField.value);
         return true;
       })
     );

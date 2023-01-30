@@ -14,7 +14,7 @@ test("Form should render children", () => {
   expect(getByText("Test")).toBeInTheDocument();
 });
 
-test("Form should submit with values in tact", async () => {
+test("Form should submit with basic values in tact", async () => {
   const SubmitValues = () => {
     const [values, setValues] = useState<string | null>(null);
 
@@ -377,9 +377,77 @@ test("Form submit should return `false` if not valid", async () => {
   expect(await findByText("False")).toBeInTheDocument();
 });
 
-test.todo("Field with dot notation should submit with deep object value");
+test("Field with dot notation should submit with deep object value", async () => {
+  const SubmitValues = () => {
+    const [values, setValues] = useState<string | null>(null);
 
-test.todo("Field with bracket notation should submit with deep object value");
+    if (values) return <p>{values}</p>;
+
+    return (
+        <Form onSubmit={(values) => setValues(JSON.stringify(values))}>
+          {({ submit }) => (
+              <>
+                <Field<string> name={"test.other.email"} initialValue="test@example.com">
+                  {() => <></>}
+                </Field>
+                <button onClick={submit}>Submit</button>
+              </>
+          )}
+        </Form>
+    );
+  };
+
+  const { getByText, container } = render(<SubmitValues />);
+
+  await user.click(getByText("Submit"));
+
+  await waitFor(() =>
+      expect(container).toMatchInlineSnapshot(`
+        <div>
+          <p>
+            {"test":{"other":{"email":"test@example.com"}}}
+          </p>
+        </div>
+      `)
+  );
+});
+
+
+test("Field with bracket notation should submit with deep object value", async () => {
+  const SubmitValues = () => {
+    const [values, setValues] = useState<string | null>(null);
+
+    if (values) return <p>{values}</p>;
+
+    return (
+        <Form onSubmit={(values) => setValues(JSON.stringify(values))}>
+          {({ submit }) => (
+              <>
+                <Field<string> name={"test['other']['email']"} initialValue="test@example.com">
+                  {() => <></>}
+                </Field>
+                <button onClick={submit}>Submit</button>
+              </>
+          )}
+        </Form>
+    );
+  };
+
+  const { getByText, container } = render(<SubmitValues />);
+
+  await user.click(getByText("Submit"));
+
+  await waitFor(() =>
+      expect(container).toMatchInlineSnapshot(`
+        <div>
+          <p>
+            {"test":{"other":{"email":"test@example.com"}}}
+          </p>
+        </div>
+      `)
+  );
+});
+
 
 // <Field name={`test[other]`}> should be gotten with `getFieldValue('test.other')`
 test("Form's `getFieldValue` should show dot notation for incorrect syntax", async () => {
