@@ -31,6 +31,10 @@ export default defineConfig({
                         link: "/"
                     },
                     {
+                        text: "Comparison to X",
+                        link: "/comparison"
+                    },
+                    {
                         text: "Usage Guides",
                         collapsed: false,
                         collapsible: true,
