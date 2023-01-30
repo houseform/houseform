@@ -1,12 +1,10 @@
 import { ZodError, ZodTypeAny } from "zod";
-import {FormContext, initialContext} from "./context";
+import { FormContext, initialContext } from "./context";
 
 export function validate<T>(
   val: T,
   form: FormContext<T>,
-  validator:
-    | ZodTypeAny
-    | ((val: T, form: FormContext<T>) => Promise<boolean>)
+  validator: ZodTypeAny | ((val: T, form: FormContext<T>) => Promise<boolean>)
 ) {
   if (validator instanceof Function) {
     return validator(val, form);
@@ -24,8 +22,8 @@ export function getValidationError(error: ZodError | string) {
 }
 
 /** Used to match property names within property paths. */
-const rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
-
+const rePropName =
+  /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
 
 /** Used to match backslashes in property paths. */
 const reEscapeChar = /\\(\\)?/g;
@@ -43,11 +41,36 @@ const reEscapeChar = /\\(\\)?/g;
 export const stringToPath = (str: string) => {
   const result = [];
   if (str.charCodeAt(0) === 46 /* . */) {
-    result.push('');
+    result.push("");
   }
   str.replace(rePropName, (match, number, quote, subString) => {
-    result.push(quote ? subString.replace(reEscapeChar, '$1') : (number || match));
+    result.push(
+      quote ? subString.replace(reEscapeChar, "$1") : number || match
+    );
     return undefined as any;
   });
   return result;
+};
+
+/**
+ * Mutates the `obj`
+ */
+export const fillPath = (obj: object, path: string, value: any) => {
+  const pathArray = stringToPath(path);
+
+  let current: any = obj;
+  for (let i = 0; i < pathArray.length; i++) {
+    const key = pathArray[i] as string;
+
+    if (i === pathArray.length - 1) {
+      current[key] = value;
+    } else {
+      if (!current[key]) {
+        current[key] = {};
+      }
+      current = current[key];
+    }
+  }
+
+  return obj;
 };
