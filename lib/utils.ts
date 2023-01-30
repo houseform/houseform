@@ -22,3 +22,32 @@ export function getValidationError(error: ZodError | string) {
     return [error];
   }
 }
+
+/** Used to match property names within property paths. */
+const rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
+
+
+/** Used to match backslashes in property paths. */
+const reEscapeChar = /\\(\\)?/g;
+
+/**
+ * Originally adapted from Lodash's `toPath` function. Imported and modified to reduce bundle size.
+ * @see https://github.com/lodash/lodash/blob/4.17.15/lodash.js#L6735-L6744
+ *
+ * Converts `string` to a property path array.
+ *
+ * @private
+ * @param {string} str The string to convert.
+ * @returns {Array} Returns the property path array.
+ */
+export const stringToPath = (str: string) => {
+  const result = [];
+  if (str.charCodeAt(0) === 46 /* . */) {
+    result.push('');
+  }
+  str.replace(rePropName, (match, number, quote, subString) => {
+    result.push(quote ? subString.replace(reEscapeChar, '$1') : (number || match));
+    return undefined as any;
+  });
+  return result;
+};
