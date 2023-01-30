@@ -14,7 +14,7 @@ import { FieldProps } from "./types";
 import { getValidationError, validate } from "./utils";
 
 export interface FormState {
-  submit: () => void;
+  submit: () => Promise<boolean>;
   errors: string[];
   isValid: boolean;
   isDirty: boolean;
@@ -92,7 +92,7 @@ function FormComp<T>(
       onBlurListenerRefs,
       recomputeIsDirty,
       recomputeIsTouched,
-      submit: () => Promise.resolve(),
+      submit: () => Promise.resolve(true),
     };
   }, [
     formFieldsRef,
@@ -135,9 +135,10 @@ function FormComp<T>(
       })
     );
 
-    if (!validArrays.every((isValid) => !!isValid)) return;
+    if (!validArrays.every((isValid) => !!isValid)) return false;
 
     props.onSubmit(values, baseValue);
+    return true;
   }, [formFieldsRef, props.onSubmit]);
 
   const value = useMemo(() => {

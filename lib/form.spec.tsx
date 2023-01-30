@@ -302,3 +302,78 @@ test("Form should have context passed to ref", async () => {
   await user.click(getByText("Submit"));
   expect(await findByText("Test")).toBeInTheDocument();
 });
+
+test("Form submit should return `true` if valid", async () => {
+  const Comp = () => {
+    const [val, setVal] = useState<boolean | null>(null);
+
+    if (val !== null) return <p>{val ? "True" : "False"}</p>
+
+    return (
+        <div>
+          <Form onSubmit={() => {}}>
+            {({submit}) => (
+                <form onSubmit={async e => {
+                  e.preventDefault();
+                  const isValid = await submit();
+                  setVal(isValid);
+                }}>
+                  <Field name={"test"} initialValue="">
+                    {() => (
+                        <div>
+                        </div>
+                    )}
+                  </Field>
+                  <button type="submit">Submit</button>
+                </form>
+            )}
+          </Form>
+        </div>
+    )
+  }
+  const { getByText, queryByText, findByText } = render(
+      <Comp/>
+  );
+
+  expect(queryByText('True')).not.toBeInTheDocument();
+  await user.click(getByText("Submit"));
+  expect(await findByText("True")).toBeInTheDocument();
+});
+
+test("Form submit should return `false` if not valid", async () => {
+  const Comp = () => {
+    const [val, setVal] = useState<boolean | null>(null);
+
+    if (val !== null) return <p>{val ? "True" : "False"}</p>
+
+    return (
+        <div>
+          <Form onSubmit={() => {}}>
+            {({submit}) => (
+                <form onSubmit={async e => {
+                  e.preventDefault();
+                  const isValid = await submit();
+                  setVal(isValid);
+                }}>
+                  <Field name={"test"} initialValue="" onChangeValidate={z.string().min(9)}>
+                    {() => (
+                        <div>
+                        </div>
+                    )}
+                  </Field>
+                  <button type="submit">Submit</button>
+                </form>
+            )}
+          </Form>
+        </div>
+    )
+  }
+  const { getByText, queryByText, findByText } = render(
+      <Comp/>
+  );
+
+  expect(queryByText('False')).not.toBeInTheDocument();
+  await user.click(getByText("Submit"));
+  expect(await findByText("False")).toBeInTheDocument();
+});
+

@@ -7,7 +7,7 @@ export interface FormContext<T = any> {
     recomputeIsDirty: () => void;
     recomputeIsTouched: () => void;
     errors: string[];
-    submit: () => Promise<void>;
+    submit: () => Promise<boolean>;
     getFieldValue: (val: string) => FieldProps<T> | undefined;
     onChangeListenerRefs: MutableRefObject<Record<string, (() => void)[]>>;
     onBlurListenerRefs: MutableRefObject<Record<string, (() => void)[]>>;
@@ -27,7 +27,7 @@ export const initialContext = {
   },
   errors: [],
   submit: async () => {
-    return undefined;
+    return true;
   },
   getFieldValue: (val) => {
     return undefined;
