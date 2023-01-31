@@ -12,6 +12,7 @@ import { ZodError } from "zod";
 import { FormContext } from "./context";
 import { fillPath, getValidationError, stringToPath, validate } from "../utils";
 import { useFormlike } from "./use-formlike";
+import { FieldInstance } from "../field";
 
 export interface FormState {
   submit: () => Promise<boolean>;
@@ -38,7 +39,7 @@ function FormComp<T>(props: FormProps<T>, ref: ForwardedRef<FormContext<T>>) {
     recomputeErrors,
     recomputeIsDirty,
     recomputeIsTouched,
-  } = useFormlike();
+  } = useFormlike<FieldInstance>();
 
   const [isSubmitted, setIsSubmitted] = useState(false);
 

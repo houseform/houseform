@@ -1,13 +1,18 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-import { FieldInstance } from "houseform";
+
+export interface FormlikeField<T = any> {
+  errors: string[];
+  isDirty: boolean;
+  isTouched: boolean;
+}
 
 /**
  * A "formlike" is a form or field that keeps track
  * of other fields. We still want utility methods and props
  * like "isTouched" and such, but don't want to duplicate the code logic
  */
-export const useFormlike = () => {
-  const formFieldsRef = useRef<FieldInstance[]>([]);
+export const useFormlike = <T extends FormlikeField>() => {
+  const formFieldsRef = useRef<T[]>([]);
 
   const getErrors = useCallback(() => {
     return formFieldsRef.current.reduce((acc, field) => {
@@ -22,7 +27,7 @@ export const useFormlike = () => {
   }, [errors]);
 
   const getFieldBoolean = useCallback(
-    (booleanFieldName: keyof FieldInstance) => {
+    (booleanFieldName: keyof T) => {
       return formFieldsRef.current.some((field) => {
         return !!field[booleanFieldName];
       });

@@ -9,7 +9,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { FieldInstance, FieldInstanceBaseProps } from "../field/types";
+import { FieldInstanceBaseProps } from "../field/types";
 import { FormContext } from "../form/context";
 import { FieldArrayContext } from "./context";
 import { getValidationError, stringToPath, validate } from "../utils";
@@ -36,7 +36,7 @@ function FieldArrayComp<T>(
     recomputeErrors,
     recomputeIsDirty,
     recomputeIsTouched,
-  } = useFormlike();
+  } = useFormlike<FieldArrayInstance<T>>();
 
   const formContext = useContext(FormContext);
 
@@ -88,10 +88,6 @@ function FieldArrayComp<T>(
       isValid,
       isDirty,
       isTouched,
-      recomputeErrors,
-      recomputeIsDirty,
-      recomputeIsTouched,
-      onChange: () => {},
       add: () => {},
       remove: () => {},
       move: () => {},
@@ -101,21 +97,45 @@ function FieldArrayComp<T>(
     _normalizedDotName,
     props,
     formFieldsRef,
+    fieldErrors,
     errors,
+    fields,
+    areFieldsDirty,
+    areFieldsTouched,
+    areFieldsValid,
+    isValid,
+    isDirty,
+    isTouched,
+  ]);
+
+  useImperativeHandle(ref, () => fieldArrayInstance, [fieldArrayInstance]);
+
+  const children = useMemo(() => {
+    return props.children(fieldArrayInstance);
+  }, [props.children, fieldArrayInstance]);
+
+  const value = useMemo(() => {
+    return {
+      formFieldsRef,
+      recomputeErrors,
+      recomputeIsDirty,
+      recomputeIsTouched,
+      errors,
+      onChange: () => {},
+    };
+  }, [
+    formFieldsRef,
     recomputeErrors,
     recomputeIsDirty,
     recomputeIsTouched,
+    errors,
   ]);
 
-  useImperativeHandle(ref, () => value, [value]);
-
-  const children = useMemo(() => {
-    return props.children({
-      ...value,
-    });
-  }, [props.children, value]);
-
-  return <FieldArrayContext.Provider value={}></FieldArrayContext.Provider>;
+  return (
+    <FieldArrayContext.Provider value={value}>
+      {children}
+    </FieldArrayContext.Provider>
+  );
 }
 
 export const FieldArray = memo(forwardRef(FieldArrayComp)) as <T>(
