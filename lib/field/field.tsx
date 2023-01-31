@@ -108,7 +108,22 @@ function FieldComp<T>(
     return errors.length === 0;
   }, [errors]);
 
-  const mutableRef = useRef<FieldInstance<T>>({
+  const fieldInstance = useMemo(() => {
+    return {
+      value,
+      props,
+      setErrors,
+      errors,
+      setIsDirty,
+      setIsTouched,
+      setValue,
+      isTouched,
+      isDirty,
+      isValid,
+      onBlur,
+      _normalizedDotName,
+    };
+  }, [
     value,
     props,
     setErrors,
@@ -121,7 +136,9 @@ function FieldComp<T>(
     isValid,
     onBlur,
     _normalizedDotName,
-  });
+  ]);
+
+  const mutableRef = useRef<FieldInstance<T>>(fieldInstance);
 
   /**
    * Add mutable ref to formFieldsRef
@@ -224,39 +241,9 @@ function FieldComp<T>(
     recomputeIsDirty();
   }, [isDirty, recomputeErrors]);
 
-  const childValue = useMemo(() => {
-    return {
-      value,
-      props,
-      setErrors,
-      errors,
-      setIsDirty,
-      setIsTouched,
-      setValue,
-      isTouched,
-      isDirty,
-      isValid,
-      onBlur,
-      _normalizedDotName,
-    };
-  }, [
-    value,
-    props,
-    setErrors,
-    errors,
-    setIsDirty,
-    setIsTouched,
-    setValue,
-    isTouched,
-    isDirty,
-    isValid,
-    onBlur,
-    _normalizedDotName,
-  ]);
+  useImperativeHandle(ref, () => fieldInstance, [fieldInstance]);
 
-  useImperativeHandle(ref, () => childValue, [childValue]);
-
-  return props.children(childValue);
+  return props.children(fieldInstance);
 }
 
 export const Field = memo(forwardRef(FieldComp)) as <T>(
