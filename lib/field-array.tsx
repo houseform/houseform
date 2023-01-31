@@ -1,5 +1,5 @@
 import { ForwardedRef, forwardRef, memo, useContext, useMemo } from "react";
-import { FieldInstanceProps } from "./types";
+import { FieldInstanceBaseProps } from "./types";
 import { FormContext } from "./form-context";
 import { stringToPath } from "./utils";
 
@@ -12,14 +12,16 @@ export interface FieldArrayHelpers<T> {
 
 export interface FieldArrayInstance<T> extends FieldArrayHelpers<T> {
   _normalizedDotName: string;
-  props: FieldInstanceProps<T>;
+  props: FieldInstanceBaseProps<T>;
+  fields: T[];
   errors: string[];
   isValid: boolean;
   isDirty: boolean;
   isTouched: boolean;
 }
 
-export interface FieldArrayRenderProps<T = any> extends FieldInstanceProps<T> {
+export interface FieldArrayRenderProps<T = any>
+  extends FieldInstanceBaseProps<T> {
   children: (props: FieldArrayInstance<T>) => JSX.Element;
   initialValue?: T[];
 }

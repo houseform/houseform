@@ -5,11 +5,14 @@ type ValidationFunction<T> =
   | ZodTypeAny
   | ((val: T, form: FormContext<T>) => Promise<boolean>);
 
-export interface FieldInstanceProps<T = any> {
+export interface FieldInstanceBaseProps<T = any> {
   name: string;
   onChangeValidate?: ValidationFunction<T>;
-  onBlurValidate?: ValidationFunction<T>;
   onSubmitValidate?: ValidationFunction<T>;
+}
+
+export interface FieldInstanceProps<T = any> extends FieldInstanceBaseProps<T> {
+  onBlurValidate?: ValidationFunction<T>;
 }
 
 export interface FieldInstance<T = any> {
