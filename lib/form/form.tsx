@@ -10,8 +10,8 @@ import {
 } from "react";
 import { ZodError } from "zod";
 import { FormContext } from "./context";
-import { FieldInstance } from "../field/types";
 import { fillPath, getValidationError, stringToPath, validate } from "../utils";
+import { useFormlike } from "./use-formlike";
 
 export interface FormState {
   submit: () => Promise<boolean>;
@@ -29,45 +29,18 @@ export interface FormProps<T> {
 }
 
 function FormComp<T>(props: FormProps<T>, ref: ForwardedRef<FormContext<T>>) {
-  const formFieldsRef = useRef<FieldInstance[]>([]);
-
-  const getErrors = useCallback(() => {
-    return formFieldsRef.current.reduce((acc, field) => {
-      return acc.concat(field.errors);
-    }, [] as string[]);
-  }, [formFieldsRef]);
-
-  const [errors, setErrors] = useState(getErrors());
-
-  const isValid = useMemo(() => {
-    return errors.length === 0;
-  }, [errors]);
+  const {
+    formFieldsRef,
+    errors,
+    isValid,
+    isDirty,
+    isTouched,
+    recomputeErrors,
+    recomputeIsDirty,
+    recomputeIsTouched,
+  } = useFormlike();
 
   const [isSubmitted, setIsSubmitted] = useState(false);
-
-  const getFieldBoolean = useCallback(
-    (booleanFieldName: keyof FieldInstance) => {
-      return formFieldsRef.current.some((field) => {
-        return !!field[booleanFieldName];
-      });
-    },
-    [formFieldsRef]
-  );
-
-  const [isDirty, setIsDirty] = useState(getFieldBoolean("isDirty"));
-  const [isTouched, setIsTouched] = useState(getFieldBoolean("isTouched"));
-
-  const recomputeErrors = useCallback(() => {
-    setErrors(getErrors());
-  }, [getErrors]);
-
-  const recomputeIsDirty = useCallback(() => {
-    setIsDirty(getFieldBoolean("isDirty"));
-  }, [getFieldBoolean]);
-
-  const recomputeIsTouched = useCallback(() => {
-    setIsTouched(getFieldBoolean("isTouched"));
-  }, [getFieldBoolean]);
 
   const getFieldValue = useCallback(
     (name: string) => {

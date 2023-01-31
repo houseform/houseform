@@ -11,6 +11,10 @@ export interface FieldArrayInstance<T> extends FieldArrayHelpers<T> {
   _normalizedDotName: string;
   props: FieldInstanceBaseProps<T>;
   fields: T[];
+  fieldErrors: string[];
+  areFieldsValid: boolean;
+  areFieldsDirty: boolean;
+  areFieldsTouched: boolean;
   errors: string[];
   isValid: boolean;
   isDirty: boolean;

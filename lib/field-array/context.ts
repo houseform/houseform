@@ -29,4 +29,4 @@ export const initialContext = {
 } as FieldArrayContext;
 /* c8 ignore stop */
 
-export const FormArrayContext = createContext(initialContext);
+export const FieldArrayContext = createContext(initialContext);
