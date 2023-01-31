@@ -51,3 +51,21 @@ export const fillPath = (obj: object, path: string, value: any) => {
 
   return obj;
 };
+
+export const getPath = (obj: object, path: string) => {
+  const pathArray = stringToPath(path);
+
+  let current: any = obj;
+  for (let i = 0; i < pathArray.length; i++) {
+    const key = pathArray[i] as string;
+
+    if (i === pathArray.length - 1) {
+      return current[key];
+    } else {
+      if (!current[key]) {
+        current[key] = {};
+      }
+      current = current[key];
+    }
+  }
+};
