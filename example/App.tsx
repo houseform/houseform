@@ -8,8 +8,8 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { z, ZodAny, ZodType } from "zod";
-import { stringToPath } from "houseform";
+import { z, ZodAny, ZodError, ZodType } from "zod";
+import { getValidationError, stringToPath, validate } from "houseform";
 
 const FormArrayContext = createContext({
   values: [] as number[],
@@ -27,11 +27,14 @@ function ArrayItem({
     setValue,
   }: {
     setValue: (v: number) => void;
+    errors: string[];
   }) => React.ReactNode;
   name: string;
   onChangeValidate: ZodType;
 }) {
   const array = useContext(FormArrayContext);
+
+  const [errors, setErrors] = useState<string[]>([]);
 
   const itemIndex = useMemo(() => {
     const arrayNamePathArr = stringToPath(array.name);
@@ -46,9 +49,18 @@ function ArrayItem({
 
   function setValue(v: number) {
     array.setValue(itemIndex, v);
+    if (onChangeValidate) {
+      validate(v, null as any, onChangeValidate)
+        .then(() => {
+          setErrors([]);
+        })
+        .catch((error: string | ZodError) => {
+          setErrors(getValidationError(error as ZodError | string));
+        });
+    }
   }
 
-  return <>{children({ setValue })}</>;
+  return <>{children({ setValue, errors })}</>;
 }
 
 function AppBase() {
@@ -61,14 +73,17 @@ function AppBase() {
           <ArrayItem
             key={index}
             name={`numbers.${index}.number`}
-            onChangeValidate={z.number().min(2, "Must be at least 2")}
+            onChangeValidate={z.number().max(8, "Must be less than 8")}
           >
-            {({ setValue }) => (
+            {({ setValue, errors }) => (
               <div>
                 {index % 2 === 0 && <p>Even row</p>}
                 {/*Make this passed by ArrayItem */}
                 <p>{field}</p>
                 <button onClick={() => setValue(field + 1)}>Add one</button>
+                {errors.map((error) => (
+                  <p key={error}>{error}</p>
+                ))}
               </div>
             )}
           </ArrayItem>
