@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { Form, Field } from "./index";
 import { render, waitFor } from "@testing-library/react";
 import { z } from "zod";
-import { FormContext } from "./context";
+import { FormContext } from "./form-context";
 
 test("Form should render children", () => {
   const { getByText } = render(

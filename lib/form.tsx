@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import { ZodError } from "zod";
-import { FormContext } from "./context";
+import { FormContext } from "./form-context";
 import { FieldInstance } from "./types";
 import { fillPath, getValidationError, stringToPath, validate } from "./utils";
 

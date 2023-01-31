@@ -1,6 +1,6 @@
 import { ForwardedRef, forwardRef, memo, useContext, useMemo } from "react";
 import { FieldInstanceProps } from "./types";
-import { FormContext } from "./context";
+import { FormContext } from "./form-context";
 import { stringToPath } from "./utils";
 
 export interface FieldArrayHelpers<T> {

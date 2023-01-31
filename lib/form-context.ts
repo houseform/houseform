@@ -1,16 +1,16 @@
-import {createContext, MutableRefObject} from "react";
+import { createContext, MutableRefObject } from "react";
 import type { FieldInstance } from "./types";
 
 export interface FormContext<T = any> {
-    formFieldsRef: MutableRefObject<FieldInstance<T>[]>;
-    recomputeErrors: () => void;
-    recomputeIsDirty: () => void;
-    recomputeIsTouched: () => void;
-    errors: string[];
-    submit: () => Promise<boolean>;
-    getFieldValue: (val: string) => FieldInstance<T> | undefined;
-    onChangeListenerRefs: MutableRefObject<Record<string, (() => void)[]>>;
-    onBlurListenerRefs: MutableRefObject<Record<string, (() => void)[]>>;
+  formFieldsRef: MutableRefObject<FieldInstance<T>[]>;
+  recomputeErrors: () => void;
+  recomputeIsDirty: () => void;
+  recomputeIsTouched: () => void;
+  errors: string[];
+  submit: () => Promise<boolean>;
+  getFieldValue: (val: string) => FieldInstance<T> | undefined;
+  onChangeListenerRefs: MutableRefObject<Record<string, (() => void)[]>>;
+  onBlurListenerRefs: MutableRefObject<Record<string, (() => void)[]>>;
 }
 
 /* c8 ignore start */

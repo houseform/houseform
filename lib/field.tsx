@@ -12,7 +12,7 @@ import {
   useState,
 } from "react";
 import { FieldInstanceProps, FieldInstance } from "./types";
-import { FormContext } from "./context";
+import { FormContext } from "./form-context";
 import { getValidationError, stringToPath, validate } from "./utils";
 
 export interface FieldRenderProps<T = any> extends FieldInstanceProps<T> {
