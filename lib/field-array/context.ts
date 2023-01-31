@@ -1,31 +1,18 @@
-import { createContext, MutableRefObject } from "react";
-import { FieldArrayInstance } from "./types";
+import { createContext } from "react";
 
 export interface FieldArrayContext<T = any> {
-  formFieldsRef: MutableRefObject<FieldArrayInstance<T>[]>;
-  recomputeErrors: () => void;
-  recomputeIsDirty: () => void;
-  recomputeIsTouched: () => void;
-  errors: string[];
-  onChange: () => void;
+  value: T[];
+  setValue: (index: number, value: T) => void;
+  name: string;
+  add: (value: T) => void;
 }
 
 /* c8 ignore start */
 export const initialContext = {
-  formFieldsRef: { current: [] },
-  recomputeErrors: () => {
-    return undefined;
-  },
-  recomputeIsDirty: () => {
-    return undefined;
-  },
-  recomputeIsTouched: () => {
-    return undefined;
-  },
-  errors: [],
-  onChange: () => {
-    return undefined;
-  },
+  value: [],
+  setValue: () => {},
+  name: "",
+  add: (value) => {},
 } as FieldArrayContext;
 /* c8 ignore stop */
 
