@@ -1,108 +1,104 @@
-import { Field, Form } from "houseform";
-import { z } from "zod";
+import React, {
+  createContext,
+  MutableRefObject,
+  PropsWithChildren,
+  useContext,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { z, ZodAny, ZodType } from "zod";
+import { stringToPath } from "houseform";
 
-export default function App() {
+const FormArrayContext = createContext({
+  values: [] as number[],
+  setValue: (index: number, value: number) => {},
+  name: "",
+  add: (value: number) => {},
+});
+
+function ArrayItem({
+  children,
+  name,
+  onChangeValidate,
+}: {
+  children: ({
+    setValue,
+  }: {
+    setValue: (v: number) => void;
+  }) => React.ReactNode;
+  name: string;
+  onChangeValidate: ZodType;
+}) {
+  const array = useContext(FormArrayContext);
+
+  const itemIndex = useMemo(() => {
+    const arrayNamePathArr = stringToPath(array.name);
+    const fieldItemPathArr = stringToPath(name);
+    for (const i of arrayNamePathArr) {
+      if (i !== fieldItemPathArr.shift()) {
+        throw new Error("Invalid name");
+      }
+    }
+    return Number(fieldItemPathArr[0]);
+  }, [array.name, name]);
+
+  function setValue(v: number) {
+    array.setValue(itemIndex, v);
+  }
+
+  return <>{children({ setValue })}</>;
+}
+
+function AppBase() {
+  const array = useContext(FormArrayContext);
+
   return (
-    <Form
-      onSubmit={(values) => {
-        alert("Form was submitted with: " + JSON.stringify(values));
-      }}
-    >
-      {({ isValid, submit }) => (
-        <form onSubmit={e => {
-          e.preventDefault();
-          submit();
-        }}>
-          <Field
-            name="email"
-            onBlurValidate={z.string().email("This must be an email")}
-            onSubmitValidate={isEmailUnique}
+    <>
+      {array.values.map((field, index) => {
+        return (
+          <ArrayItem
+            key={index}
+            name={`numbers.${index}.number`}
+            onChangeValidate={z.number().min(2, "Must be at least 2")}
           >
-            {({ value, setValue, onBlur, errors }) => {
-              return (
-                <div>
-                  <input
-                    value={value}
-                    onBlur={onBlur}
-                    onChange={(e) => setValue(e.target.value)}
-                    placeholder={"Email"}
-                  />
-                  {errors.map((error) => (
-                    <p key={error}>{error}</p>
-                  ))}
-                </div>
-              );
-            }}
-          </Field>
-          <Field<string>
-            name="password"
-            onChangeValidate={z
-              .string()
-              .min(8, "Must be at least 8 characters long")}
-          >
-            {({ value, setValue, onBlur, errors }) => {
-              return (
-                <div>
-                  <input
-                    value={value}
-                    onBlur={onBlur}
-                    onChange={(e) => setValue(e.target.value)}
-                    placeholder={"Password"}
-                    type="password"
-                  />
-                  {errors.map((error) => (
-                    <p key={error}>{error}</p>
-                  ))}
-                </div>
-              );
-            }}
-          </Field>
-          <Field<string>
-            name="confirmpassword"
-            listenTo={["password"]}
-            onChangeValidate={(val, form) => {
-              if (val === form.getFieldValue("password")!.value) {
-                return Promise.resolve(true);
-              } else {
-                return Promise.reject("Passwords must match");
-              }
-            }}
-          >
-            {({ value, setValue, onBlur, errors, isTouched }) => {
-              return (
-                <div>
-                  <input
-                    value={value}
-                    onBlur={onBlur}
-                    onChange={(e) => setValue(e.target.value)}
-                    placeholder={"Password Confirmation"}
-                    type="password"
-                  />
-                  {isTouched && errors.map((error) => (
-                    <p key={error}>{error}</p>
-                  ))}
-                </div>
-              );
-            }}
-          </Field>
-          <button disabled={!isValid} type="submit">
-            Submit
-          </button>
-        </form>
-      )}
-    </Form>
+            {({ setValue }) => (
+              <div>
+                {index % 2 === 0 && <p>Even row</p>}
+                {/*Make this passed by ArrayItem */}
+                <p>{field}</p>
+                <button onClick={() => setValue(field + 1)}>Add one</button>
+              </div>
+            )}
+          </ArrayItem>
+        );
+      })}
+      <button onClick={() => array.add(0)}>Add another number</button>
+    </>
   );
 }
 
-function isEmailUnique(val: string) {
-  return new Promise<boolean>((resolve, reject) => {
-    setTimeout(() => {
-      const isUnique = !val.startsWith("crutchcorn");
-      if (isUnique) {
-        resolve(true);
-      } else {
-        reject("That email is already taken");
-      }
-    }, 20);
-  });
+export default function App() {
+  const [values, setValues] = useState([] as number[]);
+
+  function add(val: number) {
+    setValues((v) => [...v, val]);
+  }
+
+  function setValue(index: number, value: number) {
+    setValues((v) => {
+      const newValues = [...v];
+      newValues[index] = value;
+      return newValues;
+    });
+  }
+
+  return (
+    <FormArrayContext.Provider
+      value={{ values, add, setValue, name: "numbers" }}
+    >
+      <AppBase />
+    </FormArrayContext.Provider>
+  );
 }
