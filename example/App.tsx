@@ -37,7 +37,7 @@ interface DemoData {
   };
 }
 
-function ArrayItem({
+function ArrayItem<T>({
   children,
   name,
   onChangeValidate,
@@ -45,9 +45,9 @@ function ArrayItem({
   children: ({
     setValue,
   }: {
-    setValue: (v: number) => void;
+    setValue: (v: T) => void;
     errors: string[];
-    value: number;
+    value: T;
   }) => React.ReactNode;
   name: string;
   onChangeValidate: ZodType;
@@ -79,7 +79,7 @@ function ArrayItem({
     return getPath(array.values[itemIndex], accessorPath.join("."));
   }, [array.values, itemIndex]);
 
-  function setValue(v: number) {
+  function setValue(v: T) {
     const vv = { ...array.values[itemIndex] };
     fillPath(vv, accessorPath.join("."), v);
     array.setValue(itemIndex, vv);
@@ -102,9 +102,9 @@ function AppBase() {
 
   return (
     <>
-      {array.values.map((field, index) => {
+      {array.values.map((_, index) => {
         return (
-          <ArrayItem
+          <ArrayItem<number>
             key={index}
             name={`people.${index}.person.age`}
             onChangeValidate={z.number().max(18, "Must be more than 18")}
@@ -112,8 +112,7 @@ function AppBase() {
             {({ setValue, errors, value }) => (
               <div>
                 {index % 2 === 0 && <p>Even row</p>}
-                {/*Make this passed by ArrayItem */}
-                <p>{field.person.age}</p>
+                <p>{value}</p>
                 <button onClick={() => setValue(value + 1)}>Add one</button>
                 {errors.map((error) => (
                   <p key={error}>{error}</p>
