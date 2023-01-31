@@ -9,9 +9,9 @@ import {
   useState,
 } from "react";
 import { ZodError } from "zod";
-import { FormContext, initialContext } from "./context";
+import { FormContext } from "./context";
 import { FieldInstance } from "./types";
-import {fillPath, getValidationError, stringToPath, validate} from "./utils";
+import { fillPath, getValidationError, stringToPath, validate } from "./utils";
 
 export interface FormState {
   submit: () => Promise<boolean>;
@@ -28,10 +28,7 @@ export interface FormProps<T> {
   children: (props: FormState) => JSX.Element;
 }
 
-function FormComp<T>(
-  props: FormProps<T>,
-  ref: ForwardedRef<FormContext<T>>
-) {
+function FormComp<T>(props: FormProps<T>, ref: ForwardedRef<FormContext<T>>) {
   const formFieldsRef = useRef<FieldInstance[]>([]);
 
   const getErrors = useCallback(() => {
@@ -74,10 +71,14 @@ function FormComp<T>(
 
   const getFieldValue = useCallback(
     (name: string) => {
-      const found = formFieldsRef.current.find((field) => field.props.name === name);
+      const found = formFieldsRef.current.find(
+        (field) => field.props.name === name
+      );
       if (found) return found;
       const normalizedName = stringToPath(name).join(".");
-      return formFieldsRef.current.find((field) => field._normalizedDotName === normalizedName);
+      return formFieldsRef.current.find(
+        (field) => field._normalizedDotName === normalizedName
+      );
     },
     [formFieldsRef]
   );
