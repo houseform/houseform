@@ -1,9 +1,9 @@
 import { expect, test } from "vitest";
 import { useRef, useState } from "react";
-import { Form, Field } from "./index";
+import { Form, Field } from "houseform";
 import { render, waitFor } from "@testing-library/react";
 import { z } from "zod";
-import { FormContext } from "./form-context";
+import { FormContext } from "./context";
 
 test("Form should render children", () => {
   const { getByText } = render(

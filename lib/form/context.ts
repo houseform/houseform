@@ -1,5 +1,5 @@
 import { createContext, MutableRefObject } from "react";
-import type { FieldInstance } from "./types";
+import type { FieldInstance } from "../field/types";
 
 export interface FormContext<T = any> {
   formFieldsRef: MutableRefObject<FieldInstance<T>[]>;

@@ -1,24 +1,8 @@
 import { ForwardedRef, forwardRef, memo, useContext, useMemo } from "react";
-import { FieldInstanceBaseProps } from "./types";
-import { FormContext } from "./form-context";
-import { stringToPath } from "./utils";
-
-export interface FieldArrayHelpers<T> {
-  add: (val: T) => void;
-  remove: (index: number) => void;
-  insert: (index: number, val: T) => void;
-  move: (props: { from: number; to: number }) => void;
-}
-
-export interface FieldArrayInstance<T> extends FieldArrayHelpers<T> {
-  _normalizedDotName: string;
-  props: FieldInstanceBaseProps<T>;
-  fields: T[];
-  errors: string[];
-  isValid: boolean;
-  isDirty: boolean;
-  isTouched: boolean;
-}
+import { FieldInstanceBaseProps } from "../field/types";
+import { FormContext } from "../form/context";
+import { stringToPath } from "../utils";
+import { FieldArrayInstance } from "./types";
 
 export interface FieldArrayRenderProps<T = any>
   extends FieldInstanceBaseProps<T> {

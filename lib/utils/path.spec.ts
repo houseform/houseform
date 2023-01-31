@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import { fillPath, stringToPath } from "./utils";
+import { fillPath, stringToPath } from "houseform";
 
 test("stringToPath to adapt dot notation", () => {
   expect(stringToPath("test.one.other")).toStrictEqual([

@@ -9,9 +9,9 @@ import {
   useState,
 } from "react";
 import { ZodError } from "zod";
-import { FormContext } from "./form-context";
-import { FieldInstance } from "./types";
-import { fillPath, getValidationError, stringToPath, validate } from "./utils";
+import { FormContext } from "./context";
+import { FieldInstance } from "../field/types";
+import { fillPath, getValidationError, stringToPath, validate } from "../utils";
 
 export interface FormState {
   submit: () => Promise<boolean>;
