@@ -8,15 +8,34 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { z, ZodAny, ZodError, ZodType } from "zod";
-import { getValidationError, stringToPath, validate } from "houseform";
+import { z, ZodError, ZodType } from "zod";
+import {
+  fillPath,
+  getPath,
+  getValidationError,
+  stringToPath,
+  validate,
+} from "houseform";
+
+interface FormArrayContext<T = any> {
+  values: T[];
+  setValue: (index: number, value: T) => void;
+  name: string;
+  add: (value: T) => void;
+}
 
 const FormArrayContext = createContext({
-  values: [] as number[],
-  setValue: (index: number, value: number) => {},
+  values: [],
+  setValue: () => {},
   name: "",
-  add: (value: number) => {},
-});
+  add: (value) => {},
+} as FormArrayContext);
+
+interface DemoData {
+  person: {
+    age: number;
+  };
+}
 
 function ArrayItem({
   children,
@@ -28,15 +47,16 @@ function ArrayItem({
   }: {
     setValue: (v: number) => void;
     errors: string[];
+    value: number;
   }) => React.ReactNode;
   name: string;
   onChangeValidate: ZodType;
 }) {
-  const array = useContext(FormArrayContext);
+  const array = useContext(FormArrayContext) as FormArrayContext<DemoData>;
 
   const [errors, setErrors] = useState<string[]>([]);
 
-  const itemIndex = useMemo(() => {
+  const fullAccessorPath = useMemo(() => {
     const arrayNamePathArr = stringToPath(array.name);
     const fieldItemPathArr = stringToPath(name);
     for (const i of arrayNamePathArr) {
@@ -44,11 +64,25 @@ function ArrayItem({
         throw new Error("Invalid name");
       }
     }
-    return Number(fieldItemPathArr[0]);
+    return fieldItemPathArr;
   }, [array.name, name]);
 
+  const itemIndex = useMemo(() => {
+    return parseInt(fullAccessorPath[0]);
+  }, [fullAccessorPath]);
+
+  const accessorPath = useMemo(() => {
+    return fullAccessorPath.slice(1);
+  }, [fullAccessorPath]);
+
+  const value = useMemo(() => {
+    return getPath(array.values[itemIndex], accessorPath.join("."));
+  }, [array.values, itemIndex]);
+
   function setValue(v: number) {
-    array.setValue(itemIndex, v);
+    const vv = { ...array.values[itemIndex] };
+    fillPath(vv, accessorPath.join("."), v);
+    array.setValue(itemIndex, vv);
     if (onChangeValidate) {
       validate(v, null as any, onChangeValidate)
         .then(() => {
@@ -60,11 +94,11 @@ function ArrayItem({
     }
   }
 
-  return <>{children({ setValue, errors })}</>;
+  return <>{children({ setValue, errors, value })}</>;
 }
 
 function AppBase() {
-  const array = useContext(FormArrayContext);
+  const array = useContext(FormArrayContext) as FormArrayContext<DemoData>;
 
   return (
     <>
@@ -72,15 +106,15 @@ function AppBase() {
         return (
           <ArrayItem
             key={index}
-            name={`numbers.${index}.number`}
-            onChangeValidate={z.number().max(8, "Must be less than 8")}
+            name={`people.${index}.person.age`}
+            onChangeValidate={z.number().max(18, "Must be more than 18")}
           >
-            {({ setValue, errors }) => (
+            {({ setValue, errors, value }) => (
               <div>
                 {index % 2 === 0 && <p>Even row</p>}
                 {/*Make this passed by ArrayItem */}
-                <p>{field}</p>
-                <button onClick={() => setValue(field + 1)}>Add one</button>
+                <p>{field.person.age}</p>
+                <button onClick={() => setValue(value + 1)}>Add one</button>
                 {errors.map((error) => (
                   <p key={error}>{error}</p>
                 ))}
@@ -89,19 +123,21 @@ function AppBase() {
           </ArrayItem>
         );
       })}
-      <button onClick={() => array.add(0)}>Add another number</button>
+      <button onClick={() => array.add({ person: { age: 0 } })}>
+        Add another number
+      </button>
     </>
   );
 }
 
 export default function App() {
-  const [values, setValues] = useState([] as number[]);
+  const [values, setValues] = useState([] as DemoData[]);
 
-  function add(val: number) {
+  function add(val: DemoData) {
     setValues((v) => [...v, val]);
   }
 
-  function setValue(index: number, value: number) {
+  function setValue(index: number, value: DemoData) {
     setValues((v) => {
       const newValues = [...v];
       newValues[index] = value;
@@ -111,7 +147,7 @@ export default function App() {
 
   return (
     <FormArrayContext.Provider
-      value={{ values, add, setValue, name: "numbers" }}
+      value={{ values, add, setValue, name: "people" }}
     >
       <AppBase />
     </FormArrayContext.Provider>
