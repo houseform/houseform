@@ -1,19 +1,23 @@
 import { createContext } from "react";
-
-export interface FieldArrayContext<T = any> {
-  value: T[];
-  setValue: (index: number, value: T) => void;
-  name: string;
-  add: (value: T) => void;
-}
+import { FieldArrayInstance } from "./types";
 
 /* c8 ignore start */
 export const initialContext = {
   value: [],
   setValue: () => {},
-  name: "",
-  add: (value) => {},
-} as FieldArrayContext;
+  props: {
+    name: "",
+  },
+  errors: [],
+  isValid: false,
+  isDirty: false,
+  isTouched: false,
+  _normalizedDotName: "",
+  add: () => {},
+  remove: () => {},
+  insert: () => {},
+  move: () => {},
+} as FieldArrayInstance;
 /* c8 ignore stop */
 
 export const FieldArrayContext = createContext(initialContext);

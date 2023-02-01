@@ -4,17 +4,14 @@ export interface FieldArrayHelpers<T> {
   add: (val: T) => void;
   remove: (index: number) => void;
   insert: (index: number, val: T) => void;
-  move: (props: { from: number; to: number }) => void;
+  move: (from: number, to: number) => void;
 }
 
-export interface FieldArrayInstance<T> extends FieldArrayHelpers<T> {
+export interface FieldArrayInstance<T = any> extends FieldArrayHelpers<T> {
   _normalizedDotName: string;
   props: FieldInstanceBaseProps<T>;
-  fields: T[];
-  fieldErrors: string[];
-  areFieldsValid: boolean;
-  areFieldsDirty: boolean;
-  areFieldsTouched: boolean;
+  value: T[];
+  setValue: (index: number, value: T) => void;
   errors: string[];
   isValid: boolean;
   isDirty: boolean;
