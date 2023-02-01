@@ -22,7 +22,7 @@ export function FieldArrayItem<T>({
     value: T;
   }) => React.ReactNode;
   name: string;
-  onChangeValidate: ZodType;
+  onChangeValidate?: ZodType;
 }) {
   const array = useContext(FieldArrayContext) as FieldArrayContext<T>;
 

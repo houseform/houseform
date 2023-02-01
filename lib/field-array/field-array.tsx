@@ -1,9 +1,4 @@
-import React, {
-  ForwardedRef,
-  forwardRef,
-  memo,
-  useState,
-} from "react";
+import React, { ForwardedRef, forwardRef, memo, useState } from "react";
 import { FieldInstanceBaseProps } from "../field/types";
 import { FieldArrayContext } from "./context";
 import { FieldArrayInstance } from "./types";
@@ -18,7 +13,7 @@ function FieldArrayComp<T>(
   props: FieldArrayRenderProps<T>,
   ref: ForwardedRef<FieldArrayInstance<T>>
 ) {
-  const [value, setValues] = useState([] as T[]);
+  const [value, setValues] = useState(props.initialValue || ([] as T[]));
 
   function add(val: T) {
     setValues((v) => [...v, val]);
