@@ -10,7 +10,10 @@ import React, {
 import { FieldInstanceBaseProps } from "../field/types";
 import { FieldArrayContext } from "./context";
 import { FieldArrayInstance } from "./types";
-import { useFieldLike } from "../field/use-field-like";
+import {
+  useFieldLike,
+  useListenToListenToArray,
+} from "../field/use-field-like";
 import { useFieldLikeSync } from "../field/use-field-like-sync";
 
 export interface FieldArrayRenderProps<T = any>
@@ -32,9 +35,17 @@ function FieldArrayComp<T>(
     isDirty,
     isValid,
     _normalizedDotName,
+    runFieldValidation,
+    valueRef,
   } = useFieldLike<T, FieldArrayInstance<T>>({
     props,
     initialValue: [] as T[],
+  });
+
+  useListenToListenToArray({
+    listenTo: props.listenTo,
+    runFieldValidation,
+    valueRef,
   });
 
   const setValue = useCallback(

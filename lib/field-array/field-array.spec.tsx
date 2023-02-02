@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import { render } from "@testing-library/react";
-import { FieldArray, Form } from "houseform";
+import { Field, FieldArray, FieldArrayItem, Form } from "houseform";
 import { z } from "zod";
 
 test("field array should track `isDirty` for the array of values", async () => {
@@ -262,7 +262,84 @@ test("field array should run onSubmit validation", async () => {
   expect(getByText("Should have at least three items")).toBeInTheDocument();
 });
 
+test("field array should work with listenTo as the subject", async () => {
+  const { queryByText, getByText } = render(
+    <Form>
+      {() => (
+        <div>
+          <Field<string>
+            name={"test"}
+            listenTo={[`people`]}
+            onChangeValidate={z.string().min(3, "Must be at least 3")}
+            initialValue={"T"}
+          >
+            {({ errors }) => (
+              <div>
+                {errors.map((error) => (
+                  <p key={error}>{error}</p>
+                ))}
+              </div>
+            )}
+          </Field>
+          <FieldArray<{ thing: number }>
+            initialValue={[{ thing: 1 }]}
+            name={"people"}
+          >
+            {({ add }) => (
+              <button onClick={() => add({ thing: 2 })}>Add</button>
+            )}
+          </FieldArray>
+        </div>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Must be at least 3")).not.toBeInTheDocument();
+
+  await user.click(getByText("Add"));
+
+  expect(getByText("Must be at least 3")).toBeInTheDocument();
+});
+
+test("field array should work with listenTo as the listener", async () => {
+  const { queryByText, getByText } = render(
+    <Form>
+      {() => (
+        <div>
+          <Field<string> name={"test"} initialValue={"T"}>
+            {({ setValue }) => (
+              <button onClick={() => setValue("Tes")}>Set value</button>
+            )}
+          </Field>
+          <FieldArray<{ thing: number }>
+            initialValue={[{ thing: 1 }]}
+            onChangeValidate={z.array(z.any()).min(3, "Must be at least 3")}
+            listenTo={[`test`]}
+            name={"people"}
+          >
+            {({ errors }) => (
+              <div>
+                {errors.map((error) => (
+                  <p key={error}>{error}</p>
+                ))}
+              </div>
+            )}
+          </FieldArray>
+        </div>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Must be at least 3")).not.toBeInTheDocument();
+
+  await user.click(getByText("Set value"));
+
+  expect(getByText("Must be at least 3")).toBeInTheDocument();
+});
+
 test.todo("Should work with listenTo");
+
+test.todo("Should expose meta fields to ref");
 
 test.todo("Should track all subfield errors");
 
