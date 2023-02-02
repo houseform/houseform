@@ -1,9 +1,5 @@
 # Access Data Outside Render Functions
 
-> This section is still being written.
-
-<!-- ref={} -->
-
 There are instances where you might want to access form or field data outside of the render function. Luckily, HouseForm supports this capability via `ref` usage:
 
 ```jsx
@@ -25,7 +21,7 @@ const App = () => {
       <Form onSubmit={() => {}} ref={formRef}>
         {() =>
           // ...
-          null
+          <></>
         }
       </Form>
       <button onClick={doSubmit}>Submit</button>
@@ -34,4 +30,30 @@ const App = () => {
 };
 ```
 
- 
+## Access Field Data Outside Render Functions
+
+While forms provide the `getFieldValue` helper, sometimes it's nicer to directly access the internals of the `<Field>` components. This usage is also support using a `ref`:
+
+```jsx
+export default function App() {
+  const fieldRef = useRef(null);
+
+  const logFieldValue = () => {
+    console.log(fieldRef.current?.value);
+  };
+
+  return (
+    <>
+      <Form>
+        {() => (
+          <Field name="email" ref={fieldRef}>
+            {() => <></>}
+          </Field>
+        )}
+      </Form>
+      <button onClick={logFieldValue}>Log Field Value</button>
+    </>
+  );
+}
+```
+
