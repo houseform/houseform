@@ -100,9 +100,79 @@ test("Field array item be able to set a value", async () => {
   expect(getByText("Value: 2")).toBeInTheDocument();
 });
 
-test.todo("field array item should track `isDirty`");
+test("field array item should track `isDirty`", async () => {
+  const { queryByText, getByText } = render(
+    <Form>
+      {() => (
+        <FieldArray<{ thing: number }>
+          initialValue={[{ thing: 1 }]}
+          name={"people"}
+        >
+          {({ value }) => (
+            <>
+              {value.map((person, i) => (
+                <FieldArrayItem<number>
+                  key={`people[${i}].thing`}
+                  name={`people[${i}].thing`}
+                >
+                  {({ setValue, isDirty }) => (
+                    <div>
+                      {isDirty && <p>Is dirty</p>}
+                      <button onClick={() => setValue(2)}>Set value</button>
+                    </div>
+                  )}
+                </FieldArrayItem>
+              ))}
+            </>
+          )}
+        </FieldArray>
+      )}
+    </Form>
+  );
 
-test.todo("field array item should track `isTouched`");
+  expect(queryByText("Is dirty")).not.toBeInTheDocument();
+
+  await user.click(getByText("Set value"));
+
+  expect(getByText("Is dirty")).toBeInTheDocument();
+});
+
+test("field array item should track `isTouched`", async () => {
+  const { queryByText, getByText } = render(
+    <Form>
+      {() => (
+        <FieldArray<{ thing: number }>
+          initialValue={[{ thing: 1 }]}
+          name={"people"}
+        >
+          {({ value }) => (
+            <>
+              {value.map((person, i) => (
+                <FieldArrayItem<number>
+                  key={`people[${i}].thing`}
+                  name={`people[${i}].thing`}
+                >
+                  {({ isTouched, onBlur }) => (
+                    <div>
+                      {isTouched && <p>Is touched</p>}
+                      <button onClick={() => onBlur()}>Blur</button>
+                    </div>
+                  )}
+                </FieldArrayItem>
+              ))}
+            </>
+          )}
+        </FieldArray>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Is touched")).not.toBeInTheDocument();
+
+  await user.click(getByText("Blur"));
+
+  expect(getByText("Is touched")).toBeInTheDocument();
+});
 
 test.todo("field array item should validate onChange");
 
