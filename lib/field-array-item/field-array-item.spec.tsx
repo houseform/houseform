@@ -2,6 +2,7 @@ import { expect, test } from "vitest";
 import { render, waitFor } from "@testing-library/react";
 import { FieldArray, FieldArrayItem, Form } from "houseform";
 import { useState } from "react";
+import { z } from "zod";
 
 test("Field array item should submit with values in tact", async () => {
   const SubmitValues = () => {
@@ -174,9 +175,85 @@ test("field array item should track `isTouched`", async () => {
   expect(getByText("Is touched")).toBeInTheDocument();
 });
 
-test.todo("field array item should validate onChange");
+test("field array item should validate onChange", async () => {
+  const { queryByText, getByText } = render(
+    <Form>
+      {() => (
+        <FieldArray<{ thing: number }>
+          initialValue={[{ thing: 1 }]}
+          name={"people"}
+        >
+          {({ value }) => (
+            <>
+              {value.map((person, i) => (
+                <FieldArrayItem<number>
+                  key={`people[${i}].thing`}
+                  name={`people[${i}].thing`}
+                  onChangeValidate={z.number().min(3, "Must be at least 3")}
+                >
+                  {({ setValue, errors }) => (
+                    <div>
+                      <button onClick={() => setValue(2)}>Set value</button>
+                      {errors.map((error) => (
+                        <p key={error}>{error}</p>
+                      ))}
+                    </div>
+                  )}
+                </FieldArrayItem>
+              ))}
+            </>
+          )}
+        </FieldArray>
+      )}
+    </Form>
+  );
 
-test.todo("field array item should validate onBlur");
+  expect(queryByText("Must be at least 3")).not.toBeInTheDocument();
+
+  await user.click(getByText("Set value"));
+
+  expect(getByText("Must be at least 3")).toBeInTheDocument();
+});
+
+test("field array item should validate onBlur", async () => {
+  const { queryByText, getByText } = render(
+    <Form>
+      {() => (
+        <FieldArray<{ thing: number }>
+          initialValue={[{ thing: 1 }]}
+          name={"people"}
+        >
+          {({ value }) => (
+            <>
+              {value.map((person, i) => (
+                <FieldArrayItem<number>
+                  key={`people[${i}].thing`}
+                  name={`people[${i}].thing`}
+                  onBlurValidate={z.number().min(3, "Must be at least 3")}
+                >
+                  {({ onBlur, errors }) => (
+                    <div>
+                      <button onClick={() => onBlur()}>Blur</button>
+                      {errors.map((error) => (
+                        <p key={error}>{error}</p>
+                      ))}
+                    </div>
+                  )}
+                </FieldArrayItem>
+              ))}
+            </>
+          )}
+        </FieldArray>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Must be at least 3")).not.toBeInTheDocument();
+
+  await user.click(getByText("Blur"));
+
+  expect(getByText("Must be at least 3")).toBeInTheDocument();
+});
 
 test.todo("field array item should validate onSubmit");
 
