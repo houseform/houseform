@@ -1,7 +1,7 @@
 {
   "name": "houseform",
   "description": "Simple to use React forms, where your validation and UI code live together in harmony.",
-  "version": "0.0.2-alpha.1",
+  "version": "0.0.2-alpha.2",
   "type": "module",
   "license": "MIT",
   "repository": {
