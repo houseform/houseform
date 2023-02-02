@@ -38,9 +38,9 @@ function FieldArrayComp<T>(
     runFieldValidation,
     valueRef,
     _normalizedDotName,
-  } = useFieldLike<T[], FieldArrayInstance<T>>({
+  } = useFieldLike<T, FieldArrayInstance<T>>({
     props,
-    initialValue: [] as T,
+    initialValue: [] as T[],
   });
 
   const setValue = useCallback((index: number, value: T) => {

@@ -18,7 +18,7 @@ export interface FieldInstanceProps<T = any> extends FieldInstanceBaseProps<T> {
 
 export interface FieldInstance<T = any> {
   value: T;
-  setValue: (val: T) => void;
+  setValue: (val: T | ((prevState: T) => T)) => void;
   onBlur: () => void;
   props: FieldInstanceProps<T>;
   _normalizedDotName: string;

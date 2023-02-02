@@ -17,14 +17,16 @@ import {
 } from "houseform";
 import { ZodError } from "zod";
 
+type GetInstanceInferedType<T, TT> = TT extends FieldInstance ? T : T[];
+
 export interface UseFieldLikeProps<
   T,
   TT extends FieldInstance<T> | FieldArrayInstance<T>
 > {
   props: TT["props"] & {
-    initialValue?: TT extends FieldInstance ? T : T[];
+    initialValue?: GetInstanceInferedType<T, TT>;
   };
-  initialValue: TT extends FieldInstance ? T : T[];;
+  initialValue: GetInstanceInferedType<T, TT>;
 }
 
 /**
@@ -64,10 +66,7 @@ export const useFieldLike = <
   const runFieldValidation = useCallback(
     (
       validationFnName: "onChangeValidate" | "onBlurValidate",
-     val: UseFieldLikeProps<
-       T,
-       TT
-     >["initialValue"]
+      val: UseFieldLikeProps<T, TT>["initialValue"]
     ) => {
       let validationFn = props.onChangeValidate;
       if (
@@ -78,7 +77,7 @@ export const useFieldLike = <
           .onBlurValidate;
       }
       if (validationFn) {
-        validate(val, formContext, validationFn)
+        validate(val as T, formContext, validationFn)
           .then(() => {
             setErrors([]);
           })
@@ -95,23 +94,36 @@ export const useFieldLike = <
   );
 
   const setValue = useCallback(
-    (val: UseFieldLikeProps<T, TT>["initialValue"]) => {
-      setIsDirty(true);
-      setIsTouched(true);
-      _setValue(val);
+    <
+      J extends UseFieldLikeProps<T, TT>["initialValue"] = UseFieldLikeProps<
+        T,
+        TT
+      >["initialValue"]
+    >(
+      val: J | ((prevState: J) => J)
+    ) => {
+      _setValue((prev) => {
+        const isPrevAFunction = (
+          t: any
+        ): t is (prevState: typeof value) => typeof value => t === "function";
+        const newVal = isPrevAFunction(val) ? val(prev) : (val as typeof value);
+        setIsDirty(true);
+        setIsTouched(true);
 
-      /**
-       * Call `listenTo` field subscribers for other fields.
-       *
-       * Placed into a `setTimeout` so that the `setValue` call can finish before the `onChangeListenerRefs` are called.
-       */
-      setTimeout(() => {
-        formContext.onChangeListenerRefs.current[props.name]?.forEach((fn) =>
-          fn()
-        );
-      }, 0);
+        /**
+         * Call `listenTo` field subscribers for other fields.
+         *
+         * Placed into a `setTimeout` so that the `setValue` call can finish before the `onChangeListenerRefs` are called.
+         */
+        setTimeout(() => {
+          formContext.onChangeListenerRefs.current[props.name]?.forEach((fn) =>
+            fn()
+          );
+        }, 0);
 
-      runFieldValidation("onChangeValidate", val);
+        runFieldValidation("onChangeValidate", newVal);
+        return newVal;
+      });
     },
     [runFieldValidation, formContext, props.name]
   );
