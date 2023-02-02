@@ -17,6 +17,7 @@ import {
   getPath,
   stringToPath,
   useFieldLike,
+  useFieldLikeSync,
 } from "houseform";
 import { FieldArrayContext } from "../field-array/context";
 
@@ -165,6 +166,18 @@ export function FieldArrayItemComp<T>(
     setErrors,
     setIsTouched,
   ]);
+
+  const mutableRef = useRef<FieldInstance<T>>(fieldArrayInstance);
+
+  useFieldLikeSync<T, FieldInstance<T>>({
+    mutableRef,
+    props,
+    value,
+    errors,
+    isValid,
+    isDirty,
+    isTouched,
+  });
 
   useImperativeHandle(ref, () => fieldArrayInstance, [fieldArrayInstance]);
 

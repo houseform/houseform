@@ -48,7 +48,7 @@ test("Form should submit with basic values in tact", async () => {
   );
 });
 
-test("Form should submit with array values in tact", async () => {
+test("Form should submit with simple array values in tact", async () => {
   const SubmitValues = () => {
     const [values, setValues] = useState<string | null>(null);
 
