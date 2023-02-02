@@ -17,7 +17,7 @@ export interface FormContext<T = any> {
 }
 
 /* c8 ignore start */
-export const initialContext = {
+export const initialFormContext = {
   formFieldsRef: { current: [] },
   recomputeErrors: () => {
     return undefined;
@@ -40,4 +40,4 @@ export const initialContext = {
 } as FormContext;
 /* c8 ignore stop */
 
-export const FormContext = createContext(initialContext);
+export const FormContext = createContext(initialFormContext);

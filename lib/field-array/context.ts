@@ -2,7 +2,7 @@ import { createContext } from "react";
 import { FieldArrayInstance } from "./types";
 
 /* c8 ignore start */
-export const initialContext = {
+export const initialFieldArrayContext = {
   value: [],
   setValue: () => {},
   props: {
@@ -22,4 +22,4 @@ export const initialContext = {
 } as FieldArrayInstance;
 /* c8 ignore stop */
 
-export const FieldArrayContext = createContext(initialContext);
+export const FieldArrayContext = createContext(initialFieldArrayContext);
