@@ -18,6 +18,7 @@ import {
   stringToPath,
   useFieldLike,
   useFieldLikeSync,
+  useListenToListenToArray,
 } from "houseform";
 import { FieldArrayContext } from "../field-array/context";
 
@@ -76,6 +77,12 @@ export function FieldArrayItemComp<T>(
   const valueRef = useRef(value);
 
   valueRef.current = value;
+
+  useListenToListenToArray({
+    listenTo: props.listenTo,
+    runFieldValidation,
+    valueRef,
+  });
 
   const setValue = useCallback(
     (v: T | ((prevState: T) => T)) => {

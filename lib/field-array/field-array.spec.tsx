@@ -191,10 +191,10 @@ test("Field array should have a functioning 'replace' helper", async () => {
 
 test.todo("onSubmit validation should run");
 
+test.todo("Should work with listenTo");
+
 test.todo("Should track all subfield errors");
 
 test.todo("Should track all subfield isTouched");
 
 test.todo("Should track all subfield isDirty");
-
-test.todo("Should work with listenTo");

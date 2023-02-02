@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import { render, waitFor } from "@testing-library/react";
-import { FieldArray, FieldArrayItem, Form } from "houseform";
+import { Field, FieldArray, FieldArrayItem, Form } from "houseform";
 import { useState } from "react";
 import { z } from "zod";
 
@@ -297,4 +297,99 @@ test("field array item should validate onSubmit", async () => {
   expect(getByText("Must be at least 3")).toBeInTheDocument();
 });
 
-test.todo("Should work with listenTo");
+test("field array item should work with listenTo as the subject", async () => {
+  const { queryByText, getByText } = render(
+    <Form>
+      {() => (
+        <div>
+          <Field<string>
+            name={"test"}
+            listenTo={[`people[0].thing`]}
+            onChangeValidate={z.string().min(3, "Must be at least 3")}
+            initialValue={"T"}
+          >
+            {({ errors }) => (
+              <div>
+                {errors.map((error) => (
+                  <p key={error}>{error}</p>
+                ))}
+              </div>
+            )}
+          </Field>
+          <FieldArray<{ thing: number }>
+            initialValue={[{ thing: 1 }]}
+            name={"people"}
+          >
+            {({ value }) => (
+              <>
+                {value.map((person, i) => (
+                  <FieldArrayItem<number>
+                    key={`people[${i}].thing`}
+                    name={`people[${i}].thing`}
+                  >
+                    {({ setValue }) => (
+                      <button onClick={() => setValue(2)}>Set value</button>
+                    )}
+                  </FieldArrayItem>
+                ))}
+              </>
+            )}
+          </FieldArray>
+        </div>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Must be at least 3")).not.toBeInTheDocument();
+
+  await user.click(getByText("Set value"));
+
+  expect(getByText("Must be at least 3")).toBeInTheDocument();
+});
+
+test("field array item should work with listenTo as the listener", async () => {
+  const { queryByText, getByText } = render(
+    <Form>
+      {() => (
+        <div>
+          <Field<string> name={"test"} initialValue={"T"}>
+            {({ setValue }) => (
+              <button onClick={() => setValue(2)}>Set value</button>
+            )}
+          </Field>
+          <FieldArray<{ thing: number }>
+            initialValue={[{ thing: 1 }]}
+            name={"people"}
+          >
+            {({ value }) => (
+              <>
+                {value.map((person, i) => (
+                  <FieldArrayItem<number>
+                    key={`people[${i}].thing`}
+                    name={`people[${i}].thing`}
+                    onChangeValidate={z.number().min(3, "Must be at least 3")}
+                    listenTo={[`test`]}
+                  >
+                    {({ errors }) => (
+                      <div>
+                        {errors.map((error) => (
+                          <p key={error}>{error}</p>
+                        ))}
+                      </div>
+                    )}
+                  </FieldArrayItem>
+                ))}
+              </>
+            )}
+          </FieldArray>
+        </div>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Must be at least 3")).not.toBeInTheDocument();
+
+  await user.click(getByText("Set value"));
+
+  expect(getByText("Must be at least 3")).toBeInTheDocument();
+});

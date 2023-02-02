@@ -10,7 +10,7 @@ import {
 } from "react";
 import { FieldInstance, FieldInstanceProps } from "./types";
 import { FormContext } from "../form/context";
-import { useFieldLike } from "./use-field-like";
+import { useFieldLike, useListenToListenToArray } from "./use-field-like";
 import { useFieldLikeSync } from "./use-field-like-sync";
 
 export interface FieldRenderProps<T = any> extends FieldInstanceProps<T> {
@@ -40,6 +40,12 @@ function FieldComp<T>(
   } = useFieldLike<T, FieldInstance<T>>({
     props,
     initialValue: "" as T,
+  });
+
+  useListenToListenToArray({
+    listenTo: props.listenTo,
+    runFieldValidation,
+    valueRef,
   });
 
   const onBlur = useCallback(() => {

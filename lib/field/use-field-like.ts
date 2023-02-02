@@ -1,4 +1,5 @@
 import {
+  MutableRefObject,
   useCallback,
   useContext,
   useLayoutEffect,
@@ -15,6 +16,66 @@ import {
   validate,
 } from "houseform";
 import { ZodError } from "zod";
+
+interface UseListenToListenToArrayProps<T> {
+  listenTo: string[] | undefined;
+  runFieldValidation: (l: "onChangeValidate" | "onBlurValidate", v: T) => void;
+  valueRef: MutableRefObject<T>;
+}
+export function useListenToListenToArray<T>({
+  listenTo,
+  runFieldValidation,
+  valueRef,
+}: UseListenToListenToArrayProps<T>) {
+  const formContext = useContext(FormContext);
+
+  useLayoutEffect(() => {
+    if (!listenTo || listenTo.length === 0) return;
+
+    function onChangeListener() {
+      runFieldValidation("onChangeValidate", valueRef.current);
+    }
+
+    function onBlurListener() {
+      runFieldValidation("onBlurValidate", valueRef.current);
+    }
+
+    function addListenerToListenToItem(
+      refTypeName: "onChangeListenerRefs" | "onBlurListenerRefs",
+      fieldName: string,
+      listener: () => void
+    ) {
+      // Make sure there's an array for the field
+      formContext[refTypeName].current[fieldName] =
+        formContext[refTypeName].current[fieldName] ?? [];
+      // Add the listener
+      formContext[refTypeName].current[fieldName].push(listener);
+      // Remove the listener
+      return () => {
+        formContext[refTypeName].current[fieldName].splice(
+          formContext[refTypeName].current[fieldName].indexOf(listener),
+          1
+        );
+      };
+    }
+
+    const fns = listenTo.flatMap((fieldName) => {
+      const onChangeFunctions = addListenerToListenToItem(
+        "onChangeListenerRefs",
+        fieldName,
+        onChangeListener
+      );
+      const onBlurFunctions = addListenerToListenToItem(
+        "onBlurListenerRefs",
+        fieldName,
+        onBlurListener
+      );
+      return [onChangeFunctions, onBlurFunctions];
+    });
+
+    return () => fns.forEach((fn) => fn());
+  }, [formContext, listenTo, runFieldValidation, valueRef]);
+}
 
 type GetInstanceInferedType<T, TT> = TT extends FieldInstance ? T : T[];
 
@@ -125,56 +186,6 @@ export const useFieldLike = <
   const isValid = useMemo(() => {
     return errors.length === 0;
   }, [errors]);
-
-  /**
-   * Setup `listenTo` field listeners for this field
-   */
-  useLayoutEffect(() => {
-    if (!props.listenTo || props.listenTo.length === 0) return;
-
-    function onChangeListener() {
-      runFieldValidation("onChangeValidate", valueRef.current);
-    }
-
-    function onBlurListener() {
-      runFieldValidation("onBlurValidate", valueRef.current);
-    }
-
-    function addListenerToListenToItem(
-      refTypeName: "onChangeListenerRefs" | "onBlurListenerRefs",
-      fieldName: string,
-      listener: () => void
-    ) {
-      // Make sure there's an array for the field
-      formContext[refTypeName].current[fieldName] =
-        formContext[refTypeName].current[fieldName] ?? [];
-      // Add the listener
-      formContext[refTypeName].current[fieldName].push(listener);
-      // Remove the listener
-      return () => {
-        formContext[refTypeName].current[fieldName].splice(
-          formContext[refTypeName].current[fieldName].indexOf(listener),
-          1
-        );
-      };
-    }
-
-    const fns = props.listenTo.flatMap((fieldName) => {
-      const onChangeFunctions = addListenerToListenToItem(
-        "onChangeListenerRefs",
-        fieldName,
-        onChangeListener
-      );
-      const onBlurFunctions = addListenerToListenToItem(
-        "onBlurListenerRefs",
-        fieldName,
-        onBlurListener
-      );
-      return [onChangeFunctions, onBlurFunctions];
-    });
-
-    return () => fns.forEach((fn) => fn());
-  }, [formContext, props.listenTo, runFieldValidation]);
 
   return {
     value,
