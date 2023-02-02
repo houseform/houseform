@@ -2,8 +2,28 @@ import { expect, test } from "vitest";
 import { render } from "@testing-library/react";
 import { FieldArray, FieldArrayItem, Form } from "houseform";
 
-test.todo("should register a field array with the form");
-test.todo("field array should track `isDirty` for the array of values");
+test("field array should track `isDirty` for the array of values", async () => {
+  const { getByText, queryByText } = render(
+    <Form>
+      {() => (
+        <FieldArray<number> name={"people"} initialValue={[1]}>
+          {({ isDirty, setValue }) => (
+            <>
+              {isDirty && <p>Array is dirty</p>}
+              <button onClick={() => setValue(1, 2)}>Set value</button>
+            </>
+          )}
+        </FieldArray>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Array is dirty")).not.toBeInTheDocument();
+
+  await user.click(getByText("Set value"));
+
+  expect(getByText("Array is dirty")).toBeInTheDocument();
+});
 
 test("Field array should allow you to set an initial value for the array of values", async () => {
   const { getByText } = render(
