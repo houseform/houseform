@@ -6,9 +6,8 @@ import React, {
   useContext,
   useImperativeHandle,
   useMemo,
-  useState,
+  useRef,
 } from "react";
-import { ZodError } from "zod";
 import {
   FieldArrayInstance,
   FieldInstance,
@@ -16,9 +15,8 @@ import {
   fillPath,
   FormContext,
   getPath,
-  getValidationError,
   stringToPath,
-  validate,
+  useFieldLike,
 } from "houseform";
 import { FieldArrayContext } from "../field-array/context";
 
@@ -31,18 +29,23 @@ export function FieldArrayItemComp<T>(
   props: FieldArrayItemRenderProps<T>,
   ref: ForwardedRef<FieldInstance<T>>
 ) {
-  const { name } = props;
-
-  const _normalizedDotName = useMemo(() => {
-    return stringToPath(name).join(".");
-  }, [name]);
+  const {
+    _normalizedDotName,
+    errors,
+    setErrors,
+    runFieldValidation,
+    isValid,
+    isTouched,
+    setIsTouched,
+    isDirty,
+    setIsDirty,
+  } = useFieldLike<T, FieldInstance<T>>({
+    props,
+    initialValue: "" as T,
+  });
 
   const array = useContext(FieldArrayContext) as FieldArrayInstance<T>;
   const formContext = useContext(FormContext);
-
-  const [errors, setErrors] = useState<string[]>([]);
-  const [isTouched, setIsTouched] = useState<boolean>(false);
-  const [isDirty, setIsDirty] = useState<boolean>(false);
 
   const fullAccessorPath = useMemo(() => {
     const arrayNamePathArr = stringToPath(array.props.name);
@@ -69,6 +72,10 @@ export function FieldArrayItemComp<T>(
     return getPath(array.value[itemIndex] as object, accessorPath.join("."));
   }, [accessorPath, array.value, itemIndex]);
 
+  const valueRef = useRef(value);
+
+  valueRef.current = value;
+
   const setValue = useCallback(
     (v: T | ((prevState: T) => T)) => {
       const isPrevAFunction = (t: any): t is (prevState: T) => T =>
@@ -94,15 +101,7 @@ export function FieldArrayItemComp<T>(
         );
       }, 0);
 
-      if (props.onChangeValidate) {
-        validate(newVal, null as any, props.onChangeValidate)
-          .then(() => {
-            setErrors([]);
-          })
-          .catch((error: string | ZodError) => {
-            setErrors(getValidationError(error as ZodError | string));
-          });
-      }
+      runFieldValidation("onChangeValidate", newVal);
     },
     [
       accessorPath,
@@ -110,13 +109,32 @@ export function FieldArrayItemComp<T>(
       formContext.onChangeListenerRefs,
       itemIndex,
       props.name,
-      props.onChangeValidate,
+      runFieldValidation,
+      setIsDirty,
+      setIsTouched,
     ]
   );
 
-  const isValid = useMemo(() => {
-    return errors.length === 0;
-  }, [errors]);
+  const onBlur = useCallback(() => {
+    setIsTouched(true);
+
+    /**
+     * Call `listenTo` field subscribers for other fields.
+     *
+     * Placed into a `setTimeout` so that the `setValue` call can finish before the `onChangeListenerRefs` are called.
+     */
+    setTimeout(() => {
+      formContext.onBlurListenerRefs.current[props.name]?.forEach((fn) => fn());
+    }, 0);
+
+    runFieldValidation("onBlurValidate", valueRef.current);
+  }, [
+    formContext.onBlurListenerRefs,
+    props.name,
+    runFieldValidation,
+    setIsTouched,
+    valueRef,
+  ]);
 
   const fieldArrayInstance = useMemo(() => {
     return {
@@ -124,7 +142,7 @@ export function FieldArrayItemComp<T>(
       errors,
       value,
       _normalizedDotName,
-      onBlur: () => {},
+      onBlur,
       props,
       isTouched,
       isValid,
@@ -138,6 +156,7 @@ export function FieldArrayItemComp<T>(
     errors,
     value,
     _normalizedDotName,
+    onBlur,
     props,
     isTouched,
     isValid,
