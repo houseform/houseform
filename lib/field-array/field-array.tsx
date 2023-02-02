@@ -52,53 +52,71 @@ function FieldArrayComp<T>(
   }, []);
 
   /* Helpers */
-  const add = useCallback((val: T) => {
-    setValues((v) => [...v, val]);
-  }, []);
+  const add = useCallback(
+    (val: T) => {
+      setValues((v) => [...v, val]);
+    },
+    [setValues]
+  );
 
-  const remove = useCallback((index: number) => {
-    setValues((v) => {
-      const newValue = [...v];
-      newValue.splice(index, 1);
-      return newValue;
-    });
-  }, []);
+  const remove = useCallback(
+    (index: number) => {
+      setValues((v) => {
+        const newValue = [...v];
+        newValue.splice(index, 1);
+        return newValue;
+      });
+    },
+    [setValues]
+  );
 
-  const insert = useCallback((index: number, val: T) => {
-    setValues((v) => {
-      const newValue = [...v];
-      newValue.splice(index, 0, val);
-      return newValue;
-    });
-  }, []);
+  const insert = useCallback(
+    (index: number, val: T) => {
+      setValues((v) => {
+        const newValue = [...v];
+        newValue.splice(index, 0, val);
+        return newValue;
+      });
+    },
+    [setValues]
+  );
 
-  const move = useCallback((from: number, to: number) => {
-    setValues((v) => {
-      const newValue = [...v];
-      const value = newValue[from];
-      newValue.splice(from, 1);
-      newValue.splice(to, 0, value);
-      return newValue;
-    });
-  }, []);
+  const move = useCallback(
+    (from: number, to: number) => {
+      setValues((v) => {
+        const newValue = [...v];
+        const value = newValue[from];
+        newValue.splice(from, 1);
+        newValue.splice(to, 0, value);
+        return newValue;
+      });
+    },
+    [setValues]
+  );
 
-  const replace = useCallback((index: number, val: T) => {
-    setValues((v) => {
-      const newValue = [...v];
-      newValue[index] = val;
-      return newValue;
-    });
-  }, []);
+  const replace = useCallback(
+    (index: number, val: T) => {
+      setValues((v) => {
+        const newValue = [...v];
+        newValue[index] = val;
+        return newValue;
+      });
+    },
+    [setValues]
+  );
 
-  const swap = useCallback((indexA: number, indexB: number) => {
-    setValues((v) => {
-      const newValue = [...v];
-      const a = newValue[indexA];
-      newValue[indexA] = newValue[indexB];
-      newValue[indexB] = a;
-      return newValue;
-    });
-  }, []);
+  const swap = useCallback(
+    (indexA: number, indexB: number) => {
+      setValues((v) => {
+        const newValue = [...v];
+        const a = newValue[indexA];
+        newValue[indexA] = newValue[indexB];
+        newValue[indexB] = a;
+        return newValue;
+      });
+    },
+    [setValues]
+  );
 
   const fieldArrayInstance = useMemo(() => {
     return {

@@ -103,7 +103,7 @@ export const useFieldLike = <
       _setValue((prev) => {
         const isPrevAFunction = (
           t: any
-        ): t is (prevState: typeof value) => typeof value => t === "function";
+        ): t is (prevState: typeof value) => typeof value => typeof t === "function";
         const newVal = isPrevAFunction(val) ? val(prev) : (val as typeof value);
         setIsDirty(true);
         setIsTouched(true);
