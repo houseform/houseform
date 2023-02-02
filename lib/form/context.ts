@@ -1,8 +1,11 @@
 import { createContext, MutableRefObject } from "react";
 import type { FieldInstance } from "../field/types";
+import { FieldArrayInstance } from "../field-array";
 
 export interface FormContext<T = any> {
-  formFieldsRef: MutableRefObject<FieldInstance<T>[]>;
+  formFieldsRef: MutableRefObject<
+    Array<FieldInstance<T> | FieldArrayInstance<T>>
+  >;
   recomputeErrors: () => void;
   recomputeIsDirty: () => void;
   recomputeIsTouched: () => void;

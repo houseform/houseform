@@ -3,13 +3,18 @@ import React, {
   forwardRef,
   memo,
   useCallback,
+  useContext,
+  useImperativeHandle,
+  useLayoutEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
-import { FieldInstanceBaseProps } from "../field/types";
+import { FieldInstance, FieldInstanceBaseProps } from "../field/types";
 import { FieldArrayContext } from "./context";
 import { FieldArrayInstance } from "./types";
 import { stringToPath } from "../utils";
+import { FormContext } from "../form";
 
 export interface FieldArrayRenderProps<T = any>
   extends FieldInstanceBaseProps<T> {
@@ -92,7 +97,7 @@ function FieldArrayComp<T>(
     });
   }, []);
 
-  const contextValue = useMemo(() => {
+  const fieldArrayInstance = useMemo(() => {
     return {
       value,
       add,
@@ -126,9 +131,30 @@ function FieldArrayComp<T>(
     isTouched,
   ]);
 
+  const mutableRef = useRef<FieldArrayInstance<T>>(fieldArrayInstance);
+
+  const formContext = useContext(FormContext);
+
+  const { formFieldsRef } = formContext;
+
+  /**
+   * Add mutable ref to formFieldsRef
+   */
+  useLayoutEffect(() => {
+    mutableRef.current.props = props;
+    const newMutable = mutableRef.current;
+    formFieldsRef.current.push(newMutable);
+
+    return () => {
+      formFieldsRef.current.slice(formFieldsRef.current.indexOf(newMutable), 1);
+    };
+  }, [props]);
+
+  useImperativeHandle(ref, () => fieldArrayInstance, [fieldArrayInstance]);
+
   return (
-    <FieldArrayContext.Provider value={contextValue}>
-      {props.children(contextValue)}
+    <FieldArrayContext.Provider value={fieldArrayInstance}>
+      {props.children(fieldArrayInstance)}
     </FieldArrayContext.Provider>
   );
 }
