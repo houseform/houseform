@@ -1,6 +1,7 @@
 import React, { useContext, useMemo, useState } from "react";
 import { ZodError, ZodType } from "zod";
 import {
+  FieldArrayInstance,
   fillPath,
   getPath,
   getValidationError,
@@ -24,12 +25,12 @@ export function FieldArrayItem<T>({
   name: string;
   onChangeValidate?: ZodType;
 }) {
-  const array = useContext(FieldArrayContext) as FieldArrayContext<T>;
+  const array = useContext(FieldArrayContext) as FieldArrayInstance<T>;
 
   const [errors, setErrors] = useState<string[]>([]);
 
   const fullAccessorPath = useMemo(() => {
-    const arrayNamePathArr = stringToPath(array.name);
+    const arrayNamePathArr = stringToPath(array.props.name);
     const fieldItemPathArr = stringToPath(name);
     for (const i of arrayNamePathArr) {
       if (i !== fieldItemPathArr.shift()) {
@@ -37,7 +38,7 @@ export function FieldArrayItem<T>({
       }
     }
     return fieldItemPathArr;
-  }, [array.name, name]);
+  }, [array.props.name, name]);
 
   const itemIndex = useMemo(() => {
     return parseInt(fullAccessorPath[0]);
