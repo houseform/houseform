@@ -9,9 +9,11 @@ import {
   useState,
 } from "react";
 import { ZodError } from "zod";
-import { FormContext, initialContext } from "./context";
-import { FieldInstance } from "./types";
-import {fillPath, getValidationError, stringToPath, validate} from "./utils";
+import { FormContext } from "./context";
+import { fillPath, getValidationError, stringToPath, validate } from "../utils";
+import { useFormlike } from "./use-formlike";
+import { FieldInstance } from "../field";
+import { FieldArrayInstance } from "../field-array";
 
 export interface FormState {
   submit: () => Promise<boolean>;
@@ -28,56 +30,30 @@ export interface FormProps<T> {
   children: (props: FormState) => JSX.Element;
 }
 
-function FormComp<T>(
-  props: FormProps<T>,
-  ref: ForwardedRef<FormContext<T>>
-) {
-  const formFieldsRef = useRef<FieldInstance[]>([]);
-
-  const getErrors = useCallback(() => {
-    return formFieldsRef.current.reduce((acc, field) => {
-      return acc.concat(field.errors);
-    }, [] as string[]);
-  }, [formFieldsRef]);
-
-  const [errors, setErrors] = useState(getErrors());
-
-  const isValid = useMemo(() => {
-    return errors.length === 0;
-  }, [errors]);
+function FormComp<T>(props: FormProps<T>, ref: ForwardedRef<FormContext<T>>) {
+  const {
+    formFieldsRef,
+    errors,
+    isValid,
+    isDirty,
+    isTouched,
+    recomputeErrors,
+    recomputeIsDirty,
+    recomputeIsTouched,
+  } = useFormlike<FieldInstance | FieldArrayInstance>();
 
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const getFieldBoolean = useCallback(
-    (booleanFieldName: keyof FieldInstance) => {
-      return formFieldsRef.current.some((field) => {
-        return !!field[booleanFieldName];
-      });
-    },
-    [formFieldsRef]
-  );
-
-  const [isDirty, setIsDirty] = useState(getFieldBoolean("isDirty"));
-  const [isTouched, setIsTouched] = useState(getFieldBoolean("isTouched"));
-
-  const recomputeErrors = useCallback(() => {
-    setErrors(getErrors());
-  }, [getErrors]);
-
-  const recomputeIsDirty = useCallback(() => {
-    setIsDirty(getFieldBoolean("isDirty"));
-  }, [getFieldBoolean]);
-
-  const recomputeIsTouched = useCallback(() => {
-    setIsTouched(getFieldBoolean("isTouched"));
-  }, [getFieldBoolean]);
-
   const getFieldValue = useCallback(
     (name: string) => {
-      const found = formFieldsRef.current.find((field) => field.props.name === name);
+      const found = formFieldsRef.current.find(
+        (field) => field.props.name === name
+      );
       if (found) return found;
       const normalizedName = stringToPath(name).join(".");
-      return formFieldsRef.current.find((field) => field._normalizedDotName === normalizedName);
+      return formFieldsRef.current.find(
+        (field) => field._normalizedDotName === normalizedName
+      );
     },
     [formFieldsRef]
   );
@@ -117,9 +93,13 @@ function FormComp<T>(
         const runValidationType = async (
           type: "onChangeValidate" | "onSubmitValidate" | "onBlurValidate"
         ) => {
-          if (!formField.props[type]) return true;
+          if (!formField.props[type as "onChangeValidate"]) return true;
           try {
-            await validate(formField.value, baseValue, formField.props[type]!);
+            await validate(
+              formField.value,
+              baseValue,
+              formField.props[type as "onChangeValidate"]!
+            );
             return true;
           } catch (error) {
             formField.setErrors(getValidationError(error as ZodError | string));
@@ -142,7 +122,7 @@ function FormComp<T>(
 
     props.onSubmit?.(values, baseValue);
     return true;
-  }, [formFieldsRef, props.onSubmit]);
+  }, [baseValue, formFieldsRef, props]);
 
   const value = useMemo(() => {
     return { ...baseValue, submit };
@@ -160,15 +140,7 @@ function FormComp<T>(
       isDirty,
       isTouched,
     });
-  }, [
-    props.children,
-    submit,
-    errors,
-    isSubmitted,
-    isValid,
-    isDirty,
-    isTouched,
-  ]);
+  }, [props, submit, errors, isSubmitted, isValid, isDirty, isTouched]);
 
   return <FormContext.Provider value={value}>{children}</FormContext.Provider>;
 }

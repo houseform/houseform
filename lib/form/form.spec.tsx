@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import { useRef, useState } from "react";
-import { Form, Field } from "./index";
+import { Field, FieldArray, Form } from "houseform";
 import { render, waitFor } from "@testing-library/react";
 import { z } from "zod";
 import { FormContext } from "./context";
@@ -42,6 +42,44 @@ test("Form should submit with basic values in tact", async () => {
       <div>
         <p>
           {"email":"test@example.com"}
+        </p>
+      </div>
+    `)
+  );
+});
+
+test("Form should submit with simple array values in tact", async () => {
+  const SubmitValues = () => {
+    const [values, setValues] = useState<string | null>(null);
+
+    if (values) return <p>{values}</p>;
+
+    return (
+      <Form onSubmit={(values) => setValues(JSON.stringify(values))}>
+        {({ submit }) => (
+          <>
+            <FieldArray<string>
+              name={"email"}
+              initialValue={["test@example.com"]}
+            >
+              {() => <></>}
+            </FieldArray>
+            <button onClick={submit}>Submit</button>
+          </>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByText, container } = render(<SubmitValues />);
+
+  await user.click(getByText("Submit"));
+
+  await waitFor(() =>
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        <p>
+          {"email":["test@example.com"]}
         </p>
       </div>
     `)

@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import { fireEvent, render, waitFor } from "@testing-library/react";
-import { Field, FieldInstance, Form } from "./index";
+import { Field, FieldInstance, Form } from "houseform";
 
 import { z } from "zod";
 import { useRef, useState } from "react";

@@ -16,6 +16,7 @@ specifiers:
   eslint-config-prettier: ^8.5.0
   eslint-config-react-app: ^7.0.1
   eslint-plugin-prettier: ^4.2.1
+  eslint-plugin-react-hooks: ^4.6.0
   jsdom: ^21.1.0
   prettier: ^2.8.3
   react: ^18.2.0
@@ -45,6 +46,7 @@ devDependencies:
   eslint-config-prettier: 8.6.0_eslint@8.33.0
   eslint-config-react-app: 7.0.1_zkdaqh7it7uc4cvz2haft7rc6u
   eslint-plugin-prettier: 4.2.1_jqplj6qf3uqpxpu4gdyhwwasnq
+  eslint-plugin-react-hooks: 4.6.0_eslint@8.33.0
   jsdom: 21.1.0
   prettier: 2.8.3
   react: 18.2.0

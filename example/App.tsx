@@ -9,10 +9,12 @@ export default function App() {
       }}
     >
       {({ isValid, submit }) => (
-        <form onSubmit={e => {
-          e.preventDefault();
-          submit();
-        }}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            submit();
+          }}
+        >
           <Field
             name="email"
             onBlurValidate={z.string().email("This must be an email")}
@@ -78,9 +80,8 @@ export default function App() {
                     placeholder={"Password Confirmation"}
                     type="password"
                   />
-                  {isTouched && errors.map((error) => (
-                    <p key={error}>{error}</p>
-                  ))}
+                  {isTouched &&
+                    errors.map((error) => <p key={error}>{error}</p>)}
                 </div>
               );
             }}
