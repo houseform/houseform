@@ -14,6 +14,7 @@ import { FieldArrayContext } from "./context";
 import { FieldArrayInstance } from "./types";
 import { FormContext } from "../form";
 import { useFieldLike } from "../field/use-field-like";
+import { useFieldLikeSync } from "../field/use-field-like-sync";
 
 export interface FieldArrayRenderProps<T = any>
   extends FieldInstanceBaseProps<T> {
@@ -154,22 +155,15 @@ function FieldArrayComp<T>(
 
   const mutableRef = useRef<FieldArrayInstance<T>>(fieldArrayInstance);
 
-  const formContext = useContext(FormContext);
-
-  const { formFieldsRef } = formContext;
-
-  /**
-   * Add mutable ref to formFieldsRef
-   */
-  useLayoutEffect(() => {
-    mutableRef.current.props = props;
-    const newMutable = mutableRef.current;
-    formFieldsRef.current.push(newMutable);
-
-    return () => {
-      formFieldsRef.current.slice(formFieldsRef.current.indexOf(newMutable), 1);
-    };
-  }, [props]);
+  useFieldLikeSync<T, FieldArrayInstance<T>>({
+    value,
+    mutableRef,
+    isValid,
+    isDirty,
+    isTouched,
+    props,
+    errors,
+  });
 
   useImperativeHandle(ref, () => fieldArrayInstance, [fieldArrayInstance]);
 
