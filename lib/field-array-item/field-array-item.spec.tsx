@@ -354,7 +354,7 @@ test("field array item should work with listenTo as the listener", async () => {
         <div>
           <Field<string> name={"test"} initialValue={"T"}>
             {({ setValue }) => (
-              <button onClick={() => setValue(2)}>Set value</button>
+              <button onClick={() => setValue("Tes")}>Set value</button>
             )}
           </Field>
           <FieldArray<{ thing: number }>
