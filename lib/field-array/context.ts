@@ -9,6 +9,7 @@ export const initialFieldArrayContext = {
     name: "",
   },
   errors: [],
+  setErrors: () => {},
   isValid: false,
   isDirty: false,
   isTouched: false,

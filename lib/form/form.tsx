@@ -13,6 +13,7 @@ import { FormContext } from "./context";
 import { fillPath, getValidationError, stringToPath, validate } from "../utils";
 import { useFormlike } from "./use-formlike";
 import { FieldInstance } from "../field";
+import { FieldArrayInstance } from "../field-array";
 
 export interface FormState {
   submit: () => Promise<boolean>;
@@ -39,7 +40,7 @@ function FormComp<T>(props: FormProps<T>, ref: ForwardedRef<FormContext<T>>) {
     recomputeErrors,
     recomputeIsDirty,
     recomputeIsTouched,
-  } = useFormlike<FieldInstance>();
+  } = useFormlike<FieldInstance | FieldArrayInstance>();
 
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -92,9 +93,13 @@ function FormComp<T>(props: FormProps<T>, ref: ForwardedRef<FormContext<T>>) {
         const runValidationType = async (
           type: "onChangeValidate" | "onSubmitValidate" | "onBlurValidate"
         ) => {
-          if (!formField.props[type]) return true;
+          if (!formField.props[type as "onChangeValidate"]) return true;
           try {
-            await validate(formField.value, baseValue, formField.props[type]!);
+            await validate(
+              formField.value,
+              baseValue,
+              formField.props[type as "onChangeValidate"]!
+            );
             return true;
           } catch (error) {
             formField.setErrors(getValidationError(error as ZodError | string));
@@ -117,7 +122,7 @@ function FormComp<T>(props: FormProps<T>, ref: ForwardedRef<FormContext<T>>) {
 
     props.onSubmit?.(values, baseValue);
     return true;
-  }, [formFieldsRef, props.onSubmit]);
+  }, [baseValue, formFieldsRef, props]);
 
   const value = useMemo(() => {
     return { ...baseValue, submit };

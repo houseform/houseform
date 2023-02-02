@@ -14,6 +14,7 @@ export interface FieldArrayInstance<T = any> extends FieldArrayHelpers<T> {
   props: FieldInstanceBaseProps<T>;
   value: T[];
   setValue: (index: number, value: T) => void;
+  setErrors: (errors: string[]) => void;
   errors: string[];
   isValid: boolean;
   isDirty: boolean;

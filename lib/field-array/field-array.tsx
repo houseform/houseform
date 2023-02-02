@@ -26,6 +26,7 @@ function FieldArrayComp<T>(
   const {
     value,
     errors,
+    setErrors,
     setValue: setValues,
     isTouched,
     isDirty,
@@ -127,6 +128,7 @@ function FieldArrayComp<T>(
       props,
       _normalizedDotName,
       errors,
+      setErrors,
       isValid,
       isDirty,
       isTouched,
@@ -145,6 +147,7 @@ function FieldArrayComp<T>(
     errors,
     isValid,
     isDirty,
+    setErrors,
     isTouched,
   ]);
 

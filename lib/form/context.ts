@@ -11,7 +11,9 @@ export interface FormContext<T = any> {
   recomputeIsTouched: () => void;
   errors: string[];
   submit: () => Promise<boolean>;
-  getFieldValue: (val: string) => FieldInstance<T> | undefined;
+  getFieldValue: (
+    val: string
+  ) => FieldInstance<T> | FieldArrayInstance<T> | undefined;
   onChangeListenerRefs: MutableRefObject<Record<string, (() => void)[]>>;
   onBlurListenerRefs: MutableRefObject<Record<string, (() => void)[]>>;
 }

@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
 import { render } from "@testing-library/react";
 import { FieldArray, Form } from "houseform";
+import { z } from "zod";
 
 test("field array should track `isDirty` for the array of values", async () => {
   const { getByText, queryByText } = render(
@@ -189,7 +190,77 @@ test("Field array should have a functioning 'replace' helper", async () => {
   expect(getByText("Values: 1, 0, 3")).toBeInTheDocument();
 });
 
-test.todo("onSubmit validation should run");
+test("field array should run onChange validation", async () => {
+  const { getByText, queryByText } = render(
+    <Form>
+      {() => (
+        <FieldArray<number>
+          name={"people"}
+          initialValue={[1]}
+          onChangeValidate={z
+            .array(z.any())
+            .min(3, "Should have at least three items")}
+        >
+          {({ add, errors }) => (
+            <>
+              {errors.map((error) => (
+                <p key={error}>{error}</p>
+              ))}
+              <button onClick={() => add(2)}>Add</button>
+            </>
+          )}
+        </FieldArray>
+      )}
+    </Form>
+  );
+
+  expect(
+    queryByText("Should have at least three items")
+  ).not.toBeInTheDocument();
+
+  await user.click(getByText("Add"));
+
+  expect(getByText("Should have at least three items")).toBeInTheDocument();
+
+  await user.click(getByText("Add"));
+
+  expect(
+    queryByText("Should have at least three items")
+  ).not.toBeInTheDocument();
+});
+
+test("field array should run onSubmit validation", async () => {
+  const { getByText, queryByText } = render(
+    <Form>
+      {({ submit }) => (
+        <FieldArray<number>
+          name={"people"}
+          initialValue={[1]}
+          onSubmitValidate={z
+            .array(z.any())
+            .min(3, "Should have at least three items")}
+        >
+          {({ errors }) => (
+            <>
+              {errors.map((error) => (
+                <p key={error}>{error}</p>
+              ))}
+              <button onClick={() => submit()}>Submit</button>
+            </>
+          )}
+        </FieldArray>
+      )}
+    </Form>
+  );
+
+  expect(
+    queryByText("Should have at least three items")
+  ).not.toBeInTheDocument();
+
+  await user.click(getByText("Submit"));
+
+  expect(getByText("Should have at least three items")).toBeInTheDocument();
+});
 
 test.todo("Should work with listenTo");
 
