@@ -255,6 +255,46 @@ test("field array item should validate onBlur", async () => {
   expect(getByText("Must be at least 3")).toBeInTheDocument();
 });
 
-test.todo("field array item should validate onSubmit");
+test("field array item should validate onSubmit", async () => {
+  const { queryByText, getByText } = render(
+    <Form>
+      {({ submit }) => (
+        <div>
+          <FieldArray<{ thing: number }>
+            initialValue={[{ thing: 1 }]}
+            name={"people"}
+          >
+            {({ value }) => (
+              <>
+                {value.map((person, i) => (
+                  <FieldArrayItem<number>
+                    key={`people[${i}].thing`}
+                    name={`people[${i}].thing`}
+                    onSubmitValidate={z.number().min(3, "Must be at least 3")}
+                  >
+                    {({ errors }) => (
+                      <div>
+                        {errors.map((error) => (
+                          <p key={error}>{error}</p>
+                        ))}
+                      </div>
+                    )}
+                  </FieldArrayItem>
+                ))}
+              </>
+            )}
+          </FieldArray>
+          <button onClick={submit}>Submit</button>
+        </div>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Must be at least 3")).not.toBeInTheDocument();
+
+  await user.click(getByText("Submit"));
+
+  expect(getByText("Must be at least 3")).toBeInTheDocument();
+});
 
 test.todo("Should work with listenTo");
