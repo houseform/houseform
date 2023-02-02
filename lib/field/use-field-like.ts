@@ -48,8 +48,6 @@ export const useFieldLike = <
 
   const formContext = useContext(FormContext);
 
-  const { recomputeErrors, recomputeIsTouched, recomputeIsDirty } = formContext;
-
   const [value, _setValue] = useState(
     (props.initialValue ?? initialValue) as UseFieldLikeProps<
       T,
@@ -181,21 +179,6 @@ export const useFieldLike = <
 
     return () => fns.forEach((fn) => fn());
   }, [formContext, props.listenTo, runFieldValidation]);
-
-  /**
-   * Recompute form errors when field errors change
-   */
-  useLayoutEffect(() => {
-    recomputeErrors();
-  }, [errors, recomputeErrors]);
-
-  useLayoutEffect(() => {
-    recomputeIsTouched();
-  }, [isTouched, recomputeErrors]);
-
-  useLayoutEffect(() => {
-    recomputeIsDirty();
-  }, [isDirty, recomputeErrors]);
 
   return {
     value,

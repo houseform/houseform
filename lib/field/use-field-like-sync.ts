@@ -28,7 +28,12 @@ export const useFieldLikeSync = <
 }: UseFieldLikeSyncProps<T, TT>) => {
   const formContext = useContext(FormContext);
 
-  const { formFieldsRef } = formContext;
+  const {
+    formFieldsRef,
+    recomputeErrors,
+    recomputeIsTouched,
+    recomputeIsDirty,
+  } = formContext;
 
   /**
    * Add mutable ref to formFieldsRef
@@ -65,4 +70,19 @@ export const useFieldLikeSync = <
   useLayoutEffect(() => {
     mutableRef.current.isTouched = isTouched;
   }, [isTouched]);
+
+  /**
+   * Recompute form errors when field errors change
+   */
+  useLayoutEffect(() => {
+    recomputeErrors();
+  }, [errors, recomputeErrors]);
+
+  useLayoutEffect(() => {
+    recomputeIsTouched();
+  }, [isTouched, recomputeErrors]);
+
+  useLayoutEffect(() => {
+    recomputeIsDirty();
+  }, [isDirty, recomputeErrors]);
 };
