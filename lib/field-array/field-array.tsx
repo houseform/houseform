@@ -28,16 +28,11 @@ function FieldArrayComp<T>(
 ) {
   const {
     value,
-    setErrors,
     errors,
-    setIsDirty,
-    setIsTouched,
     setValue: setValues,
     isTouched,
     isDirty,
     isValid,
-    runFieldValidation,
-    valueRef,
     _normalizedDotName,
   } = useFieldLike<T, FieldArrayInstance<T>>({
     props,
