@@ -22,11 +22,11 @@ The `Form` component takes the following props:
 | Method     | Parameters                                                   | Expected Return | Description                                                  |
 | ---------- | ------------------------------------------------------------ | --------------- | ------------------------------------------------------------ |
 | `onSubmit` | `Record<string, any>`, [`FormContext`](#interface-formcontext) |                 | The function to call when the form is submitted. The first argument is the values of a form submitted. It might look something like:<br />`{email: "test@example.com", password: "Hunter2!", confirmpassword: "Hunter2!"}` |
-| `children` | [`FormState`](#interface-formstate)                          | `JSX.Element`   | This is the component child function to pass, which accepts the arguments for FormState. |
+| `children` | [`FormInstance`](#interface-forminstance)                          | `JSX.Element`   | This is the component child function to pass, which accepts the arguments for FormInstance. |
 
-### _Interface_ `FormState`
+### _Interface_ `FormInstance`
 
-These are the properties that are passed to the `<Form>` component's child function.
+These are the properties that are passed to the `<Form>` component's child function, the `FormContext`, and the second arguments of the `onSubmit` function as well as all [`<Field>` `onXValidate` property functions](#field):
 
 
 | Property         | Type                     | Description                                                  |
@@ -37,16 +37,10 @@ These are the properties that are passed to the `<Form>` component's child funct
 | `isSubmitted`    | `boolean`                | A boolean to check if the form has had an attempted submission or not. |
 | `setIsSubmitted` | `(val: boolean) => void` | A method to reset the `isSubmitted` field                    |
 | `isDirty`        | `boolean`                | A boolean to check if any of the form fields are dirty or not. |
+| `setIsDirty`     | `(val: boolean) => void` | A method to reset the `isDirty` field                        |
 | `isTouched`      | `boolean`                | A boolean to check if any of the form fields have been touched or not. |
-
-### _Interface_ `FormContext`
-
-This is the second argument passed to the `<Form>` `onSubmit` function and the second argument to all [`<Field>` `onXValidate` property functions](#field):
-
-| Property        | Type                                  | Description                                                                                                   |
-| --------------- |---------------------------------------|---------------------------------------------------------------------------------------------------------------|
-| `errors`        | `string[]`                            | A list of all errors present on the form. When an empty array, the form is valid.                             |
-| `getFieldValue` | `(fieldName: sting) => FieldInstance` | Takes the field name and returns a [`FieldProp`](#interface-fieldinstance) representation of the named field. |
+| `setIsTouched`   | `(val: boolean) => void` | A method to reset the `isTouched` field                      |
+| `getFieldValue` | `(fieldName: sting) => FieldInstance` | Takes the field name and returns a [`FieldInstance`](#interface-fieldinstance) or [`FieldArrayInstance`](#interface-fieldarrayinstance) representation of the named field. |
 
 ## Field
 
@@ -173,4 +167,3 @@ An `ArrayFieldItem` is a helper used to validate sub-items in a `FieldArray`. An
 | `onBlurValidate`   | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the user has blurred the field. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error. |
 | `onSubmitValidate` | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the user has submitted the form. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error. |
 
-### 
