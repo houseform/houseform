@@ -1,0 +1,1 @@
+import{_ as s,c as a,o as n,a as l}from"./app.e429eefa.js";const i=JSON.parse('{"title":"Usage with React Native","description":"","frontmatter":{},"headers":[],"relativePath":"guides/react-native.md"}'),p={name:"guides/react-native.md"},o=l("",3),t=[o];function e(c,r,D,F,y,C){return n(),a("div",null,t)}const u=s(p,[["render",e]]);export{i as __pageData,u as default};
