@@ -17,6 +17,8 @@ export const initialContext = {
   remove: () => {},
   insert: () => {},
   move: () => {},
+  swap: () => {},
+  replace: () => {},
 } as FieldArrayInstance;
 /* c8 ignore stop */
 
