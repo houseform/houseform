@@ -1,42 +1,109 @@
+import { Field, Form } from "houseform";
 import { z } from "zod";
-import { FieldArray, FieldArrayItem } from "houseform";
-
-interface DemoData {
-  person: {
-    age: number;
-  };
-}
 
 export default function App() {
   return (
-    <FieldArray<DemoData> name={"people"}>
-      {({ value, add }) => (
-        <>
-          {value.map((_, index) => {
-            return (
-              <FieldArrayItem<number>
-                key={index}
-                name={`people.${index}.person.age`}
-                onChangeValidate={z.number().max(18, "Must be more than 18")}
-              >
-                {({ setValue, errors, value }) => (
-                  <div>
-                    {index % 2 === 0 && <p>Even row</p>}
-                    <p>{value}</p>
-                    <button onClick={() => setValue(value + 1)}>Add one</button>
-                    {errors.map((error) => (
-                      <p key={error}>{error}</p>
-                    ))}
-                  </div>
-                )}
-              </FieldArrayItem>
-            );
-          })}
-          <button onClick={() => add({ person: { age: 0 } })}>
-            Add another number
+    <Form
+      onSubmit={(values) => {
+        alert("Form was submitted with: " + JSON.stringify(values));
+      }}
+    >
+      {({ isValid, submit }) => (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            submit();
+          }}
+        >
+          <Field
+            name="email"
+            onBlurValidate={z.string().email("This must be an email")}
+            onSubmitValidate={isEmailUnique}
+          >
+            {({ value, setValue, onBlur, errors }) => {
+              return (
+                <div>
+                  <input
+                    value={value}
+                    onBlur={onBlur}
+                    onChange={(e) => setValue(e.target.value)}
+                    placeholder={"Email"}
+                  />
+                  {errors.map((error) => (
+                    <p key={error}>{error}</p>
+                  ))}
+                </div>
+              );
+            }}
+          </Field>
+          <Field<string>
+            name="password"
+            onChangeValidate={z
+              .string()
+              .min(8, "Must be at least 8 characters long")}
+          >
+            {({ value, setValue, onBlur, errors }) => {
+              return (
+                <div>
+                  <input
+                    value={value}
+                    onBlur={onBlur}
+                    onChange={(e) => setValue(e.target.value)}
+                    placeholder={"Password"}
+                    type="password"
+                  />
+                  {errors.map((error) => (
+                    <p key={error}>{error}</p>
+                  ))}
+                </div>
+              );
+            }}
+          </Field>
+          <Field<string>
+            name="confirmpassword"
+            listenTo={["password"]}
+            onChangeValidate={(val, form) => {
+              if (val === form.getFieldValue("password")!.value) {
+                return Promise.resolve(true);
+              } else {
+                return Promise.reject("Passwords must match");
+              }
+            }}
+          >
+            {({ value, setValue, onBlur, errors, isTouched }) => {
+              return (
+                <div>
+                  <input
+                    value={value}
+                    onBlur={onBlur}
+                    onChange={(e) => setValue(e.target.value)}
+                    placeholder={"Password Confirmation"}
+                    type="password"
+                  />
+                  {isTouched &&
+                    errors.map((error) => <p key={error}>{error}</p>)}
+                </div>
+              );
+            }}
+          </Field>
+          <button disabled={!isValid} type="submit">
+            Submit
           </button>
-        </>
+        </form>
       )}
-    </FieldArray>
+    </Form>
   );
+}
+
+function isEmailUnique(val: string) {
+  return new Promise<boolean>((resolve, reject) => {
+    setTimeout(() => {
+      const isUnique = !val.startsWith("crutchcorn");
+      if (isUnique) {
+        resolve(true);
+      } else {
+        reject("That email is already taken");
+      }
+    }, 20);
+  });
 }
