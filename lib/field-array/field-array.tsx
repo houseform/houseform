@@ -37,6 +37,8 @@ function FieldArrayComp<T>(
     _normalizedDotName,
     runFieldValidation,
     valueRef,
+    setIsDirty,
+    setIsTouched,
   } = useFieldLike<T, FieldArrayInstance<T>>({
     props,
     initialValue: [] as T[],
@@ -141,7 +143,9 @@ function FieldArrayComp<T>(
       errors,
       setErrors,
       isValid,
+      setIsDirty,
       isDirty,
+      setIsTouched,
       isTouched,
     };
   }, [
@@ -156,9 +160,11 @@ function FieldArrayComp<T>(
     props,
     _normalizedDotName,
     errors,
-    isValid,
-    isDirty,
     setErrors,
+    isValid,
+    setIsDirty,
+    isDirty,
+    setIsTouched,
     isTouched,
   ]);
 

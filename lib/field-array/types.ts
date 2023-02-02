@@ -17,6 +17,8 @@ export interface FieldArrayInstance<T = any> extends FieldArrayHelpers<T> {
   setErrors: (errors: string[]) => void;
   errors: string[];
   isValid: boolean;
+  setIsTouched: (val: boolean) => void;
+  setIsDirty: (val: boolean) => void;
   isDirty: boolean;
   isTouched: boolean;
 }
