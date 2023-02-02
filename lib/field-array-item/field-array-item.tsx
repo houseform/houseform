@@ -8,19 +8,17 @@ import React, {
   useMemo,
   useRef,
 } from "react";
+import { FieldArrayContext } from "../field-array/context";
 import {
-  FieldArrayInstance,
   FieldInstance,
   FieldInstanceProps,
-  fillPath,
-  FormContext,
-  getPath,
-  stringToPath,
   useFieldLike,
   useFieldLikeSync,
   useListenToListenToArray,
-} from "houseform";
-import { FieldArrayContext } from "../field-array/context";
+} from "../field";
+import { fillPath, getPath, stringToPath } from "../utils";
+import { FormContext } from "../form";
+import { FieldArrayInstance } from "../field-array";
 
 export interface FieldArrayItemRenderProps<T = any>
   extends FieldInstanceProps<T> {

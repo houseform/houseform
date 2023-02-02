@@ -9,33 +9,27 @@ import {
   useState,
 } from "react";
 import { ZodError } from "zod";
-import { FormContext } from "./context";
 import { fillPath, getValidationError, stringToPath, validate } from "../utils";
 import { useFormlike } from "./use-formlike";
 import { FieldInstance } from "../field";
 import { FieldArrayInstance } from "../field-array";
-
-export interface FormState {
-  submit: () => Promise<boolean>;
-  errors: string[];
-  isValid: boolean;
-  isDirty: boolean;
-  isTouched: boolean;
-  isSubmitted: boolean;
-  setIsSubmitted: (val: boolean) => void;
-}
+import { FormInstance } from "./types";
+import { FormContext } from "./context";
 
 export interface FormProps<T> {
-  onSubmit?: (values: Record<string, T>, form: FormContext<T>) => void;
-  children: (props: FormState) => JSX.Element;
+  onSubmit?: (values: Record<string, T>, form: FormInstance<T>) => void;
+  children: (props: FormInstance<T>) => JSX.Element;
 }
 
-function FormComp<T>(props: FormProps<T>, ref: ForwardedRef<FormContext<T>>) {
+function FormComp<T>(props: FormProps<T>, ref: ForwardedRef<FormInstance<T>>) {
   const {
     formFieldsRef,
     errors,
     isValid,
     isDirty,
+    setErrors,
+    setIsDirty,
+    setIsTouched,
     isTouched,
     recomputeErrors,
     recomputeIsDirty,
@@ -71,6 +65,14 @@ function FormComp<T>(props: FormProps<T>, ref: ForwardedRef<FormContext<T>>) {
       onBlurListenerRefs,
       recomputeIsDirty,
       recomputeIsTouched,
+      isTouched,
+      isDirty,
+      isSubmitted,
+      isValid,
+      setIsSubmitted,
+      setErrors,
+      setIsDirty,
+      setIsTouched,
       submit: () => Promise.resolve(true),
     };
   }, [
@@ -78,10 +80,15 @@ function FormComp<T>(props: FormProps<T>, ref: ForwardedRef<FormContext<T>>) {
     errors,
     recomputeErrors,
     getFieldValue,
-    onChangeListenerRefs,
-    onBlurListenerRefs,
     recomputeIsDirty,
     recomputeIsTouched,
+    isTouched,
+    isDirty,
+    isSubmitted,
+    isValid,
+    setErrors,
+    setIsDirty,
+    setIsTouched,
   ]);
 
   const submit = useCallback(async () => {
@@ -130,21 +137,11 @@ function FormComp<T>(props: FormProps<T>, ref: ForwardedRef<FormContext<T>>) {
 
   useImperativeHandle(ref, () => value, [value]);
 
-  const children = useMemo(() => {
-    return props.children({
-      submit,
-      errors,
-      isSubmitted,
-      setIsSubmitted,
-      isValid,
-      isDirty,
-      isTouched,
-    });
-  }, [props, submit, errors, isSubmitted, isValid, isDirty, isTouched]);
+  const children = useMemo(() => props.children(value), [value]);
 
   return <FormContext.Provider value={value}>{children}</FormContext.Provider>;
 }
 
 export const Form = memo(forwardRef(FormComp)) as <T>(
-  props: FormProps<T> & { ref?: ForwardedRef<FormContext<T>> }
+  props: FormProps<T> & { ref?: ForwardedRef<FormInstance<T>> }
 ) => ReturnType<typeof FormComp>;

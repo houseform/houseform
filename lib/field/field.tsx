@@ -9,9 +9,9 @@ import {
   useRef,
 } from "react";
 import { FieldInstance, FieldInstanceProps } from "./types";
-import { FormContext } from "../form/context";
 import { useFieldLike, useListenToListenToArray } from "./use-field-like";
 import { useFieldLikeSync } from "./use-field-like-sync";
+import { FormContext } from "../form";
 
 export interface FieldRenderProps<T = any> extends FieldInstanceProps<T> {
   children: (props: FieldInstance<T>) => JSX.Element;

@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { Field, FieldArray, Form } from "houseform";
 import { render, waitFor } from "@testing-library/react";
 import { z } from "zod";
-import { FormContext } from "./context";
+import { FormInstance } from "houseform";
 
 test("Form should render children", () => {
   const { getByText } = render(
@@ -309,7 +309,7 @@ test("Form should reset isDirty when all touched fields are not touched anymore"
 
 test("Form should have context passed to ref", async () => {
   const Comp = () => {
-    const formRef = useRef<FormContext>(undefined!);
+    const formRef = useRef<FormInstance>(undefined!);
 
     const [val, setVal] = useState("");
 
@@ -490,7 +490,7 @@ test("Field with bracket notation should submit with deep object value", async (
 // <Field name={`test[other]`}> should be gotten with `getFieldValue('test.other')`
 test("Form's `getFieldValue` should show dot notation for incorrect syntax", async () => {
   const Comp = () => {
-    const formRef = useRef<FormContext>(undefined!);
+    const formRef = useRef<FormInstance>(undefined!);
 
     const [val, setVal] = useState("");
 

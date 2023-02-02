@@ -55,6 +55,8 @@ export const useFormlike = <T extends FormlikeField>() => {
     getErrors,
     errors,
     setErrors,
+    setIsDirty,
+    setIsTouched,
     isValid,
     getFieldBoolean,
     isDirty,

@@ -1,9 +1,9 @@
 import { ZodTypeAny } from "zod";
-import { FormContext } from "../form/context";
+import { FormInstance } from "../form/types";
 
 type ValidationFunction<T> =
   | ZodTypeAny
-  | ((val: T, form: FormContext<T>) => Promise<boolean>);
+  | ((val: T, form: FormInstance<T>) => Promise<boolean>);
 
 export interface FieldInstanceBaseProps<T = any> {
   name: string;

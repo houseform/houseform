@@ -1,4 +1,4 @@
-import { FieldInstanceBaseProps } from "houseform";
+import { FieldInstanceBaseProps } from "../field";
 
 export interface FieldArrayHelpers<T> {
   add: (val: T) => void;

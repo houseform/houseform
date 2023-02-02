@@ -1,5 +1,7 @@
 import { MutableRefObject, useContext, useLayoutEffect } from "react";
-import { FieldArrayInstance, FieldInstance, FormContext } from "houseform";
+import { FieldInstance } from "./types";
+import { FieldArrayInstance } from "../field-array";
+import { FormContext } from "../form";
 
 export interface UseFieldLikeSyncProps<
   T,

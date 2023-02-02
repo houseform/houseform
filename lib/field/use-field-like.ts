@@ -7,15 +7,11 @@ import {
   useRef,
   useState,
 } from "react";
-import {
-  FieldArrayInstance,
-  FieldInstance,
-  FormContext,
-  getValidationError,
-  stringToPath,
-  validate,
-} from "houseform";
 import { ZodError } from "zod";
+import { FormContext } from "../form";
+import { FieldInstance } from "./types";
+import { FieldArrayInstance } from "../field-array";
+import { getValidationError, stringToPath, validate } from "../utils";
 
 interface UseListenToListenToArrayProps<T> {
   listenTo: string[] | undefined;
