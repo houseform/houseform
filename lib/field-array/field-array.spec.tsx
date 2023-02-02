@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import { render } from "@testing-library/react";
-import { FieldArray, FieldArrayItem, Form } from "houseform";
+import { FieldArray, Form } from "houseform";
 
 test("field array should track `isDirty` for the array of values", async () => {
   const { getByText, queryByText } = render(
@@ -188,3 +188,13 @@ test("Field array should have a functioning 'replace' helper", async () => {
 
   expect(getByText("Values: 1, 0, 3")).toBeInTheDocument();
 });
+
+test.todo("onSubmit validation should run");
+
+test.todo("Should track all subfield errors");
+
+test.todo("Should track all subfield isTouched");
+
+test.todo("Should track all subfield isDirty");
+
+test.todo("Should work with listenTo");

@@ -3,10 +3,6 @@ import { render } from "@testing-library/react";
 import { FieldArray, FieldArrayItem, Form } from "houseform";
 
 test.todo("should register a field array with the form");
-test.todo(
-  "field array should allow you to set an initial value for the array of values"
-);
-test.todo("field array should track `isDirty` for the array of values");
 
 test("Field array item be able to set a value", async () => {
   const { getByText } = render(
@@ -44,3 +40,15 @@ test("Field array item be able to set a value", async () => {
 
   expect(getByText("Value: 2")).toBeInTheDocument();
 });
+
+test.todo("field array item should track `isDirty`");
+
+test.todo("field array item should track `isTouched`");
+
+test.todo("field array item should validate onChange");
+
+test.todo("field array item should validate onBlur");
+
+test.todo("field array item should validate onSubmit");
+
+test.todo("Should work with listenTo");
