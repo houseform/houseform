@@ -135,15 +135,7 @@ function FormComp<T>(props: FormProps<T>, ref: ForwardedRef<FormContext<T>>) {
       isDirty,
       isTouched,
     });
-  }, [
-    props.children,
-    submit,
-    errors,
-    isSubmitted,
-    isValid,
-    isDirty,
-    isTouched,
-  ]);
+  }, [props, submit, errors, isSubmitted, isValid, isDirty, isTouched]);
 
   return <FormContext.Provider value={value}>{children}</FormContext.Provider>;
 }

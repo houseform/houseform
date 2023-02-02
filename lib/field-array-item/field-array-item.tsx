@@ -67,7 +67,7 @@ export function FieldArrayItemComp<T>(
 
   const value = useMemo(() => {
     return getPath(array.value[itemIndex] as object, accessorPath.join("."));
-  }, [array.value, itemIndex]);
+  }, [accessorPath, array.value, itemIndex]);
 
   const setValue = useCallback(
     (v: T | ((prevState: T) => T)) => {
@@ -104,7 +104,14 @@ export function FieldArrayItemComp<T>(
           });
       }
     },
-    [props.name, props.onChangeValidate]
+    [
+      accessorPath,
+      array,
+      formContext.onChangeListenerRefs,
+      itemIndex,
+      props.name,
+      props.onChangeValidate,
+    ]
   );
 
   const isValid = useMemo(() => {

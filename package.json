@@ -17,8 +17,8 @@
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "prepublishOnly": "npm run build",
-    "lint": "eslint lib/**/*.{js,jsx,ts,tsx}",
-    "format": "eslint lib/**/*.{js,jsx,ts,tsx} --fix",
+    "lint": "eslint 'lib/**/*.{js,jsx,ts,tsx}'",
+    "format": "eslint 'lib/**/*.{js,jsx,ts,tsx}' --fix",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
@@ -43,6 +43,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "jsdom": "^21.1.0",
     "prettier": "^2.8.3",
     "react": "^18.2.0",

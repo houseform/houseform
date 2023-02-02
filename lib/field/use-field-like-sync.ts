@@ -44,32 +44,33 @@ export const useFieldLikeSync = <
     formFieldsRef.current.push(newMutable);
 
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       formFieldsRef.current.slice(formFieldsRef.current.indexOf(newMutable), 1);
     };
-  }, [props]);
+  }, [formFieldsRef, mutableRef, props]);
 
   /**
    * Sync the values with the mutable ref
    */
   useLayoutEffect(() => {
     mutableRef.current.value = value;
-  }, [value]);
+  }, [mutableRef, value]);
 
   useLayoutEffect(() => {
     mutableRef.current.errors = errors;
-  }, [errors]);
+  }, [errors, mutableRef]);
 
   useLayoutEffect(() => {
     mutableRef.current.isDirty = isDirty;
-  }, [isDirty]);
+  }, [isDirty, mutableRef]);
 
   useLayoutEffect(() => {
     mutableRef.current.isValid = isValid;
-  }, [isValid]);
+  }, [isValid, mutableRef]);
 
   useLayoutEffect(() => {
     mutableRef.current.isTouched = isTouched;
-  }, [isTouched]);
+  }, [isTouched, mutableRef]);
 
   /**
    * Recompute form errors when field errors change
@@ -80,9 +81,9 @@ export const useFieldLikeSync = <
 
   useLayoutEffect(() => {
     recomputeIsTouched();
-  }, [isTouched, recomputeErrors]);
+  }, [isTouched, recomputeIsTouched]);
 
   useLayoutEffect(() => {
     recomputeIsDirty();
-  }, [isDirty, recomputeErrors]);
+  }, [isDirty, recomputeIsDirty]);
 };

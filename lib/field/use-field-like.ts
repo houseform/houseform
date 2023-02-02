@@ -1,5 +1,4 @@
 import {
-  MutableRefObject,
   useCallback,
   useContext,
   useLayoutEffect,
@@ -84,11 +83,7 @@ export const useFieldLike = <
           });
       }
     },
-    [
-      formContext,
-      props.onChangeValidate,
-      (props as unknown as FieldInstance<T>["props"])?.onBlurValidate,
-    ]
+    [formContext, props]
   );
 
   const setValue = useCallback(

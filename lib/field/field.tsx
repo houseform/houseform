@@ -8,9 +8,8 @@ import {
   useMemo,
   useRef,
 } from "react";
-import { FieldInstanceProps, FieldInstance } from "./types";
+import { FieldInstance, FieldInstanceProps } from "./types";
 import { FormContext } from "../form/context";
-import { stringToPath } from "../utils";
 import { useFieldLike } from "./use-field-like";
 import { useFieldLikeSync } from "./use-field-like-sync";
 
@@ -56,7 +55,13 @@ function FieldComp<T>(
     }, 0);
 
     runFieldValidation("onBlurValidate", valueRef.current);
-  }, []);
+  }, [
+    formContext.onBlurListenerRefs,
+    props.name,
+    runFieldValidation,
+    setIsTouched,
+    valueRef,
+  ]);
 
   const fieldInstance = useMemo(() => {
     return {

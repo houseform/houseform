@@ -3,16 +3,13 @@ import React, {
   forwardRef,
   memo,
   useCallback,
-  useContext,
   useImperativeHandle,
-  useLayoutEffect,
   useMemo,
   useRef,
 } from "react";
 import { FieldInstanceBaseProps } from "../field/types";
 import { FieldArrayContext } from "./context";
 import { FieldArrayInstance } from "./types";
-import { FormContext } from "../form";
 import { useFieldLike } from "../field/use-field-like";
 import { useFieldLikeSync } from "../field/use-field-like-sync";
 
@@ -39,13 +36,16 @@ function FieldArrayComp<T>(
     initialValue: [] as T[],
   });
 
-  const setValue = useCallback((index: number, value: T) => {
-    setValues((v) => {
-      const newValues = [...v];
-      newValues[index] = value;
-      return newValues;
-    });
-  }, []);
+  const setValue = useCallback(
+    (index: number, value: T) => {
+      setValues((v) => {
+        const newValues = [...v];
+        newValues[index] = value;
+        return newValues;
+      });
+    },
+    [setValues]
+  );
 
   /* Helpers */
   const add = useCallback(

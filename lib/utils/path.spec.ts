@@ -1,4 +1,4 @@
-import { test, expect } from "vitest";
+import { expect, test } from "vitest";
 import { fillPath, getPath, stringToPath } from "houseform";
 
 test("stringToPath to adapt dot notation", () => {

@@ -1,3 +1,3 @@
 import { FieldInstance } from "../field/types";
 
-interface FieldArrayItemInstance<T = any> extends FieldInstance<T> {}
+type FieldArrayItemInstance<T = any> = FieldInstance<T>;
