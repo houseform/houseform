@@ -1,8 +1,6 @@
 # Non-Text Inputs
 
-> This section is still being written.
-
-<!-- Radio buttons, select -->
+Simple text inputs aren't the only useful item to keep track of in your form state. Because of HouseForm's headless nature, you're able to use any existing HTML or UI Library elements to track other parts of state. 
 
 ## Radio Inputs
 
