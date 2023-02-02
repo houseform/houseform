@@ -16,6 +16,7 @@ import { useFieldLikeSync } from "./use-field-like-sync";
 
 export interface FieldRenderProps<T = any> extends FieldInstanceProps<T> {
   children: (props: FieldInstance<T>) => JSX.Element;
+  initialValue?: T;
 }
 
 function FieldComp<T>(
@@ -23,12 +24,6 @@ function FieldComp<T>(
   ref: ForwardedRef<FieldInstance<T>>
 ) {
   const formContext = useContext(FormContext);
-
-  const { name } = props;
-
-  const _normalizedDotName = useMemo(() => {
-    return stringToPath(name).join(".");
-  }, [name]);
 
   const {
     value,
@@ -42,6 +37,7 @@ function FieldComp<T>(
     isValid,
     runFieldValidation,
     valueRef,
+    _normalizedDotName,
   } = useFieldLike<T, FieldInstance<T>>({
     props,
     initialValue: "" as T,

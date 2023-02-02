@@ -9,7 +9,6 @@ export interface FieldInstanceBaseProps<T = any> {
   name: string;
   onChangeValidate?: ValidationFunction<T>;
   onSubmitValidate?: ValidationFunction<T>;
-  initialValue?: T;
   listenTo?: string[];
 }
 

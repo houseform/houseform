@@ -8,13 +8,12 @@ import React, {
   useLayoutEffect,
   useMemo,
   useRef,
-  useState,
 } from "react";
-import { FieldInstance, FieldInstanceBaseProps } from "../field/types";
+import { FieldInstanceBaseProps } from "../field/types";
 import { FieldArrayContext } from "./context";
 import { FieldArrayInstance } from "./types";
-import { stringToPath } from "../utils";
 import { FormContext } from "../form";
+import { useFieldLike } from "../field/use-field-like";
 
 export interface FieldArrayRenderProps<T = any>
   extends FieldInstanceBaseProps<T> {
@@ -26,19 +25,23 @@ function FieldArrayComp<T>(
   props: FieldArrayRenderProps<T>,
   ref: ForwardedRef<FieldArrayInstance<T>>
 ) {
-  const { name } = props;
-
-  const _normalizedDotName = useMemo(() => {
-    return stringToPath(name).join(".");
-  }, [name]);
-
-  const [value, setValues] = useState(props.initialValue || ([] as T[]));
-
-  const [errors, setErrors] = useState([]);
-
-  const [isValid, setIsValid] = useState(false);
-  const [isDirty, setIsDirty] = useState(false);
-  const [isTouched, setIsTouched] = useState(false);
+  const {
+    value,
+    setErrors,
+    errors,
+    setIsDirty,
+    setIsTouched,
+    setValue: setValues,
+    isTouched,
+    isDirty,
+    isValid,
+    runFieldValidation,
+    valueRef,
+    _normalizedDotName,
+  } = useFieldLike<T[], FieldArrayInstance<T>>({
+    props,
+    initialValue: [] as T,
+  });
 
   const setValue = useCallback((index: number, value: T) => {
     setValues((v) => {

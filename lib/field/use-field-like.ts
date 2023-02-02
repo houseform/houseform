@@ -12,6 +12,7 @@ import {
   FieldInstance,
   FormContext,
   getValidationError,
+  stringToPath,
   validate,
 } from "houseform";
 import { ZodError } from "zod";
@@ -20,8 +21,10 @@ export interface UseFieldLikeProps<
   T,
   TT extends FieldInstance<T> | FieldArrayInstance<T>
 > {
-  props: TT["props"];
-  initialValue: T;
+  props: TT["props"] & {
+    initialValue?: TT extends FieldInstance ? T : T[];
+  };
+  initialValue: TT extends FieldInstance ? T : T[];;
 }
 
 /**
@@ -35,11 +38,22 @@ export const useFieldLike = <
   initialValue,
   props,
 }: UseFieldLikeProps<T, TT>) => {
+  const { name } = props;
+
+  const _normalizedDotName = useMemo(() => {
+    return stringToPath(name).join(".");
+  }, [name]);
+
   const formContext = useContext(FormContext);
 
   const { recomputeErrors, recomputeIsTouched, recomputeIsDirty } = formContext;
 
-  const [value, _setValue] = useState<T>(props.initialValue ?? initialValue);
+  const [value, _setValue] = useState(
+    (props.initialValue ?? initialValue) as UseFieldLikeProps<
+      T,
+      TT
+    >["initialValue"]
+  );
   const valueRef = useRef(value);
 
   valueRef.current = value;
@@ -48,7 +62,13 @@ export const useFieldLike = <
   const [isDirty, setIsDirty] = useState<boolean>(false);
 
   const runFieldValidation = useCallback(
-    (validationFnName: "onChangeValidate" | "onBlurValidate", val: T) => {
+    (
+      validationFnName: "onChangeValidate" | "onBlurValidate",
+     val: UseFieldLikeProps<
+       T,
+       TT
+     >["initialValue"]
+    ) => {
       let validationFn = props.onChangeValidate;
       if (
         validationFnName === "onBlurValidate" &&
@@ -75,7 +95,7 @@ export const useFieldLike = <
   );
 
   const setValue = useCallback(
-    (val: T) => {
+    (val: UseFieldLikeProps<T, TT>["initialValue"]) => {
       setIsDirty(true);
       setIsTouched(true);
       _setValue(val);
@@ -177,5 +197,6 @@ export const useFieldLike = <
     isValid,
     runFieldValidation,
     valueRef,
+    _normalizedDotName,
   };
 };
