@@ -5,6 +5,8 @@ export interface FieldArrayHelpers<T> {
   remove: (index: number) => void;
   insert: (index: number, val: T) => void;
   move: (from: number, to: number) => void;
+  replace: (index: number, val: T) => void;
+  swap: (indexA: number, indexB: number) => void;
 }
 
 export interface FieldArrayInstance<T = any> extends FieldArrayHelpers<T> {

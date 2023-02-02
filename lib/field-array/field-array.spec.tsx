@@ -49,3 +49,9 @@ test("Field array should have a functioning 'add' helper", async () => {
 
   expect(getByText("1")).toBeInTheDocument();
 });
+
+test.todo("Remove util should work");
+test.todo("Insert util should work");
+test.todo("Move util should work");
+test.todo("Swap util should work");
+test.todo("Replace util should work");

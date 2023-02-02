@@ -74,6 +74,24 @@ function FieldArrayComp<T>(
     });
   }, []);
 
+  const replace = useCallback((index: number, val: T) => {
+    setValues((v) => {
+      const newValue = [...v];
+      newValue[index] = val;
+      return newValue;
+    });
+  }, []);
+
+  const swap = useCallback((indexA: number, indexB: number) => {
+    setValues((v) => {
+      const newValue = [...v];
+      const a = newValue[indexA];
+      newValue[indexA] = newValue[indexB];
+      newValue[indexB] = a;
+      return newValue;
+    });
+  }, []);
+
   const contextValue = useMemo(() => {
     return {
       value,
@@ -81,6 +99,8 @@ function FieldArrayComp<T>(
       move,
       insert,
       remove,
+      swap,
+      replace,
       setValue,
       props,
       _normalizedDotName,
@@ -95,6 +115,8 @@ function FieldArrayComp<T>(
     move,
     insert,
     remove,
+    swap,
+    replace,
     setValue,
     props,
     _normalizedDotName,
