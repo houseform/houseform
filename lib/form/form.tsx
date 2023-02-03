@@ -17,11 +17,14 @@ import { FormInstance } from "./types";
 import { FormContext } from "./context";
 
 export interface FormProps<T> {
-  onSubmit?: (values: Record<string, T>, form: FormInstance<T>) => void;
+  onSubmit?: (values: T, form: FormInstance<T>) => void;
   children: (props: FormInstance<T>) => JSX.Element;
 }
 
-function FormComp<T>(props: FormProps<T>, ref: ForwardedRef<FormInstance<T>>) {
+function FormComp<T extends Record<string, any> = Record<string, any>>(
+  props: FormProps<T>,
+  ref: ForwardedRef<FormInstance<T>>
+) {
   const {
     formFieldsRef,
     errors,
@@ -34,7 +37,7 @@ function FormComp<T>(props: FormProps<T>, ref: ForwardedRef<FormInstance<T>>) {
     recomputeErrors,
     recomputeIsDirty,
     recomputeIsTouched,
-  } = useFormlike<FieldInstance | FieldArrayInstance>();
+  } = useFormlike<FieldInstance<any, T> | FieldArrayInstance<any, T>>();
 
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -50,7 +53,7 @@ function FormComp<T>(props: FormProps<T>, ref: ForwardedRef<FormInstance<T>>) {
       );
     },
     [formFieldsRef]
-  );
+  ) as FormInstance<T>["getFieldValue"];
 
   const onChangeListenerRefs = useRef({} as Record<string, (() => void)[]>);
   const onBlurListenerRefs = useRef({} as Record<string, (() => void)[]>);
@@ -93,7 +96,7 @@ function FormComp<T>(props: FormProps<T>, ref: ForwardedRef<FormInstance<T>>) {
 
   const submit = useCallback(async () => {
     setIsSubmitted(true);
-    const values = {} as Record<string, T>;
+    const values = {} as T;
 
     const validArrays = await Promise.all(
       formFieldsRef.current.map(async (formField) => {
@@ -142,6 +145,6 @@ function FormComp<T>(props: FormProps<T>, ref: ForwardedRef<FormInstance<T>>) {
   return <FormContext.Provider value={value}>{children}</FormContext.Provider>;
 }
 
-export const Form = memo(forwardRef(FormComp)) as <T>(
+export const Form = memo(forwardRef(FormComp)) as <T = Record<string, any>>(
   props: FormProps<T> & { ref?: ForwardedRef<FormInstance<T>> }
 ) => ReturnType<typeof FormComp>;

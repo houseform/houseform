@@ -13,14 +13,15 @@ import { useFieldLike, useListenToListenToArray } from "./use-field-like";
 import { useFieldLikeSync } from "./use-field-like-sync";
 import { FormContext } from "../form";
 
-export interface FieldRenderProps<T = any> extends FieldInstanceProps<T> {
-  children: (props: FieldInstance<T>) => JSX.Element;
+export interface FieldRenderProps<T = any, F = any>
+  extends FieldInstanceProps<T, F> {
+  children: (props: FieldInstance<T, F>) => JSX.Element;
   initialValue?: T;
 }
 
-function FieldComp<T>(
-  props: FieldRenderProps<T>,
-  ref: ForwardedRef<FieldInstance<T>>
+function FieldComp<T = any, F = any>(
+  props: FieldRenderProps<T, F>,
+  ref: ForwardedRef<FieldInstance<T, F>>
 ) {
   const formContext = useContext(FormContext);
 
@@ -37,7 +38,7 @@ function FieldComp<T>(
     runFieldValidation,
     valueRef,
     _normalizedDotName,
-  } = useFieldLike<T, FieldInstance<T>>({
+  } = useFieldLike<T, F, FieldInstance<T, F>>({
     props,
     initialValue: "" as T,
   });
@@ -101,7 +102,7 @@ function FieldComp<T>(
 
   const mutableRef = useRef<FieldInstance<T>>(fieldInstance);
 
-  useFieldLikeSync<T, FieldInstance<T>>({
+  useFieldLikeSync<T, F, FieldInstance<T, F>>({
     mutableRef,
     props,
     value,
@@ -116,6 +117,6 @@ function FieldComp<T>(
   return props.children(fieldInstance);
 }
 
-export const Field = memo(forwardRef(FieldComp)) as <T>(
-  props: FieldRenderProps<T> & { ref?: ForwardedRef<FieldInstance<T>> }
+export const Field = memo(forwardRef(FieldComp)) as <T = any, F = any>(
+  props: FieldRenderProps<T, F> & { ref?: ForwardedRef<FieldInstance<T, F>> }
 ) => ReturnType<typeof FieldComp>;

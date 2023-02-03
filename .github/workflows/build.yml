@@ -23,5 +23,8 @@ jobs:
       - name: Install packages
         run: pnpm install --frozen-lockfile
 
+      - name: Run Type Check Tests
+        run: pnpm typecheck
+
       - name: Run tests
         run: pnpm build

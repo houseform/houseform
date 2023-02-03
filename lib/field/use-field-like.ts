@@ -77,7 +77,8 @@ type GetInstanceInferedType<T, TT> = TT extends FieldInstance ? T : T[];
 
 export interface UseFieldLikeProps<
   T,
-  TT extends FieldInstance<T> | FieldArrayInstance<T>
+  F,
+  TT extends FieldInstance<T, F> | FieldArrayInstance<T, F>
 > {
   props: TT["props"] & {
     initialValue?: GetInstanceInferedType<T, TT>;
@@ -91,11 +92,12 @@ export interface UseFieldLikeProps<
  */
 export const useFieldLike = <
   T,
-  TT extends FieldInstance<T> | FieldArrayInstance<T>
+  F,
+  TT extends FieldInstance<T, F> | FieldArrayInstance<T, F>
 >({
   initialValue,
   props,
-}: UseFieldLikeProps<T, TT>) => {
+}: UseFieldLikeProps<T, F, TT>) => {
   const { name } = props;
 
   const _normalizedDotName = useMemo(() => {
@@ -107,6 +109,7 @@ export const useFieldLike = <
   const [value, _setValue] = useState(
     (props.initialValue ?? initialValue) as UseFieldLikeProps<
       T,
+      F,
       TT
     >["initialValue"]
   );
@@ -120,14 +123,14 @@ export const useFieldLike = <
   const runFieldValidation = useCallback(
     (
       validationFnName: "onChangeValidate" | "onBlurValidate",
-      val: UseFieldLikeProps<T, TT>["initialValue"]
+      val: UseFieldLikeProps<T, F, TT>["initialValue"]
     ) => {
       let validationFn = props.onChangeValidate;
       if (
         validationFnName === "onBlurValidate" &&
-        (props as unknown as FieldInstance<T>["props"])?.onBlurValidate
+        (props as unknown as FieldInstance<T, F>["props"])?.onBlurValidate
       ) {
-        validationFn = (props as unknown as FieldInstance<T>["props"])
+        validationFn = (props as unknown as FieldInstance<T, F>["props"])
           .onBlurValidate;
       }
       if (validationFn) {
@@ -145,8 +148,9 @@ export const useFieldLike = <
 
   const setValue = useCallback(
     <
-      J extends UseFieldLikeProps<T, TT>["initialValue"] = UseFieldLikeProps<
+      J extends UseFieldLikeProps<T, F, TT>["initialValue"] = UseFieldLikeProps<
         T,
+        F,
         TT
       >["initialValue"]
     >(

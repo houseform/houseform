@@ -16,15 +16,15 @@ import {
 } from "../field/use-field-like";
 import { useFieldLikeSync } from "../field/use-field-like-sync";
 
-export interface FieldArrayRenderProps<T = any>
-  extends FieldInstanceBaseProps<T> {
-  children: (props: FieldArrayInstance<T>) => JSX.Element;
+export interface FieldArrayRenderProps<T = any, F = any>
+  extends FieldInstanceBaseProps<T, F> {
+  children: (props: FieldArrayInstance<T, F>) => JSX.Element;
   initialValue?: T[];
 }
 
-function FieldArrayComp<T>(
-  props: FieldArrayRenderProps<T>,
-  ref: ForwardedRef<FieldArrayInstance<T>>
+function FieldArrayComp<T = any, F = any>(
+  props: FieldArrayRenderProps<T, F>,
+  ref: ForwardedRef<FieldArrayInstance<T, F>>
 ) {
   const {
     value,
@@ -39,7 +39,7 @@ function FieldArrayComp<T>(
     valueRef,
     setIsDirty,
     setIsTouched,
-  } = useFieldLike<T, FieldArrayInstance<T>>({
+  } = useFieldLike<T, F, FieldArrayInstance<T, F>>({
     props,
     initialValue: [] as T[],
   });
@@ -168,9 +168,9 @@ function FieldArrayComp<T>(
     isTouched,
   ]);
 
-  const mutableRef = useRef<FieldArrayInstance<T>>(fieldArrayInstance);
+  const mutableRef = useRef<FieldArrayInstance<T, F>>(fieldArrayInstance);
 
-  useFieldLikeSync<T, FieldArrayInstance<T>>({
+  useFieldLikeSync<T, F, FieldArrayInstance<T, F>>({
     value,
     mutableRef,
     isValid,
@@ -189,8 +189,11 @@ function FieldArrayComp<T>(
   );
 }
 
-export const FieldArray = memo(forwardRef(FieldArrayComp)) as <T>(
-  props: FieldArrayRenderProps<T> & {
-    ref?: ForwardedRef<FieldArrayInstance<T>>;
+export const FieldArray = memo(forwardRef(FieldArrayComp)) as <
+  T = any,
+  F = any
+>(
+  props: FieldArrayRenderProps<T, F> & {
+    ref?: ForwardedRef<FieldArrayInstance<T, F>>;
   }
 ) => ReturnType<typeof FieldArrayComp>;
