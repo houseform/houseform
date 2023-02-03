@@ -37,7 +37,7 @@ function FormComp<T extends Record<string, any>>(
     recomputeErrors,
     recomputeIsDirty,
     recomputeIsTouched,
-  } = useFormlike<FieldInstance | FieldArrayInstance>();
+  } = useFormlike<FieldInstance<any, T> | FieldArrayInstance<any, T>>();
 
   const [isSubmitted, setIsSubmitted] = useState(false);
 

@@ -5,18 +5,10 @@ import type { AutoPath } from "ts-toolbelt/out/Function/AutoPath";
 import type { Path } from "ts-toolbelt/out/Object/Path";
 import type { Split } from "ts-toolbelt/out/String/Split";
 
-declare function getFieldValue<T, P extends string>(
-  val: AutoPath<T, P>
-): Path<T, Split<P, ".">> extends infer R
-  ? FieldInstance<R> | FieldArrayInstance<R> | undefined
-  : never;
-
-declare function getFieldValue(
-  val: string
-): FieldInstance | FieldArrayInstance | undefined;
-
 export interface FormInstance<T = any> {
-  formFieldsRef: MutableRefObject<Array<FieldInstance | FieldArrayInstance>>;
+  formFieldsRef: MutableRefObject<
+    Array<FieldInstance<any, T> | FieldArrayInstance<any, T>>
+  >;
   recomputeErrors: () => void;
   recomputeIsDirty: () => void;
   recomputeIsTouched: () => void;
@@ -29,7 +21,14 @@ export interface FormInstance<T = any> {
   isDirty: boolean;
   isSubmitted: boolean;
   setIsSubmitted: (val: boolean) => void;
-  getFieldValue: typeof getFieldValue;
+  getFieldValue(
+    val: string
+  ): FieldInstance<any, T> | FieldArrayInstance<any, T> | undefined;
+  getFieldValue<T, P extends string>(
+    val: AutoPath<T, P>
+  ): Path<T, Split<P, ".">> extends infer R
+    ? FieldInstance<R, T> | FieldArrayInstance<R, T> | undefined
+    : never;
   onChangeListenerRefs: MutableRefObject<Record<string, (() => void)[]>>;
   onBlurListenerRefs: MutableRefObject<Record<string, (() => void)[]>>;
 }

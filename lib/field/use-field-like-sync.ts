@@ -5,7 +5,8 @@ import { FormContext } from "../form";
 
 export interface UseFieldLikeSyncProps<
   T,
-  TT extends FieldInstance<T> | FieldArrayInstance<T>
+  F,
+  TT extends FieldInstance<T, F> | FieldArrayInstance<T, F>
 > {
   mutableRef: MutableRefObject<TT>;
   props: TT["props"];
@@ -18,7 +19,8 @@ export interface UseFieldLikeSyncProps<
 
 export const useFieldLikeSync = <
   T,
-  TT extends FieldInstance<T> | FieldArrayInstance<T>
+  F,
+  TT extends FieldInstance<T, F> | FieldArrayInstance<T, F>
 >({
   mutableRef,
   props,
@@ -27,7 +29,7 @@ export const useFieldLikeSync = <
   isDirty,
   isValid,
   isTouched,
-}: UseFieldLikeSyncProps<T, TT>) => {
+}: UseFieldLikeSyncProps<T, F, TT>) => {
   const formContext = useContext(FormContext);
 
   const {

@@ -9,9 +9,10 @@ export interface FieldArrayHelpers<T> {
   swap: (indexA: number, indexB: number) => void;
 }
 
-export interface FieldArrayInstance<T = any> extends FieldArrayHelpers<T> {
+export interface FieldArrayInstance<T = any, F = any>
+  extends FieldArrayHelpers<T> {
   _normalizedDotName: string;
-  props: FieldInstanceBaseProps<T>;
+  props: FieldInstanceBaseProps<T, F>;
   value: T[];
   setValue: (index: number, value: T) => void;
   setErrors: (errors: string[]) => void;

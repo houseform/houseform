@@ -20,14 +20,14 @@ import { fillPath, getPath, stringToPath } from "../utils";
 import { FormContext } from "../form";
 import { FieldArrayInstance } from "../field-array";
 
-export interface FieldArrayItemRenderProps<T = any>
-  extends FieldInstanceProps<T> {
-  children: (props: FieldInstance<T>) => JSX.Element;
+export interface FieldArrayItemRenderProps<T = any, F = any>
+  extends FieldInstanceProps<T, F> {
+  children: (props: FieldInstance<T, F>) => JSX.Element;
 }
 
-export function FieldArrayItemComp<T>(
-  props: FieldArrayItemRenderProps<T>,
-  ref: ForwardedRef<FieldInstance<T>>
+export function FieldArrayItemComp<T, F>(
+  props: FieldArrayItemRenderProps<T, F>,
+  ref: ForwardedRef<FieldInstance<T, F>>
 ) {
   const {
     _normalizedDotName,
@@ -39,7 +39,7 @@ export function FieldArrayItemComp<T>(
     setIsTouched,
     isDirty,
     setIsDirty,
-  } = useFieldLike<T, FieldInstance<T>>({
+  } = useFieldLike<T, F, FieldInstance<T, F>>({
     props,
     initialValue: "" as T,
   });
@@ -174,7 +174,7 @@ export function FieldArrayItemComp<T>(
 
   const mutableRef = useRef<FieldInstance<T>>(fieldArrayInstance);
 
-  useFieldLikeSync<T, FieldInstance<T>>({
+  useFieldLikeSync<T, F, FieldInstance<T, F>>({
     mutableRef,
     props,
     value,
@@ -189,6 +189,8 @@ export function FieldArrayItemComp<T>(
   return props.children(fieldArrayInstance);
 }
 
-export const FieldArrayItem = memo(forwardRef(FieldArrayItemComp)) as <T>(
-  props: FieldArrayItemRenderProps<T> & { ref?: ForwardedRef<FieldInstance<T>> }
+export const FieldArrayItem = memo(forwardRef(FieldArrayItemComp)) as <T, F>(
+  props: FieldArrayItemRenderProps<T, F> & {
+    ref?: ForwardedRef<FieldInstance<T, F>>;
+  }
 ) => ReturnType<typeof FieldArrayItemComp>;
