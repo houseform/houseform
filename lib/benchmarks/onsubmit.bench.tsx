@@ -3,6 +3,7 @@ import { describe, bench } from "vitest";
 import { Field, Form } from "houseform";
 import { useState } from "react";
 import { cleanup, fireEvent, render } from "@testing-library/react";
+import { Formik, Form as FormikForm, Field as FormikField } from "formik";
 
 const arr = Array.from({ length: 1000 }, (_, i) => i);
 
@@ -31,22 +32,8 @@ function HouseFormOnSubmitBenchmark() {
           {arr.map((num, i) => {
             return (
               <Field key={i} name={`num[${i}]`} initialValue={num}>
-                {({ value, setValue, onBlur, errors }) => {
-                  return (
-                    <div>
-                      <input
-                        data-testid={`value${i}`}
-                        type="number"
-                        value={`${value}`}
-                        onBlur={onBlur}
-                        onChange={(e) => setValue(Number(e.target.value))}
-                        placeholder={`Number ${i}`}
-                      />
-                      {errors.map((error) => (
-                        <p key={error}>{error}</p>
-                      ))}
-                    </div>
-                  );
+                {() => {
+                  return <></>;
                 }}
               </Field>
             );
@@ -57,13 +44,58 @@ function HouseFormOnSubmitBenchmark() {
   );
 }
 
+function FormikOnSubmitBenchmark() {
+  const [val, setVal] = useState<Record<string, any> | null>(null);
+
+  if (val) {
+    return (
+      <p>
+        <span>Value:</span>
+        {JSON.stringify(val)}
+      </p>
+    );
+  }
+
+  return (
+    <Formik
+      initialValues={{
+        num: arr,
+      }}
+      onSubmit={(values) => {
+        setVal(values);
+      }}
+    >
+      {() => (
+        <FormikForm>
+          <button type="submit">Submit</button>
+          {arr.map((num, i) => (
+            <FormikField key={i} name={`num[${i}]`}>
+              {() => {
+                return <></>;
+              }}
+            </FormikField>
+          ))}
+        </FormikForm>
+      )}
+    </Formik>
+  );
+}
+
 describe("Submits 1,000 form items", () => {
   bench("Houseform", async () => {
     cleanup();
 
-    const { getByText, findByText } = render(
-      <HouseFormOnSubmitBenchmark />
-    );
+    const { getByText, findByText } = render(<HouseFormOnSubmitBenchmark />);
+
+    fireEvent.click(getByText("Submit"));
+
+    await findByText("Value:");
+  });
+
+  bench("Formik", async () => {
+    cleanup();
+
+    const { getByText, findByText } = render(<FormikOnSubmitBenchmark />);
 
     fireEvent.click(getByText("Submit"));
 

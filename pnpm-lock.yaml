@@ -30,6 +30,7 @@ specifiers:
   vitest: ^0.28.2
   vue: ^3.2.45
   zod: ^3.20.2
+  zod-formik-adapter: ^1.2.0
 
 devDependencies:
   '@testing-library/jest-dom': 5.16.5
@@ -61,6 +62,7 @@ devDependencies:
   vitest: 0.28.2_jsdom@21.1.0
   vue: 3.2.45
   zod: 3.20.2
+  zod-formik-adapter: 1.2.0_formik@2.2.9+zod@3.20.2
 
 packages:
 
@@ -6149,6 +6151,16 @@ packages:
       validator: 13.7.0
     optionalDependencies:
       commander: 9.5.0
+    dev: true
+
+  /zod-formik-adapter/1.2.0_formik@2.2.9+zod@3.20.2:
+    resolution: {integrity: sha512-62U+Mf8U05pvLsIMUTC1H6d4K5SmsrXM+YgiZhCpPin5GNhnVuXCGySmJCs0FHuTJCBy7Et5Z1i8KF5ffuLttg==}
+    peerDependencies:
+      formik: ^2.2.9
+      zod: ^3.14.4
+    dependencies:
+      formik: 2.2.9_react@18.2.0
+      zod: 3.20.2
     dev: true
 
   /zod/3.20.2:
