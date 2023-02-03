@@ -17,11 +17,14 @@ import { FormInstance } from "./types";
 import { FormContext } from "./context";
 
 export interface FormProps<T> {
-  onSubmit?: (values: Record<string, T>, form: FormInstance<T>) => void;
+  onSubmit?: (values: T, form: FormInstance<T>) => void;
   children: (props: FormInstance<T>) => JSX.Element;
 }
 
-function FormComp<T>(props: FormProps<T>, ref: ForwardedRef<FormInstance<T>>) {
+function FormComp<T extends Record<string, any>>(
+  props: FormProps<T>,
+  ref: ForwardedRef<FormInstance<T>>
+) {
   const {
     formFieldsRef,
     errors,
@@ -93,7 +96,7 @@ function FormComp<T>(props: FormProps<T>, ref: ForwardedRef<FormInstance<T>>) {
 
   const submit = useCallback(async () => {
     setIsSubmitted(true);
-    const values = {} as Record<string, T>;
+    const values = {} as T;
 
     const validArrays = await Promise.all(
       formFieldsRef.current.map(async (formField) => {
