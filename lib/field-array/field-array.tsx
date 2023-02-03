@@ -22,7 +22,7 @@ export interface FieldArrayRenderProps<T = any, F = any>
   initialValue?: T[];
 }
 
-function FieldArrayComp<T, F>(
+function FieldArrayComp<T = any, F = any>(
   props: FieldArrayRenderProps<T, F>,
   ref: ForwardedRef<FieldArrayInstance<T, F>>
 ) {
@@ -189,8 +189,11 @@ function FieldArrayComp<T, F>(
   );
 }
 
-export const FieldArray = memo(forwardRef(FieldArrayComp)) as <T>(
-  props: FieldArrayRenderProps<T> & {
-    ref?: ForwardedRef<FieldArrayInstance<T>>;
+export const FieldArray = memo(forwardRef(FieldArrayComp)) as <
+  T = any,
+  F = any
+>(
+  props: FieldArrayRenderProps<T, F> & {
+    ref?: ForwardedRef<FieldArrayInstance<T, F>>;
   }
 ) => ReturnType<typeof FieldArrayComp>;

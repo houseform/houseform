@@ -19,7 +19,7 @@ export interface FieldRenderProps<T = any, F = any>
   initialValue?: T;
 }
 
-function FieldComp<T, F = any>(
+function FieldComp<T = any, F = any>(
   props: FieldRenderProps<T, F>,
   ref: ForwardedRef<FieldInstance<T, F>>
 ) {
@@ -117,6 +117,6 @@ function FieldComp<T, F = any>(
   return props.children(fieldInstance);
 }
 
-export const Field = memo(forwardRef(FieldComp)) as <T, F>(
+export const Field = memo(forwardRef(FieldComp)) as <T = any, F = any>(
   props: FieldRenderProps<T, F> & { ref?: ForwardedRef<FieldInstance<T, F>> }
 ) => ReturnType<typeof FieldComp>;

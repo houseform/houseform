@@ -21,7 +21,7 @@ export interface FormProps<T> {
   children: (props: FormInstance<T>) => JSX.Element;
 }
 
-function FormComp<T extends Record<string, any>>(
+function FormComp<T extends Record<string, any> = Record<string, any>>(
   props: FormProps<T>,
   ref: ForwardedRef<FormInstance<T>>
 ) {
@@ -145,6 +145,6 @@ function FormComp<T extends Record<string, any>>(
   return <FormContext.Provider value={value}>{children}</FormContext.Provider>;
 }
 
-export const Form = memo(forwardRef(FormComp)) as <T>(
+export const Form = memo(forwardRef(FormComp)) as <T = Record<string, any>>(
   props: FormProps<T> & { ref?: ForwardedRef<FormInstance<T>> }
 ) => ReturnType<typeof FormComp>;

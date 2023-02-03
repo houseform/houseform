@@ -25,7 +25,7 @@ export interface FieldArrayItemRenderProps<T = any, F = any>
   children: (props: FieldInstance<T, F>) => JSX.Element;
 }
 
-export function FieldArrayItemComp<T, F>(
+export function FieldArrayItemComp<T = any, F = any>(
   props: FieldArrayItemRenderProps<T, F>,
   ref: ForwardedRef<FieldInstance<T, F>>
 ) {
@@ -189,7 +189,10 @@ export function FieldArrayItemComp<T, F>(
   return props.children(fieldArrayInstance);
 }
 
-export const FieldArrayItem = memo(forwardRef(FieldArrayItemComp)) as <T, F>(
+export const FieldArrayItem = memo(forwardRef(FieldArrayItemComp)) as <
+  T = any,
+  F = any
+>(
   props: FieldArrayItemRenderProps<T, F> & {
     ref?: ForwardedRef<FieldInstance<T, F>>;
   }
