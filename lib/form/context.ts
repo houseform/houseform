@@ -11,7 +11,7 @@ export const initialFormContext = {
   submit: async () => {
     return true;
   },
-  getFieldValue: (val) => {},
+  getFieldValue: (val: string) => {},
   setIsSubmitted: (val) => {},
   onChangeListenerRefs: { current: {} },
   onBlurListenerRefs: { current: {} },

@@ -20,7 +20,7 @@ function HouseFormOnSubmitBenchmark() {
   }
 
   return (
-    <Form
+    <Form<{ num: number[] }>
       onSubmit={(values) => {
         setVal(values);
       }}
