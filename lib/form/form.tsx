@@ -53,7 +53,7 @@ function FormComp<T extends Record<string, any>>(
       );
     },
     [formFieldsRef]
-  );
+  ) as FormInstance<T>["getFieldValue"];
 
   const onChangeListenerRefs = useRef({} as Record<string, (() => void)[]>);
   const onBlurListenerRefs = useRef({} as Record<string, (() => void)[]>);
