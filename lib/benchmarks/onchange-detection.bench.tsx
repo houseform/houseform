@@ -12,24 +12,9 @@ import {
 
 const arr = Array.from({ length: 1000 }, (_, i) => i);
 
-function Benchmark({ disableValidation }: { disableValidation: boolean }) {
-  const [val, setVal] = useState<Record<string, any> | null>(null);
-
-  if (val) {
-    return (
-      <p>
-        <span>Value:</span>
-        {JSON.stringify(val)}
-      </p>
-    );
-  }
-
+function HouseFormOnChangeBenchmark() {
   return (
-    <Form
-      onSubmit={(values) => {
-        setVal(values);
-      }}
-    >
+    <Form>
       {({ submit }) => (
         <>
           <button onClick={submit}>Submit</button>
@@ -40,11 +25,7 @@ function Benchmark({ disableValidation }: { disableValidation: boolean }) {
                 key={i}
                 name={`num[${i}]`}
                 initialValue={num}
-                onChangeValidate={
-                  disableValidation
-                    ? undefined
-                    : z.number().min(3, "Must be at least three")
-                }
+                onChangeValidate={z.number().min(3, "Must be at least three")}
               >
                 {({ value, setValue, onBlur, errors }) => {
                   return (
@@ -72,24 +53,12 @@ function Benchmark({ disableValidation }: { disableValidation: boolean }) {
   );
 }
 
-describe("Houseform", () => {
-  bench("Submits 1,000 form items", async () => {
-    cleanup();
-
-    const { getByText, findByText } = render(
-      <Benchmark disableValidation={true} />
-    );
-
-    fireEvent.click(getByText("Submit"));
-
-    await findByText("Value:");
-  });
-
-  bench("Validates onChange on 1,000 form items", async () => {
+describe("Validates onChange on 1,000 form items", () => {
+  bench("HouseForm", async () => {
     cleanup();
 
     const { getByTestId, findByText, queryByText } = render(
-      <Benchmark disableValidation={false} />
+      <HouseFormOnChangeBenchmark />
     );
 
     if (queryByText("Must be at least three")) {
