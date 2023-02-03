@@ -8,7 +8,7 @@ import {
   getByTestId,
   render,
 } from "@testing-library/react";
-import { Formik, Form as FormikForm, Field as FormikField } from "formik";
+import { Formik, Field as FormikField } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { FieldProps } from "formik/dist/Field";
 
@@ -65,32 +65,28 @@ function FormikOnChangeBenchmark() {
           num: z.array(z.number().min(3, "Must be at least three")),
         })
       )}
-      onSubmit={(values) => {}}
+      onSubmit={() => {}}
     >
-      {({ errors, touched }) => (
+      {() => (
         <>
-          <FormikForm>
-            {JSON.stringify(errors)}
-            <button type="submit">Submit</button>
-            {arr.map((num, i) => (
-              <FormikField key={i} name={`num[${i}]`} data-testid={`value${i}`}>
-                {(props: FieldProps) => (
-                  <div>
-                    <input
-                      data-testid={`value${i}`}
-                      type="number"
-                      name={props.field.name}
-                      value={props.field.value}
-                      onBlur={props.field.onBlur}
-                      onChange={props.field.onChange}
-                      placeholder={`Number ${i}`}
-                    />
-                    {props.meta.error}
-                  </div>
-                )}
-              </FormikField>
-            ))}
-          </FormikForm>
+          {arr.map((num, i) => (
+            <FormikField key={i} name={`num[${i}]`} data-testid={`value${i}`}>
+              {(props: FieldProps) => (
+                <div>
+                  <input
+                    data-testid={`value${i}`}
+                    type="number"
+                    name={props.field.name}
+                    value={props.field.value}
+                    onBlur={props.field.onBlur}
+                    onChange={props.field.onChange}
+                    placeholder={`Number ${i}`}
+                  />
+                  {props.meta.error}
+                </div>
+              )}
+            </FormikField>
+          ))}
         </>
       )}
     </Formik>

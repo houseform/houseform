@@ -1,9 +1,8 @@
 import { describe, bench } from "vitest";
 
 import { Field, Form } from "houseform";
-import { useState } from "react";
-import { cleanup, fireEvent, render } from "@testing-library/react";
-import { Formik, Form as FormikForm, Field as FormikField } from "formik";
+import { cleanup, render } from "@testing-library/react";
+import { Formik, Field as FormikField } from "formik";
 import { FieldProps } from "formik/dist/Field";
 
 const arr = Array.from({ length: 1000 }, (_, i) => i);
@@ -37,7 +36,7 @@ function FormikInitialRenderBenchmark() {
       onSubmit={(values) => {}}
     >
       {() => (
-        <FormikForm>
+        <>
           {arr.map((num, i) => (
             <FormikField key={i} name={`num[${i}]`}>
               {({ field }: FieldProps) => {
@@ -45,7 +44,7 @@ function FormikInitialRenderBenchmark() {
               }}
             </FormikField>
           ))}
-        </FormikForm>
+        </>
       )}
     </Formik>
   );
