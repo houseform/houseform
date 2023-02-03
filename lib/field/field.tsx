@@ -20,8 +20,8 @@ export interface FieldRenderProps<T = any, F = any>
 }
 
 function FieldComp<T, F = any>(
-  props: FieldRenderProps<T>,
-  ref: ForwardedRef<FieldInstance<T>>
+  props: FieldRenderProps<T, F>,
+  ref: ForwardedRef<FieldInstance<T, F>>
 ) {
   const formContext = useContext(FormContext);
 

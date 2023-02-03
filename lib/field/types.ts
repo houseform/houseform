@@ -13,7 +13,7 @@ export interface FieldInstanceBaseProps<T = any, F = any> {
 }
 
 export interface FieldInstanceProps<T = any, F = any>
-  extends FieldInstanceBaseProps<T> {
+  extends FieldInstanceBaseProps<T, F> {
   onBlurValidate?: ValidationFunction<T, F>;
 }
 
