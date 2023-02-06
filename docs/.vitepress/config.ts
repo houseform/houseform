@@ -5,7 +5,6 @@ const { description, version } = require("../../package.json");
 export default defineConfig({
   title: "HouseForm",
   description: description,
-  base: "/houseform/",
   themeConfig: {
     logo: "/logo.svg",
     socialLinks: [

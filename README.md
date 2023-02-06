@@ -23,7 +23,4 @@ src="./docs/public/logo.svg"
 
 </div>
 
-**Visit [https://crutchcorn.github.io/houseform/](https://crutchcorn.github.io/houseform/) to get started with HouseForm.**
-
-> This is a work in progress library. Docs are still being written.
-
+**Visit [https://houseform.dev/](https://houseform.dev/) to get started with HouseForm.**
