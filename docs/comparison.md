@@ -5,12 +5,12 @@ head:
       content: Compare HouseForm to Other Libs
   - - meta
     - property: og:description
-      content: Compare HouseForm to other form libraries such as Formik, React Hook Form, and React Final Form.
+      content: Compare HouseForm to other form libraries such as Formik and React Hook Form.
 ---
 
 # Comparison Against Other Form Libraries
 
-> This section is still being written.
+We know that we're not the only choice in the React ecosystem for form validation libraries. Let's compare HouseForm to some of the other popular libraries.
 
 ## HouseForm vs. [Formik](https://formik.org/)
 
@@ -38,13 +38,10 @@ head:
 > 
 > If you'd like to help us with this, please [open an issue](https://github.com/crutchcorn/houseform/issues/new).
 
-## HouseForm vs. [React Final Form](https://github.com/final-form/react-final-form)
+----
 
-> This section is still being written.
-
-- **HouseForm is lightweight:** [React Final Form is 24 kb without GZIP](https://unpkg.com/browse/react-final-form@latest/dist/react-final-form.es.js) and relies on [a 47.6 kb base package](https://unpkg.com/browse/final-form@latest/dist/final-form.es.js) for *a total non-GZIP bundle size of 71.6 kb*. Meanwhile, [HouseForm is 9.54 kb without GZIP](https://unpkg.com/browse/houseform@latest/dist/houseform.umd.cjs)*.
-
+> \* Sizes of bundles were taken in February 2023 and are subject to change as time goes on.
 
 ----
 
-> \* Sizes of bundles were taken in February 2023 and are subject to change as time goes on.**
+> Want to expand this section? [Open an issue with more details](https://github.com/crutchcorn/houseform/issues/new).
