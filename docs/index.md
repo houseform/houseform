@@ -1,3 +1,19 @@
+---
+head:
+  - - meta
+    - property: og:type
+      content: website
+  - - meta
+    - property: og:title
+      content: HouseForm
+  - - meta
+    - property: og:url
+      content: https://houseform.dev
+  - - meta
+    - property: og:description
+      content: Simple to use React forms, where your validation and UI code live in harmony.
+---
+
 # Introduction
 
 <div align="center">

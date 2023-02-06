@@ -1,3 +1,13 @@
+---
+head:
+  - - meta
+    - property: og:title
+      content: Basic HouseForm Usage
+  - - meta
+    - property: og:description
+      content: Learn how to use HouseForm; a React form library that colocates your forms' validation logic and UI into one place.
+---
+
 # Basic Usage
 
 Every form in HouseForm starts with a `<Form>` component:

@@ -1,3 +1,13 @@
+---
+head:
+  - - meta
+    - property: og:title
+      content: HouseForm TypeScript Usage
+  - - meta
+    - property: og:description
+      content: Learn how to use HouseForm with TypeScript.
+---
+
 # TypeScript Usage
 
 HouseForm is built with TypeScript and takes type safety very seriously. However, because of our API design ([which has massive benefits with colocated code](/index)), we're often not able to infer the type of various items. Because of this, it's expected that you pass many of the types you need into the related components.

@@ -5,6 +5,10 @@ const { description, version } = require("../../package.json");
 export default defineConfig({
   title: "HouseForm",
   description: description,
+  head: [
+    ["meta", {property: "og:image", content: "https://houseform.dev/social-banner.png"}],
+    ["meta", {property: "twitter:card", content: "summary_large_image"}],
+  ],
   themeConfig: {
     logo: "/logo.svg",
     socialLinks: [

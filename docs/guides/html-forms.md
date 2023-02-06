@@ -1,3 +1,13 @@
+---
+head:
+  - - meta
+    - property: og:title
+      content: HouseForm HTML Form Usage
+  - - meta
+    - property: og:description
+      content: HTML forms have a lot of built-in functionality that you can combine with HouseForm's powerful API to create a great user experience.
+---
+
 # Usage with HTML forms
 
 One commonly raised issue with other headless form libraries is that they lose the capabilities of HTML forms.
