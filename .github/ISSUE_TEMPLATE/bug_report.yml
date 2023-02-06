@@ -1,0 +1,70 @@
+name: Bug report
+description: File a bug report
+title: '[Bug]: '
+labels:
+  - needs triage
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking time to submit a bug report to us!
+  - type: textarea
+    attributes:
+      label: Steps To Reproduce
+      description: What steps do we need to take to reproduce this?
+      placeholder: Tell us what you see!
+      value: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+      description: What do you expect to have happened?
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Reproduction link
+      description: A StackBlitz/CodePen/CodeSandbox reproduction link
+  - type: markdown
+    attributes:
+      value: >-
+        > [Example HouseForm StackBlitz
+        template](https://stackblitz.com/edit/houseform-v1-example?file=App.tsx)
+  - type: input
+    attributes:
+      label: HouseForm Version
+      description: What version number of HouseForm are you using?
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: React Version
+      description: What version number of React are you using?
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Zod Version
+      description: What version number of Zod are you using?
+  - type: dropdown
+    attributes:
+      label: Environment
+      description: What environment are you running HouseForm in?
+      multiple: true
+      options:
+        - Browser (Chrome/Firefox/Safari/etc)
+        - React Native
+        - Testing Environment (Jest/Vitest/JSDom/etc)
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: More details
+      description: >-
+        Is there anything else we should know? What version of React Native?
+        What browser?
