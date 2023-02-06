@@ -1,4 +1,4 @@
-**---
+---
 head:
   - - meta
     - property: og:title
