@@ -24,3 +24,35 @@ src="./docs/public/logo.svg"
 </div>
 
 **Visit [https://houseform.dev/](https://houseform.dev/) to get started with HouseForm.**
+
+## Contributing
+
+If you've ever wanted to contribute to open source, now is your chance!
+
+See the [contributing docs](./CONTRIBUTING.md) for more information
+
+## Contributors
+
+Thanks goes to these wonderful people
+([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://crutchcorn.dev/"><img src="https://avatars.githubusercontent.com/u/9100169?v=4?s=100" width="100px;" alt="Corbin Crutchley"/><br /><sub><b>Corbin Crutchley</b></sub></a><br /><a href="https://github.com/crutchcorn/houseform/commits?author=crutchcorn" title="Code">💻</a> <a href="https://github.com/crutchcorn/houseform/commits?author=crutchcorn" title="Documentation">📖</a> <a href="#maintenance-crutchcorn" title="Maintenance">🚧</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://pratti.design/"><img src="https://avatars.githubusercontent.com/u/17130024?v=4?s=100" width="100px;" alt="Eduardo Pratti"/><br /><sub><b>Eduardo Pratti</b></sub></a><br /><a href="#design-PrattiDev" title="Design">🎨</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the
+[all-contributors](https://github.com/all-contributors/all-contributors)
+specification. Contributions of any kind welcome!

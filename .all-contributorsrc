@@ -1,0 +1,36 @@
+{
+  "projectName": "houseform",
+  "projectOwner": "crutchcorn",
+  "repoType": "github",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributorsPerLine": 7,
+  "skipCi": false,
+  "contributors": [
+    {
+      "login": "crutchcorn",
+      "name": "Corbin Crutchley",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9100169?v=4",
+      "profile": "https://crutchcorn.dev/",
+      "contributions": [
+        "code",
+        "doc",
+        "maintenance"
+      ]
+    },
+    {
+      "login": "PrattiDev",
+      "name": "Eduardo Pratti",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17130024?v=4",
+      "profile": "http://pratti.design/",
+      "contributions": [
+        "design"
+      ]
+    }
+  ],
+  "repoHost": "https://github.com",
+  "commitConvention": "none"
+}
