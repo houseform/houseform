@@ -1,7 +1,7 @@
 {
   "name": "houseform",
   "description": "Simple to use React forms, where your validation and UI code live together in harmony.",
-  "version": "0.0.3-alpha.1",
+  "version": "0.0.0-development",
   "type": "module",
   "license": "MIT",
   "repository": {
@@ -23,7 +23,8 @@
     "format": "eslint 'lib/**/*.{js,jsx,ts,tsx}' --fix",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "docs:preview": "vitepress preview docs",
+    "semantic-release": "semantic-release"
   },
   "peerDependencies": {
     "react": ">=16.8.0",
@@ -61,7 +62,8 @@
     "vitest": "^0.28.2",
     "vue": "^3.2.45",
     "zod": "^3.20.2",
-    "zod-formik-adapter": "^1.2.0"
+    "zod-formik-adapter": "^1.2.0",
+    "semantic-release": "^20.1.0"
   },
   "files": [
     "dist",
@@ -91,5 +93,19 @@
         "@testing-library/dom"
       ]
     }
-  }
+  },
+  "branches": [
+    "+([0-9])?(.{+([0-9]),x}).x",
+    "main",
+    "next",
+    "next-major",
+    {
+      "name": "beta",
+      "prerelease": true
+    },
+    {
+      "name": "alpha",
+      "prerelease": true
+    }
+  ]
 }

@@ -1,0 +1,65 @@
+name: validate
+on:
+  push:
+    branches:
+      # Match SemVer major release branches
+      # e.g. "12.x" or "8.x"
+      - '[0-9]+.x'
+      - 'main'
+      - 'next'
+      - 'next-major'
+      - 'beta'
+      - 'alpha'
+      - '!all-contributors/**'
+  pull_request: {}
+
+permissions: {}
+
+jobs:
+  release:
+    permissions:
+      contents: write #  to create release tags (cycjimmy/semantic-release-action)
+
+    needs: main
+    runs-on: ubuntu-latest
+    if:
+      ${{ github.repository == 'crutchcorn/houseform' &&
+      github.event_name == 'push' }}
+    steps:
+      - name: 🛑 Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.0
+
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install packages
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: 🚀 Release
+        uses: cycjimmy/semantic-release-action@v3
+        with:
+          semantic_version: 20
+          branches: |
+            [
+              '+([0-9])?(.{+([0-9]),x}).x',
+              'main',
+              'next',
+              'next-major',
+              {name: 'beta', prerelease: true},
+              {name: 'alpha', prerelease: true}
+            ]
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
