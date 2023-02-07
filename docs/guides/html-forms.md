@@ -26,7 +26,7 @@ Let's start with a basic HouseForm form:
 import {Form, Field} from 'houseform';
 
 const App = () => (
-    <Form onSubmit={values => alert(JSON.striingify(values))}>
+    <Form onSubmit={values => alert(JSON.stringify(values))}>
       {({ isValid, submit }) => (
     		<div>
     		    <Field name="email" onChangeValidate={z.string().email("Must be an email")}>
