@@ -44,6 +44,7 @@ Thanks goes to these wonderful people
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://crutchcorn.dev/"><img src="https://avatars.githubusercontent.com/u/9100169?v=4?s=100" width="100px;" alt="Corbin Crutchley"/><br /><sub><b>Corbin Crutchley</b></sub></a><br /><a href="https://github.com/crutchcorn/houseform/commits?author=crutchcorn" title="Code">💻</a> <a href="https://github.com/crutchcorn/houseform/commits?author=crutchcorn" title="Documentation">📖</a> <a href="#maintenance-crutchcorn" title="Maintenance">🚧</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://pratti.design/"><img src="https://avatars.githubusercontent.com/u/17130024?v=4?s=100" width="100px;" alt="Eduardo Pratti"/><br /><sub><b>Eduardo Pratti</b></sub></a><br /><a href="#design-PrattiDev" title="Design">🎨</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/emkay"><img src="https://avatars.githubusercontent.com/u/1327?v=4?s=100" width="100px;" alt="Michael Matuzak"/><br /><sub><b>Michael Matuzak</b></sub></a><br /><a href="https://github.com/crutchcorn/houseform/commits?author=emkay" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
