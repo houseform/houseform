@@ -18,12 +18,12 @@ export default defineConfig({
       { text: "Home", link: "/" },
       { text: "Reference", link: "/reference" },
       {
-        text: version,
+        text: "v1",
         items: [
           // Change to `Changelog` when we have one
           {
             text: "Releases",
-            link: "https://github.com/crutchcorn/houseform/tags",
+            link: "https://github.com/crutchcorn/houseform/releases",
           },
           {
             text: "Contributing",
