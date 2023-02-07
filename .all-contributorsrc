@@ -29,6 +29,15 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "emkay",
+      "name": "Michael Matuzak",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1327?v=4",
+      "profile": "https://github.com/emkay",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoHost": "https://github.com",
