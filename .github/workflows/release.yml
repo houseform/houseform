@@ -1,4 +1,4 @@
-name: validate
+name: Release
 on:
   push:
     branches:
@@ -20,7 +20,6 @@ jobs:
     permissions:
       contents: write #  to create release tags (cycjimmy/semantic-release-action)
 
-    needs: main
     runs-on: ubuntu-latest
     if:
       ${{ github.repository == 'crutchcorn/houseform' &&
