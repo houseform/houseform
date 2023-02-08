@@ -24,6 +24,7 @@ Let's start with a basic HouseForm form:
 
 ```jsx
 import {Form, Field} from 'houseform';
+import { z } from "zod";
 
 const App = () => (
     <Form onSubmit={values => alert(JSON.stringify(values))}>
@@ -59,6 +60,7 @@ To solve this, we need to add a `<form> `element and use its `onSubmit` to call 
 
 ```jsx
 import {Form, Field} from 'houseform';
+import { z } from "zod";
 
 const App = () => (
     <Form onSubmit={values => alert(JSON.striingify(values))}>
@@ -98,6 +100,10 @@ Now, when we hit enter anywhere within the `<form>`, it will run the `onSubmit` 
 If your form uses the [`action`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form#attr-action) property to submit the form to a remote server, you can use a custom `onSubmit` function, a `useRef`, and a `<form>` ref's [`submit()`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/submit) function to check validation and run a form's `action` logic conditionally: 
 
 ```jsx
+import {Form, Field} from 'houseform';
+import { z } from 'zod';
+import { useRef } from 'react';
+
 export default function App() {
   const formRef = useRef();
 
