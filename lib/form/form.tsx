@@ -8,7 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { ZodError } from "zod";
+import type { ZodError } from "zod";
 import { fillPath, getValidationError, stringToPath, validate } from "../utils";
 import { useFormlike } from "./use-formlike";
 import { FieldInstance } from "../field";

@@ -1,4 +1,4 @@
-import { ZodTypeAny } from "zod";
+import type { ZodTypeAny } from "zod";
 import { FormInstance } from "../form/types";
 
 type ValidationFunction<T, F> =

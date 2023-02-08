@@ -1,7 +1,8 @@
-import { MutableRefObject, useContext, useLayoutEffect } from "react";
+import { MutableRefObject, useContext } from "react";
 import { FieldInstance } from "./types";
 import { FieldArrayInstance } from "../field-array";
 import { FormContext } from "../form";
+import useIsomorphicLayoutEffect from "../utils/use-isomorphic-layout-effect";
 
 export interface UseFieldLikeSyncProps<
   T,
@@ -42,7 +43,7 @@ export const useFieldLikeSync = <
   /**
    * Add mutable ref to formFieldsRef
    */
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     mutableRef.current.props = props;
     const newMutable = mutableRef.current;
     formFieldsRef.current.push(newMutable);
@@ -56,38 +57,38 @@ export const useFieldLikeSync = <
   /**
    * Sync the values with the mutable ref
    */
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     mutableRef.current.value = value;
   }, [mutableRef, value]);
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     mutableRef.current.errors = errors;
   }, [errors, mutableRef]);
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     mutableRef.current.isDirty = isDirty;
   }, [isDirty, mutableRef]);
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     mutableRef.current.isValid = isValid;
   }, [isValid, mutableRef]);
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     mutableRef.current.isTouched = isTouched;
   }, [isTouched, mutableRef]);
 
   /**
    * Recompute form errors when field errors change
    */
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     recomputeErrors();
   }, [errors, recomputeErrors]);
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     recomputeIsTouched();
   }, [isTouched, recomputeIsTouched]);
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     recomputeIsDirty();
   }, [isDirty, recomputeIsDirty]);
 };

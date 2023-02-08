@@ -2,16 +2,16 @@ import {
   MutableRefObject,
   useCallback,
   useContext,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
-import { ZodError } from "zod";
+import type { ZodError } from "zod";
 import { FormContext } from "../form";
 import { FieldInstance } from "./types";
 import { FieldArrayInstance } from "../field-array";
 import { getValidationError, stringToPath, validate } from "../utils";
+import useIsomorphicLayoutEffect from "../utils/use-isomorphic-layout-effect";
 
 interface UseListenToListenToArrayProps<T> {
   listenTo: string[] | undefined;
@@ -25,7 +25,7 @@ export function useListenToListenToArray<T>({
 }: UseListenToListenToArrayProps<T>) {
   const formContext = useContext(FormContext);
 
-  useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (!listenTo || listenTo.length === 0) return;
 
     function onChangeListener() {
