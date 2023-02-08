@@ -47,6 +47,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "gitname",
+      "name": "gitname",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7143133?v=4",
+      "profile": "https://github.com/gitname",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoHost": "https://github.com",
