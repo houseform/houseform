@@ -38,6 +38,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "perkinsjr",
+      "name": "James Perkins",
+      "avatar_url": "https://avatars.githubusercontent.com/u/45409975?v=4",
+      "profile": "https://jamesperkins.dev/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoHost": "https://github.com",
