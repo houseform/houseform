@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { ZodError } from "zod";
+import type { ZodError } from "zod";
 import { FormContext } from "../form";
 import { FieldInstance } from "./types";
 import { FieldArrayInstance } from "../field-array";
