@@ -101,7 +101,7 @@ If your form uses the [`action`](https://developer.mozilla.org/en-US/docs/Web/HT
 
 ```jsx
 import {Form, Field} from 'houseform';
-import * as z from 'zod';
+import { z } from 'zod';
 import { useRef } from 'react';
 
 export default function App() {
