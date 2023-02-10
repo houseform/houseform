@@ -161,13 +161,17 @@ export const useFieldLike = <
     [formContext, props]
   );
 
-  const [value, _setValue] = useState(initialState: () => {
-    const initVal = (props.initialValue ?? initialValue) as UseFieldLikeProps<T,F,TT>["initialValue"]
+  const [value, _setValue] = useState(() => {
+    const initVal = (props.initialValue ?? initialValue) as UseFieldLikeProps<
+      T,
+      F,
+      TT
+    >["initialValue"];
 
-    runFieldValidation(validationFnName: "onMountValidate", initVal)
-    return initVal
+    runFieldValidation("onMountValidate", initVal);
+    return initVal;
   });
-  
+
   const valueRef = useRef(value);
 
   valueRef.current = value;

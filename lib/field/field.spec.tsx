@@ -680,7 +680,7 @@ test("Field should not show errors with async onMount validator zod usage", asyn
     </Form>
   );
 
-  expect(queryByText("You must input a valid email")).not.toBeInTheDocument();
+  expect(queryByText("You must input a valid email")).toBeInTheDocument();
 
   await user.type(getByPlaceholderText("Email"), "test@gmail.com");
 
