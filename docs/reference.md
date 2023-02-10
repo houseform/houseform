@@ -64,6 +64,7 @@ A field is the primitive for every input that you'd like to display to the user.
 | `children`         | `(props: FieldInstance<T>) => JSX.Element`                   | Passed [`FieldInstance`](#interface-fieldinstance), expected to return a JSX element. |
 | `onChangeValidate` | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the user has changed the field value. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error. |
 | `onBlurValidate`   | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the user has blurred the field. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error. |
+| `onMountValidate`   | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the component is mounted. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error. |
 | `onSubmitValidate` | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the user has submitted the form. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error. |
 
 ### _Interface_ `FieldInstance`
@@ -108,6 +109,7 @@ The `ArrayField` component takes the following props:
 | `listenTo`         | `string[]`                                                   | A list of form field names to listen to. When a listened field updates it's value, it will trigger the relevant `onChangeValidation` change detection. Useful when making one field depend on the validation of another. |
 | `children`         | `(props: FieldArrayInstance<T>) => JSX.Element`              | Passed [`FieldArrayInstance`](#interface-fieldarrayinstance), expected to return a JSX element. |
 | `onChangeValidate` | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the user has changed the field value. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error. |
+| `onMountValidate`   | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the component is mounted. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error. |
 | `onSubmitValidate` | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the user has submitted the form. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error. |
 
 ### _Interface_ `FieldArrayInstance`
@@ -165,5 +167,6 @@ An `ArrayFieldItem` is a helper used to validate sub-items in a `FieldArray`. An
 | `children`         | `(props: FieldInstance<T>) => JSX.Element`                   | Passed [`FieldInstance`](#interface-fieldinstance), expected to return a JSX element. |
 | `onChangeValidate` | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the user has changed the field value. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error. |
 | `onBlurValidate`   | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the user has blurred the field. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error. |
+| `onMountValidate`   | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the component is mounted . Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error. |
 | `onSubmitValidate` | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the user has submitted the form. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error. |
 

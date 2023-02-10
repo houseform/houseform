@@ -31,4 +31,5 @@ export interface FormInstance<T = any> {
     : never;
   onChangeListenerRefs: MutableRefObject<Record<string, (() => void)[]>>;
   onBlurListenerRefs: MutableRefObject<Record<string, (() => void)[]>>;
+  onMountListenerRefs: MutableRefObject<Record<string, (() => void)[]>>;
 }

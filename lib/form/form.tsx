@@ -47,12 +47,14 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
 
   const onChangeListenerRefs = useRef({} as Record<string, (() => void)[]>);
   const onBlurListenerRefs = useRef({} as Record<string, (() => void)[]>);
+  const onMountListenerRefs = useRef({} as Record<string, (() => void)[]>);
 
   const baseValue = useMemo(() => {
     return Object.assign(formLike, {
       getFieldValue,
       onChangeListenerRefs,
       onBlurListenerRefs,
+      onMountListenerRefs,
       isSubmitted,
       setIsSubmitted,
       submit: () => Promise.resolve(true),
