@@ -653,3 +653,36 @@ test("Field should have render props passed to ref", async () => {
   await user.click(getByText("Submit"));
   expect(await findByText("Test")).toBeInTheDocument();
 });
+
+test("Field should not show errors with async onMount validator zod usage", async () => {
+  const { getByPlaceholderText, queryByText, getByText } = render(
+    <Form onSubmit={(_) => {}}>
+      {() => (
+        <Field<string>
+          name={"email"}
+          initialValue=""
+          onMountValidate={z.string().email("You must input a valid email")}
+        >
+          {({ value, setValue, errors }) => (
+            <div>
+              <input
+                placeholder="Email"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+              />
+              {errors.map((error) => (
+                <p key={error}>{error}</p>
+              ))}
+            </div>
+          )}
+        </Field>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("You must input a valid email")).not.toBeInTheDocument();
+
+  await user.type(getByPlaceholderText("Email"), "test@gmail.com");
+
+  expect(queryByText("You must input a valid email")).not.toBeInTheDocument();
+});
