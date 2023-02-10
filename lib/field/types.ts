@@ -15,6 +15,7 @@ export interface FieldInstanceBaseProps<T = any, F = any> {
 export interface FieldInstanceProps<T = any, F = any>
   extends FieldInstanceBaseProps<T, F> {
   onBlurValidate?: ValidationFunction<T, F>;
+  onMountValidate?: ValidationFunction<T, F>;
 }
 
 export interface FieldInstance<T = any, F = any> {

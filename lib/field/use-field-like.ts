@@ -121,16 +121,6 @@ export const useFieldLike = <
 
   const formContext = useContext(FormContext);
 
-  const [value, _setValue] = useState(
-    (props.initialValue ?? initialValue) as UseFieldLikeProps<
-      T,
-      F,
-      TT
-    >["initialValue"]
-  );
-  const valueRef = useRef(value);
-
-  valueRef.current = value;
   const [errors, setErrors] = useState<string[]>([]);
   const [isTouched, setIsTouched] = useState<boolean>(false);
   const [isDirty, setIsDirty] = useState<boolean>(false);
@@ -151,6 +141,13 @@ export const useFieldLike = <
         validationFn = (props as unknown as FieldInstance<T, F>["props"])
           .onBlurValidate;
       }
+      if (
+        validationFnName === "onMountValidate" &&
+        (props as unknown as FieldInstance<T, F>["props"])?.onMountValidate
+      ) {
+        validationFn = (props as unknown as FieldInstance<T, F>["props"])
+          .onMountValidate;
+      }
       if (validationFn) {
         validate(val as T, formContext, validationFn)
           .then(() => {
@@ -163,6 +160,17 @@ export const useFieldLike = <
     },
     [formContext, props]
   );
+
+  const [value, _setValue] = useState(initialState: () => {
+    const initVal = (props.initialValue ?? initialValue) as UseFieldLikeProps<T,F,TT>["initialValue"]
+
+    runFieldValidation(validationFnName: "onMountValidate", initVal)
+    return initVal
+  });
+  
+  const valueRef = useRef(value);
+
+  valueRef.current = value;
 
   const setValue = useCallback(
     <
