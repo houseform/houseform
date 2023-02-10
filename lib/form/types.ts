@@ -9,15 +9,10 @@ export interface FormInstance<T = any> {
   formFieldsRef: MutableRefObject<
     Array<FieldInstance<any, T> | FieldArrayInstance<any, T>>
   >;
-  recomputeErrors: () => void;
-  recomputeIsDirty: () => void;
-  recomputeIsTouched: () => void;
   errors: string[];
   submit: () => Promise<boolean>;
   isValid: boolean;
-  setIsTouched: (val: boolean) => void;
   isTouched: boolean;
-  setIsDirty: (val: boolean) => void;
   isDirty: boolean;
   isSubmitted: boolean;
   setIsSubmitted: (val: boolean) => void;

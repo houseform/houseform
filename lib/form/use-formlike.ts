@@ -20,12 +20,6 @@ export const useFormlike = <T extends FormlikeField>() => {
     }, [] as string[]);
   }, [formFieldsRef]);
 
-  const [errors, setErrors] = useState(getErrors());
-
-  const isValid = useMemo(() => {
-    return errors.length === 0;
-  }, [errors]);
-
   const getFieldBoolean = useCallback(
     (booleanFieldName: keyof T) => {
       return formFieldsRef.current.some((field) => {
@@ -35,34 +29,22 @@ export const useFormlike = <T extends FormlikeField>() => {
     [formFieldsRef]
   );
 
-  const [isDirty, setIsDirty] = useState(getFieldBoolean("isDirty"));
-  const [isTouched, setIsTouched] = useState(getFieldBoolean("isTouched"));
-
-  const recomputeErrors = useCallback(() => {
-    setErrors(getErrors());
-  }, [getErrors]);
-
-  const recomputeIsDirty = useCallback(() => {
-    setIsDirty(getFieldBoolean("isDirty"));
-  }, [getFieldBoolean]);
-
-  const recomputeIsTouched = useCallback(() => {
-    setIsTouched(getFieldBoolean("isTouched"));
-  }, [getFieldBoolean]);
-
   return {
     formFieldsRef,
     getErrors,
-    errors,
-    setErrors,
-    setIsDirty,
-    setIsTouched,
-    isValid,
     getFieldBoolean,
-    isDirty,
-    isTouched,
-    recomputeErrors,
-    recomputeIsDirty,
-    recomputeIsTouched,
+
+    get errors() {
+      return getErrors();
+    },
+    get isValid() {
+      return getErrors().length === 0;
+    },
+    get isDirty() {
+      return getFieldBoolean("isDirty");
+    },
+    get isTouched() {
+      return getFieldBoolean("isTouched");
+    },
   };
 };

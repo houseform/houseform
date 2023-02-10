@@ -4,9 +4,6 @@ import { FormInstance } from "./types";
 /* c8 ignore start */
 export const initialFormContext = {
   formFieldsRef: { current: [] },
-  recomputeErrors: () => {},
-  recomputeIsDirty: () => {},
-  recomputeIsTouched: () => {},
   errors: [],
   submit: async () => {
     return true;
@@ -15,8 +12,6 @@ export const initialFormContext = {
   setIsSubmitted: (val) => {},
   onChangeListenerRefs: { current: {} },
   onBlurListenerRefs: { current: {} },
-  setIsTouched: () => {},
-  setIsDirty: () => {},
   isValid: false,
   isDirty: false,
   isTouched: false,
