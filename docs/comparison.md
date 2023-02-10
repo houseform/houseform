@@ -21,8 +21,8 @@ We know that we're not the only choice in the React ecosystem for form validatio
 - **HouseForm is flexible:** While [Formik forces you to choose between `onChange`, `onSubmit`, and `onMount` validation](https://formik.org/docs/api/withFormik#validateonblur-boolean), HouseForm allows you to choose which validation to use for each field.
 - **HouseForm is being actively maintained:** As of this writing, [Formik has not seen a package publish in nearly 3 years](https://www.npmjs.com/package/formik), despite [many open community PRs](https://github.com/jaredpalmer/formik/pulls).
                                               There doesn't appear to be a clear community-led fork of Formik to help supplement this, either. HouseForm, on the other hand, is being actively maintained and is actively used in production today.
-- **Formik is fast:** It's worth mentioning that HouseForm is not yet as performant as Formik. In general, [our benchmarks](https://github.com/crutchcorn/houseform/tree/main/lib/benchmarks) show that Formik is ~2x faster at most operations when rendering 1,000 form fields. 
-                      However, HouseForm is still fast enough for most use cases. In those same benchmarks we're able to do an initial render of those 1,000 fields in ~100ms.
+- **Formik is fast:** It's worth mentioning that HouseForm is not yet as performant as Formik. In general, [our benchmarks](https://github.com/crutchcorn/houseform/tree/main/lib/benchmarks) show that Formik is ~1.25x faster at most operations when rendering 1,000 form fields. 
+                      However, HouseForm is still more than fast enough for most use cases. In those same benchmarks we're able to do an initial render of those 1,000 fields in ~80ms.
 - **Formik is popular:** As of time of writing, [Formik has 2 million downloads a week](https://www.npmjs.com/package/formik). HouseForm, on the other hand, is still new and therefore doesn't have the same foothold in the industry.
 
 ## HouseForm vs. [React Hook Form](https://react-hook-form.com/)
