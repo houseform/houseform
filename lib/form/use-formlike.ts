@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from "react";
+import { useRerender } from "../utils/use-rerender";
 
 export interface FormlikeField<T = any> {
   errors: string[];
@@ -13,6 +14,8 @@ export interface FormlikeField<T = any> {
  */
 export const useFormlike = <T extends FormlikeField>() => {
   const formFieldsRef = useRef<T[]>([]);
+
+  const rerender = useRerender();
 
   const getErrors = useCallback(() => {
     return formFieldsRef.current.reduce((acc, field) => {
@@ -29,21 +32,53 @@ export const useFormlike = <T extends FormlikeField>() => {
     [formFieldsRef]
   );
 
+  const shouldRerenderErrorOnRecompute = useRef(false);
+  const shouldRerenderIsValidOnRecompute = useRef(false);
+  const shouldRerenderIsDirtyOnRecompute = useRef(false);
+  const shouldRerenderIsTouchedOnRecompute = useRef(false);
+
+  const recomputeErrors = useCallback(() => {
+    if (shouldRerenderErrorOnRecompute.current) {
+      rerender();
+    }
+    if (shouldRerenderIsValidOnRecompute.current) {
+      rerender();
+    }
+  }, [rerender]);
+
+  const recomputeIsDirty = useCallback(() => {
+    if (shouldRerenderIsDirtyOnRecompute.current) {
+      rerender();
+    }
+  }, [rerender]);
+
+  const recomputeIsTouched = useCallback(() => {
+    if (shouldRerenderIsTouchedOnRecompute.current) {
+      rerender();
+    }
+  }, [rerender]);
+
   return {
     formFieldsRef,
     getErrors,
     getFieldBoolean,
-
+    recomputeErrors,
+    recomputeIsDirty,
+    recomputeIsTouched,
     get errors() {
+      shouldRerenderErrorOnRecompute.current = true;
       return getErrors();
     },
     get isValid() {
+      shouldRerenderIsValidOnRecompute.current = true;
       return getErrors().length === 0;
     },
     get isDirty() {
+      shouldRerenderIsDirtyOnRecompute.current = true;
       return getFieldBoolean("isDirty");
     },
     get isTouched() {
+      shouldRerenderIsTouchedOnRecompute.current = true;
       return getFieldBoolean("isTouched");
     },
   };

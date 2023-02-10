@@ -42,8 +42,10 @@ export const useFieldLikeSync = <
     formContext.formFieldsRef.current.push(newMutable);
 
     return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      formContext.formFieldsRef.current.slice(formContext.formFieldsRef.current.indexOf(newMutable), 1);
+      formContext.formFieldsRef.current.slice(
+        formContext.formFieldsRef.current.indexOf(newMutable),
+        1
+      );
     };
   }, [formContext.formFieldsRef, mutableRef, props]);
 
@@ -69,4 +71,19 @@ export const useFieldLikeSync = <
   useIsomorphicLayoutEffect(() => {
     mutableRef.current.isTouched = isTouched;
   }, [isTouched, mutableRef]);
+
+  /**
+   * Recompute form errors when field errors change
+   */
+  useIsomorphicLayoutEffect(() => {
+    formContext.recomputeErrors();
+  }, [errors, formContext.recomputeErrors]);
+
+  useIsomorphicLayoutEffect(() => {
+    formContext.recomputeIsTouched();
+  }, [isTouched, formContext.recomputeIsTouched]);
+
+  useIsomorphicLayoutEffect(() => {
+    formContext.recomputeIsDirty();
+  }, [isDirty, formContext.recomputeIsDirty]);
 };
