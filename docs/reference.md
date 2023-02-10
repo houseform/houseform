@@ -29,17 +29,17 @@ The `Form` component takes the following props:
 These are the properties that are passed to the `<Form>` component's child function, the `FormContext`, and the second arguments of the `onSubmit` function as well as all [`<Field>` `onXValidate` property functions](#field):
 
 
-| Property         | Type                     | Description                                                  |
-| ---------------- | ------------------------ | ------------------------------------------------------------ |
-| `submit`         | `() => void`             | The function to run when you're ready to submit your form. This function will not do anything if there are `errors` on the form. |
-| `errors`         | `string[]`               | An array of all errors on all form fields.                   |
-| `isValid`        | `boolean`                | A boolean to check if the form is valid or not.              |
-| `isSubmitted`    | `boolean`                | A boolean to check if the form has had an attempted submission or not. |
-| `setIsSubmitted` | `(val: boolean) => void` | A method to reset the `isSubmitted` field                    |
-| `isDirty`        | `boolean`                | A boolean to check if any of the form fields are dirty or not. |
-| `setIsDirty`     | `(val: boolean) => void` | A method to reset the `isDirty` field                        |
-| `isTouched`      | `boolean`                | A boolean to check if any of the form fields have been touched or not. |
-| `setIsTouched`   | `(val: boolean) => void` | A method to reset the `isTouched` field                      |
+| Property         | Type                     | Description                                                                                                                                                               |
+| ---------------- | ------------------------ |---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `submit`         | `() => void`             | The function to run when you're ready to submit your form. This function will not do anything if there are `errors` on the form.                                          |
+| `errors`         | `string[]`               | An array of all errors on all form fields.                                                                                                                                |
+| `isValid`        | `boolean`                | A boolean to check if the form is valid or not.                                                                                                                           |
+| `isSubmitted`    | `boolean`                | A boolean to check if the form has had an attempted submission or not.                                                                                                    |
+| `setIsSubmitted` | `(val: boolean) => void` | A method to reset the `isSubmitted` field                                                                                                                                 |
+| `isDirty`        | `boolean`                | A boolean to check if any of the form fields are dirty or not.                                                                                                            |
+| `setIsDirty`     | `(val: boolean) => void` | A method to reset the `isDirty` properties of all of the Form's Fields.                                                                                                   |
+| `isTouched`      | `boolean`                | A boolean to check if any of the form fields have been touched or not.                                                                                                    |
+| `setIsTouched`   | `(val: boolean) => void` | A method to reset the `isTouched` properties of all of the Form's Fields.                                                                                                                                    |
 | `getFieldValue` | `(fieldName: sting) => FieldInstance` | Takes the field name and returns a [`FieldInstance`](#interface-fieldinstance) or [`FieldArrayInstance`](#interface-fieldarrayinstance) representation of the named field. |
 
 ## Field

@@ -25,34 +25,24 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
   props: FormProps<T>,
   ref: ForwardedRef<FormInstance<T>>
 ) {
-  const {
-    formFieldsRef,
-    errors,
-    isValid,
-    isDirty,
-    setErrors,
-    setIsDirty,
-    setIsTouched,
-    isTouched,
-    recomputeErrors,
-    recomputeIsDirty,
-    recomputeIsTouched,
-  } = useFormlike<FieldInstance<any, T> | FieldArrayInstance<any, T>>();
+  const formLike = useFormlike<
+    FieldInstance<any, T> | FieldArrayInstance<any, T>
+  >();
 
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const getFieldValue = useCallback(
     (name: string) => {
-      const found = formFieldsRef.current.find(
+      const found = formLike.formFieldsRef.current.find(
         (field) => field.props.name === name
       );
       if (found) return found;
       const normalizedName = stringToPath(name).join(".");
-      return formFieldsRef.current.find(
+      return formLike.formFieldsRef.current.find(
         (field) => field._normalizedDotName === normalizedName
       );
     },
-    [formFieldsRef]
+    [formLike.formFieldsRef]
   ) as FormInstance<T>["getFieldValue"];
 
   const onChangeListenerRefs = useRef({} as Record<string, (() => void)[]>);
@@ -60,48 +50,23 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
   const onMountListenerRefs = useRef({} as Record<string, (() => void)[]>);
 
   const baseValue = useMemo(() => {
-    return {
-      formFieldsRef,
-      errors,
-      recomputeErrors,
+    return Object.assign(formLike, {
       getFieldValue,
       onChangeListenerRefs,
       onBlurListenerRefs,
       onMountListenerRefs,
-      recomputeIsDirty,
-      recomputeIsTouched,
-      isTouched,
-      isDirty,
       isSubmitted,
-      isValid,
       setIsSubmitted,
-      setErrors,
-      setIsDirty,
-      setIsTouched,
       submit: () => Promise.resolve(true),
-    };
-  }, [
-    formFieldsRef,
-    errors,
-    recomputeErrors,
-    getFieldValue,
-    recomputeIsDirty,
-    recomputeIsTouched,
-    isTouched,
-    isDirty,
-    isSubmitted,
-    isValid,
-    setErrors,
-    setIsDirty,
-    setIsTouched,
-  ]);
+    });
+  }, [formLike, getFieldValue, isSubmitted]);
 
   const submit = useCallback(async () => {
     setIsSubmitted(true);
     const values = {} as T;
 
     const validArrays = await Promise.all(
-      formFieldsRef.current.map(async (formField) => {
+      formLike.formFieldsRef.current.map(async (formField) => {
         const runValidationType = async (
           type: "onChangeValidate" | "onSubmitValidate" | "onBlurValidate"
         ) => {
@@ -134,10 +99,10 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
 
     props.onSubmit?.(values, baseValue);
     return true;
-  }, [baseValue, formFieldsRef, props]);
+  }, [baseValue, formLike.formFieldsRef, props]);
 
   const value = useMemo(() => {
-    return { ...baseValue, submit };
+    return Object.assign(baseValue, { submit });
   }, [baseValue, submit]);
 
   useImperativeHandle(ref, () => value, [value]);

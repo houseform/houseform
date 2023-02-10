@@ -33,26 +33,21 @@ export const useFieldLikeSync = <
 }: UseFieldLikeSyncProps<T, F, TT>) => {
   const formContext = useContext(FormContext);
 
-  const {
-    formFieldsRef,
-    recomputeErrors,
-    recomputeIsTouched,
-    recomputeIsDirty,
-  } = formContext;
-
   /**
    * Add mutable ref to formFieldsRef
    */
   useIsomorphicLayoutEffect(() => {
     mutableRef.current.props = props;
     const newMutable = mutableRef.current;
-    formFieldsRef.current.push(newMutable);
+    formContext.formFieldsRef.current.push(newMutable);
 
     return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      formFieldsRef.current.slice(formFieldsRef.current.indexOf(newMutable), 1);
+      formContext.formFieldsRef.current.slice(
+        formContext.formFieldsRef.current.indexOf(newMutable),
+        1
+      );
     };
-  }, [formFieldsRef, mutableRef, props]);
+  }, [formContext.formFieldsRef, mutableRef, props]);
 
   /**
    * Sync the values with the mutable ref
@@ -81,14 +76,14 @@ export const useFieldLikeSync = <
    * Recompute form errors when field errors change
    */
   useIsomorphicLayoutEffect(() => {
-    recomputeErrors();
-  }, [errors, recomputeErrors]);
+    formContext.recomputeErrors();
+  }, [errors, formContext.recomputeErrors]);
 
   useIsomorphicLayoutEffect(() => {
-    recomputeIsTouched();
-  }, [isTouched, recomputeIsTouched]);
+    formContext.recomputeIsTouched();
+  }, [isTouched, formContext.recomputeIsTouched]);
 
   useIsomorphicLayoutEffect(() => {
-    recomputeIsDirty();
-  }, [isDirty, recomputeIsDirty]);
+    formContext.recomputeIsDirty();
+  }, [isDirty, formContext.recomputeIsDirty]);
 };
