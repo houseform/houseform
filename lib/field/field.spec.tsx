@@ -3,7 +3,7 @@ import { fireEvent, render, waitFor } from "@testing-library/react";
 import { Field, FieldInstance, Form } from "houseform";
 
 import { z } from "zod";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 test("Field should render children", () => {
   const { getByText } = render(
@@ -654,13 +654,13 @@ test("Field should have render props passed to ref", async () => {
   expect(await findByText("Test")).toBeInTheDocument();
 });
 
-test("Field should not show errors with async onMount validator zod usage", async () => {
-  const { getByPlaceholderText, queryByText, getByText } = render(
+test("Field should show errors with invalid onMount validator zod usage", async () => {
+  const { getByText } = render(
     <Form onSubmit={(_) => {}}>
       {() => (
         <Field<string>
           name={"email"}
-          initialValue=""
+          initialValue="testing"
           onMountValidate={z.string().email("You must input a valid email")}
         >
           {({ value, setValue, errors }) => (
@@ -680,9 +680,56 @@ test("Field should not show errors with async onMount validator zod usage", asyn
     </Form>
   );
 
-  expect(queryByText("You must input a valid email")).toBeInTheDocument();
+  await waitFor(() =>
+    expect(getByText("You must input a valid email")).toBeInTheDocument()
+  );
+});
 
-  await user.type(getByPlaceholderText("Email"), "test@gmail.com");
+test("Field should show not errors with valid onMount validator zod usage", async () => {
+  const Comp = () => {
+    const [didRun, setDidRun] = useState(false);
+
+    useEffect(() => {
+      if (!didRun) {
+        setTimeout(() => {
+          setDidRun(true);
+        }, 0);
+      }
+    }, [didRun, setDidRun]);
+
+    return (
+      <>
+        {didRun && <p>Did run useEffect</p>}
+        <Form onSubmit={(_) => {}}>
+          {() => (
+            <Field<string>
+              name={"email"}
+              initialValue="testing@gmail.com"
+              onMountValidate={z.string().email("You must input a valid email")}
+            >
+              {({ value, setValue, errors }) => (
+                <div>
+                  <input
+                    placeholder="Email"
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                  />
+                  {errors.map((error) => (
+                    <p key={error}>{error}</p>
+                  ))}
+                </div>
+              )}
+            </Field>
+          )}
+        </Form>
+      </>
+    );
+  };
+  const { queryByText, getByText } = render(<Comp />);
+
+  await waitFor(() =>
+    expect(getByText("Did run useEffect")).toBeInTheDocument()
+  );
 
   expect(queryByText("You must input a valid email")).not.toBeInTheDocument();
 });
