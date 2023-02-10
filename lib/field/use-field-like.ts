@@ -15,7 +15,10 @@ import useIsomorphicLayoutEffect from "../utils/use-isomorphic-layout-effect";
 
 interface UseListenToListenToArrayProps<T> {
   listenTo: string[] | undefined;
-  runFieldValidation: (l: "onChangeValidate" | "onBlurValidate", v: T) => void;
+  runFieldValidation: (
+    l: "onChangeValidate" | "onBlurValidate" | "onMountValidate",
+    v: T
+  ) => void;
   valueRef: MutableRefObject<T>;
 }
 export function useListenToListenToArray<T>({
@@ -36,8 +39,15 @@ export function useListenToListenToArray<T>({
       runFieldValidation("onBlurValidate", valueRef.current);
     }
 
+    function onMountListener() {
+      runFieldValidation("onMountValidate", valueRef.current);
+    }
+
     function addListenerToListenToItem(
-      refTypeName: "onChangeListenerRefs" | "onBlurListenerRefs",
+      refTypeName:
+        | "onChangeListenerRefs"
+        | "onBlurListenerRefs"
+        | "onMountListenerRefs",
       fieldName: string,
       listener: () => void
     ) {
@@ -66,7 +76,12 @@ export function useListenToListenToArray<T>({
         fieldName,
         onBlurListener
       );
-      return [onChangeFunctions, onBlurFunctions];
+      const onMountFunctions = addListenerToListenToItem(
+        "onMountListenerRefs",
+        fieldName,
+        onMountListener
+      );
+      return [onChangeFunctions, onBlurFunctions, onMountFunctions];
     });
 
     return () => fns.forEach((fn) => fn());
@@ -106,23 +121,16 @@ export const useFieldLike = <
 
   const formContext = useContext(FormContext);
 
-  const [value, _setValue] = useState(
-    (props.initialValue ?? initialValue) as UseFieldLikeProps<
-      T,
-      F,
-      TT
-    >["initialValue"]
-  );
-  const valueRef = useRef(value);
-
-  valueRef.current = value;
   const [errors, setErrors] = useState<string[]>([]);
   const [isTouched, setIsTouched] = useState<boolean>(false);
   const [isDirty, setIsDirty] = useState<boolean>(false);
 
   const runFieldValidation = useCallback(
     (
-      validationFnName: "onChangeValidate" | "onBlurValidate",
+      validationFnName:
+        | "onChangeValidate"
+        | "onBlurValidate"
+        | "onMountValidate",
       val: UseFieldLikeProps<T, F, TT>["initialValue"]
     ) => {
       let validationFn = props.onChangeValidate;
@@ -132,6 +140,13 @@ export const useFieldLike = <
       ) {
         validationFn = (props as unknown as FieldInstance<T, F>["props"])
           .onBlurValidate;
+      }
+      if (
+        validationFnName === "onMountValidate" &&
+        (props as unknown as FieldInstance<T, F>["props"])?.onMountValidate
+      ) {
+        validationFn = (props as unknown as FieldInstance<T, F>["props"])
+          .onMountValidate;
       }
       if (validationFn) {
         validate(val as T, formContext, validationFn)
@@ -145,6 +160,25 @@ export const useFieldLike = <
     },
     [formContext, props]
   );
+
+  const initVal = (props.initialValue ?? initialValue) as UseFieldLikeProps<
+    T,
+    F,
+    TT
+  >["initialValue"];
+
+  const hasRanMountHook = useRef(false);
+  const [value, _setValue] = useState(initVal);
+
+  useIsomorphicLayoutEffect(() => {
+    if (hasRanMountHook.current) return;
+    hasRanMountHook.current = true;
+    runFieldValidation("onMountValidate", initVal);
+  });
+
+  const valueRef = useRef(value);
+
+  valueRef.current = value;
 
   const setValue = useCallback(
     <
