@@ -15,7 +15,10 @@ import useIsomorphicLayoutEffect from "../utils/use-isomorphic-layout-effect";
 
 interface UseListenToListenToArrayProps<T> {
   listenTo: string[] | undefined;
-  runFieldValidation: (l: "onChangeValidate" | "onBlurValidate", v: T) => void;
+  runFieldValidation: (
+    l: "onChangeValidate" | "onBlurValidate" | "onMountValidate",
+    v: T
+  ) => void;
   valueRef: MutableRefObject<T>;
 }
 export function useListenToListenToArray<T>({
@@ -36,8 +39,15 @@ export function useListenToListenToArray<T>({
       runFieldValidation("onBlurValidate", valueRef.current);
     }
 
+    function onMountListener() {
+      runFieldValidation("onMountValidate", valueRef.current);
+    }
+
     function addListenerToListenToItem(
-      refTypeName: "onChangeListenerRefs" | "onBlurListenerRefs",
+      refTypeName:
+        | "onChangeListenerRefs"
+        | "onBlurListenerRefs"
+        | "onMountListenerRefs",
       fieldName: string,
       listener: () => void
     ) {
@@ -66,7 +76,12 @@ export function useListenToListenToArray<T>({
         fieldName,
         onBlurListener
       );
-      return [onChangeFunctions, onBlurFunctions];
+      const onMountFunctions = addListenerToListenToItem(
+        "onMountListenerRefs",
+        fieldName,
+        onMountListener
+      );
+      return [onChangeFunctions, onBlurFunctions, onMountFunctions];
     });
 
     return () => fns.forEach((fn) => fn());
@@ -122,7 +137,10 @@ export const useFieldLike = <
 
   const runFieldValidation = useCallback(
     (
-      validationFnName: "onChangeValidate" | "onBlurValidate",
+      validationFnName:
+        | "onChangeValidate"
+        | "onBlurValidate"
+        | "onMountValidate",
       val: UseFieldLikeProps<T, F, TT>["initialValue"]
     ) => {
       let validationFn = props.onChangeValidate;

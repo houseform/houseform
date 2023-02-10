@@ -15,6 +15,7 @@ export const initialFormContext = {
   setIsSubmitted: (val) => {},
   onChangeListenerRefs: { current: {} },
   onBlurListenerRefs: { current: {} },
+  onMountListenerRefs: { current: {} },
   setIsTouched: () => {},
   setIsDirty: () => {},
   isValid: false,
