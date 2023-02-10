@@ -4,7 +4,9 @@ import { useRerender } from "../utils/use-rerender";
 export interface FormlikeField<T = any> {
   errors: string[];
   isDirty: boolean;
+  setIsDirty: (val: boolean) => void;
   isTouched: boolean;
+  setIsTouched: (val: boolean) => void;
 }
 
 /**
@@ -14,6 +16,18 @@ export interface FormlikeField<T = any> {
  */
 export const useFormlike = <T extends FormlikeField>() => {
   const formFieldsRef = useRef<T[]>([]);
+
+  const setIsTouched = useCallback((val: boolean) => {
+    formFieldsRef.current.forEach((field) => {
+      field.setIsTouched(val);
+    });
+  }, []);
+
+  const setIsDirty = useCallback((val: boolean) => {
+    formFieldsRef.current.forEach((field) => {
+      field.setIsDirty(val);
+    });
+  }, []);
 
   const rerender = useRerender();
 
@@ -65,6 +79,8 @@ export const useFormlike = <T extends FormlikeField>() => {
     recomputeErrors,
     recomputeIsDirty,
     recomputeIsTouched,
+    setIsTouched,
+    setIsDirty,
     get errors() {
       shouldRerenderErrorOnRecompute.current = true;
       return getErrors();

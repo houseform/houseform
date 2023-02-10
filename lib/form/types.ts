@@ -15,7 +15,9 @@ export interface FormInstance<T = any> {
   errors: string[];
   submit: () => Promise<boolean>;
   isValid: boolean;
+  setIsTouched: (val: boolean) => void;
   isTouched: boolean;
+  setIsDirty: (val: boolean) => void;
   isDirty: boolean;
   isSubmitted: boolean;
   setIsSubmitted: (val: boolean) => void;
