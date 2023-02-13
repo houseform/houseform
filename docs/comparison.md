@@ -14,7 +14,7 @@ We know that we're not the only choice in the React ecosystem for form validatio
 
 ## HouseForm vs. [Formik](https://formik.org/)
 
-- **HouseForm is lightweight:** [Formik is 68.3 kB without GZIP](https://unpkg.com/browse/formik@latest/dist/formik.esm.js). Meanwhile, [HouseForm is 9.54 kb without GZIP](https://unpkg.com/browse/houseform@latest/dist/houseform.umd.cjs)*.
+- **HouseForm is lightweight:** [Formik is 68.3 kB without GZIP](https://unpkg.com/browse/formik@latest/dist/formik.esm.js). Meanwhile, [HouseForm is 9.87 kb without GZIP](https://unpkg.com/browse/houseform@latest/dist/houseform.umd.cjs)*.
 - **HouseForm uses Zod:** Formik primarily uses [Yup](https://github.com/jquense/yup) to do validation, HouseForm relies more heavily on [Zod](https://github.com/colinhacks/zod) to do its validation.
                           While Yup is more popular, Zod generally has stricter TypeScript types and is well-loved by many React developers.
 - **HouseForm is field-focused:** Formik requires you to pass [a `validationSchema` property](https://formik.org/docs/api/withFormik#validationschema-schema--props-props--schema) to validate the whole form with Yup. HouseForm, on the other hand, allows you to validate each field individually [using inline properties associated with the field itself](/reference#field-props).
@@ -27,7 +27,7 @@ We know that we're not the only choice in the React ecosystem for form validatio
 
 ## HouseForm vs. [React Hook Form](https://react-hook-form.com/)
 
-- **HouseForm is lightweight:** [React Hook Form is 87.7 kb without GZIP](https://unpkg.com/browse/react-hook-form@latest/dist/index.esm.mjs). Meanwhile, [HouseForm is 9.54 kb without GZIP](https://unpkg.com/browse/houseform@latest/dist/houseform.umd.cjs)*.
+- **HouseForm is lightweight:** [React Hook Form is 87.7 kb without GZIP](https://unpkg.com/browse/react-hook-form@latest/dist/index.esm.mjs). Meanwhile, [HouseForm is 9.87 kb without GZIP](https://unpkg.com/browse/houseform@latest/dist/houseform.umd.cjs)*.
 - **HouseForm uses controlled components:** React Hook Form uses [uncontrolled components](https://beta.reactjs.org/learn/sharing-state-between-components#controlled-and-uncontrolled-components) to handle form state, while HouseForm uses controlled components. This allows HouseForm more control over field state, re-renders, and validation.
 - **HouseForm allows for per-field validation with Zod:** While [React Hook Form supports some form of per-field validation](https://react-hook-form.com/get-started#Applyvalidation) it only support built-in validation provided by the DOM. [To use more complex validation with React Hook Form, you need to use a form schema.](https://react-hook-form.com/get-started#SchemaValidation) HouseForm, on the other hand, allows you to use [Zod](https://github.com/colinhacks/zod) right inline with your field definitions.
 - **HouseForm has first-class support for React Native:** While [React Hook Form has some support for React Native](https://react-hook-form.com/get-started#ReactNative), it uses a different API than the web version. HouseForm, on the other hand, has a [the same API for React Native as it does the web version](/guides/react-native).
@@ -37,6 +37,20 @@ We know that we're not the only choice in the React ecosystem for form validatio
 > While we're fairly sure that React Hook Form is more performant than HouseForm, it's unclear by how much.
 > 
 > If you'd like to help us with this, please [open an issue](https://github.com/crutchcorn/houseform/issues/new).
+
+## HouseForm vs. [React Final Form](https://final-form.org/react)
+
+- **HouseForm is lightweight:** [React Final Form is 24 kb without GZIP](https://unpkg.com/browse/react-final-form@latest/dist/react-final-form.es.js) and relies on [a 47.6 kb base package](https://unpkg.com/browse/final-form@latest/dist/final-form.es.js) for *a total non-GZIP bundle size of 71.6 kb*. Meanwhile, [HouseForm is 9.87 kb without GZIP](https://unpkg.com/browse/houseform@latest/dist/houseform.umd.cjs)*.
+- **HouseForm uses Zod:** While React Final Form requires you to use a manual function to do validation, HouseForm allows you to use [Zod](https://github.com/colinhacks/zod) to do validation. Zod allows you to use an easier API to define common validation types than manual functions.
+- **HouseForm supports React Native:** [React Final Form appears not to have React Native support currently](https://github.com/final-form/react-final-form-hooks/issues/48). This differs from [HouseForm, which fully supports React Native](/guides/react-native).
+- **HouseForm has a consistent API**: [There appear to be many different ways to define a field in React Final Form, per their docs](https://final-form.org/docs/react-final-form/getting-started). In HouseForm? There's a single consistent method of creating fields. Less of an API surface area to know, smaller surface area for bugs to occur.
+- **React Final Form is more popular:** As of time of writing, [React Final Form has 300 thousand downloads a week](https://www.npmjs.com/package/react-final-form). HouseForm, on the other hand, is still new and therefore doesn't have the same foothold in the industry.
+
+> We've yet to run benchmarks comparing HouseForm to React Final Form.
+>
+> If you'd like to help us with this, please [open an issue](https://github.com/crutchcorn/houseform/issues/new).
+
+
 
 ----
 
