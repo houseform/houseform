@@ -37,12 +37,8 @@ That said, here's a quick recap of why you might choose HouseForm over other Rea
 - **HouseForm uses controlled components:** React Hook Form uses [uncontrolled components](https://beta.reactjs.org/learn/sharing-state-between-components#controlled-and-uncontrolled-components) to handle form state, while HouseForm uses controlled components. This allows HouseForm more control over field state, re-renders, and validation.
 - **HouseForm allows for per-field validation with Zod:** While [React Hook Form supports some form of per-field validation](https://react-hook-form.com/get-started#Applyvalidation) it only support built-in validation provided by the DOM. [To use more complex validation with React Hook Form, you need to use a form schema.](https://react-hook-form.com/get-started#SchemaValidation) HouseForm, on the other hand, allows you to use [Zod](https://github.com/colinhacks/zod) right inline with your field definitions.
 - **HouseForm has first-class support for React Native:** While [React Hook Form has some support for React Native](https://react-hook-form.com/get-started#ReactNative), it uses a different API than the web version. HouseForm, on the other hand, has a [the same API for React Native as it does the web version](/guides/react-native).
+- **HouseForm is faster in headless mode:** When comparing apples-to-apples by running React Hook Form in [headless mode](https://react-hook-form.com/get-started#ReactNative), [our benchmarks](https://github.com/crutchcorn/houseform/tree/main/lib/benchmarks) show that HouseForm is ~1.25x to ~2x faster at most operations when rendering 1,000 form fields.
 - **React Hook Form is popular:** As of time of writing, [React Hook Form has 3 million downloads a week](https://www.npmjs.com/package/react-hook-form). HouseForm, on the other hand, is still new and therefore doesn't have the same foothold in the industry.
-
-> We've yet to run benchmarks comparing HouseForm to React Hook Form. 
-> While we're fairly sure that React Hook Form is more performant than HouseForm, it's unclear by how much.
-> 
-> If you'd like to help us with this, please [open an issue](https://github.com/crutchcorn/houseform/issues/new).
 
 ## HouseForm vs. [React Final Form](https://final-form.org/react)
 
