@@ -82,7 +82,7 @@ function FormikOnSubmitBenchmark() {
   );
 }
 
-function ReactHookFormInitialRenderBenchmark() {
+function ReactHookFormOnSubmitBenchmark() {
   const { control, handleSubmit } = useForm({
     defaultValues: {
       num: arr,
@@ -143,7 +143,7 @@ describe("Submits 1,000 form items", () => {
     cleanup();
 
     const { getByText, findByText } = render(
-      <ReactHookFormInitialRenderBenchmark />
+      <ReactHookFormOnSubmitBenchmark />
     );
 
     fireEvent.click(getByText("Submit"));

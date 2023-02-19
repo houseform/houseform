@@ -11,6 +11,9 @@ import {
 import { Formik, Field as FormikField } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { FieldProps } from "formik/dist/Field";
+import { Controller, useForm } from "react-hook-form";
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const arr = Array.from({ length: 1000 }, (_, i) => i);
 
@@ -93,6 +96,52 @@ function FormikOnChangeBenchmark() {
   );
 }
 
+function ReactHookFormOnChangeBenchmark() {
+  const { control, handleSubmit } = useForm({
+    defaultValues: {
+      num: arr,
+    },
+    mode: "onChange",
+    resolver: zodResolver(
+      z.object({
+        num: z.array(z.number().min(3, "Must be at least three")),
+      })
+    ),
+  });
+
+  return (
+    <>
+      {arr.map((num, i) => {
+        return (
+          <Controller
+            key={i}
+            control={control}
+            render={({
+              field: { value, onBlur, onChange },
+              fieldState: { error },
+            }) => {
+              return (
+                <div>
+                  <input
+                    data-testid={`value${i}`}
+                    type="number"
+                    value={value}
+                    onBlur={onBlur}
+                    onChange={(event) => onChange(event.target.valueAsNumber)}
+                    placeholder={`Number ${i}`}
+                  />
+                  {error && <p>{error.message}</p>}
+                </div>
+              );
+            }}
+            name={`num.${i}`}
+          />
+        );
+      })}
+    </>
+  );
+}
+
 describe("Validates onChange on 1,000 form items", () => {
   bench("HouseForm", async () => {
     cleanup();
@@ -115,6 +164,22 @@ describe("Validates onChange on 1,000 form items", () => {
 
     const { getByTestId, findAllByText, queryAllByText } = render(
       <FormikOnChangeBenchmark />
+    );
+
+    if (queryAllByText("Must be at least three")?.length) {
+      throw "Should not be present yet";
+    }
+
+    fireEvent.change(getByTestId("value1"), { target: { value: 0 } });
+
+    await findAllByText("Must be at least three");
+  });
+
+  bench("React Hook Forms", async () => {
+    cleanup();
+
+    const { getByTestId, findAllByText, queryAllByText } = render(
+      <ReactHookFormOnChangeBenchmark />
     );
 
     if (queryAllByText("Must be at least three")?.length) {
