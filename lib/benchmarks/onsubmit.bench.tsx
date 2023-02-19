@@ -4,6 +4,7 @@ import { Field, Form } from "houseform";
 import { useState } from "react";
 import { cleanup, fireEvent, render } from "@testing-library/react";
 import { Formik, Field as FormikField } from "formik";
+import { Controller, useForm } from "react-hook-form";
 
 const arr = Array.from({ length: 1000 }, (_, i) => i);
 
@@ -81,6 +82,42 @@ function FormikOnSubmitBenchmark() {
   );
 }
 
+function ReactHookFormInitialRenderBenchmark() {
+  const { control, handleSubmit } = useForm({
+    defaultValues: {
+      num: arr,
+    },
+  });
+
+  const [val, setVal] = useState<Record<string, any> | null>(null);
+
+  if (val) {
+    return (
+      <p>
+        <span>Value:</span>
+        {JSON.stringify(val)}
+      </p>
+    );
+  }
+
+  return (
+    <>
+      <button onClick={handleSubmit((data) => setVal(data))}>Submit</button>
+
+      {arr.map((num, i) => {
+        return (
+          <Controller
+            key={i}
+            control={control}
+            render={({ field: { value } }) => <p>{value}</p>}
+            name={`num.${i}`}
+          />
+        );
+      })}
+    </>
+  );
+}
+
 describe("Submits 1,000 form items", () => {
   bench("Houseform", async () => {
     cleanup();
@@ -96,6 +133,18 @@ describe("Submits 1,000 form items", () => {
     cleanup();
 
     const { getByText, findByText } = render(<FormikOnSubmitBenchmark />);
+
+    fireEvent.click(getByText("Submit"));
+
+    await findByText("Value:");
+  });
+
+  bench("React Hook Form", async () => {
+    cleanup();
+
+    const { getByText, findByText } = render(
+      <ReactHookFormInitialRenderBenchmark />
+    );
 
     fireEvent.click(getByText("Submit"));
 
