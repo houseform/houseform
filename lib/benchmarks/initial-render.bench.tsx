@@ -4,6 +4,7 @@ import { Field, Form } from "houseform";
 import { cleanup, render } from "@testing-library/react";
 import { Formik, Field as FormikField } from "formik";
 import { FieldProps } from "formik/dist/Field";
+import { Controller, useForm } from "react-hook-form";
 
 const arr = Array.from({ length: 1000 }, (_, i) => i);
 
@@ -50,6 +51,29 @@ function FormikInitialRenderBenchmark() {
   );
 }
 
+function ReactHookFormInitialRenderBenchmark() {
+  const { control } = useForm({
+    defaultValues: {
+      num: arr,
+    },
+  });
+
+  return (
+    <>
+      {arr.map((num, i) => {
+        return (
+          <Controller
+            key={i}
+            control={control}
+            render={({ field: { value } }) => <p>{value}</p>}
+            name={`num.${i}`}
+          />
+        );
+      })}
+    </>
+  );
+}
+
 describe("Renders 1,000 form items", () => {
   bench("Houseform", async () => {
     cleanup();
@@ -63,6 +87,14 @@ describe("Renders 1,000 form items", () => {
     cleanup();
 
     const { findByText } = render(<FormikInitialRenderBenchmark />);
+
+    await findByText("999");
+  });
+
+  bench("React Hook Form", async () => {
+    cleanup();
+
+    const { findByText } = render(<ReactHookFormInitialRenderBenchmark />);
 
     await findByText("999");
   });
