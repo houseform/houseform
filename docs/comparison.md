@@ -12,6 +12,12 @@ head:
 
 We know that we're not the only choice in the React ecosystem for form validation libraries. Let's compare HouseForm to some of the other popular libraries.
 
+We wrote a long-form explanation explaining why we build HouseForm and are using it over other form libraries here:
+
+[Formik Works Great; Here's Why I Wrote My Own](https://dev.to/crutchcorn/formik-works-great-heres-why-i-wrote-my-own-591m)
+
+That said, here's a quick recap of why you might choose HouseForm over other React forms libraries.
+
 ## HouseForm vs. [Formik](https://formik.org/)
 
 - **HouseForm is lightweight:** [Formik is 68.3 kB without GZIP](https://unpkg.com/browse/formik@latest/dist/formik.esm.js). Meanwhile, [HouseForm is 9.87 kb without GZIP](https://unpkg.com/browse/houseform@latest/dist/houseform.umd.cjs)*.
