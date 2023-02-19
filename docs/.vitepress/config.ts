@@ -62,6 +62,10 @@ export default defineConfig({
                 link: "/guides/react-native",
               },
               {
+                text: "UI Libraries",
+                link: "/guides/ui-libraries",
+              },
+              {
                 text: "Non-Text Inputs",
                 link: "/guides/non-text-inputs",
               },
