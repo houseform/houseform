@@ -1,6 +1,6 @@
 import { defineConfig } from "vitepress";
 
-const { description, version } = require("../../package.json");
+const { description } = require("../../package.json");
 
 export default defineConfig({
   title: "HouseForm",
