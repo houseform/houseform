@@ -63,7 +63,7 @@ import {Form, Field} from 'houseform';
 import { z } from "zod";
 
 const App = () => (
-    <Form onSubmit={values => alert(JSON.striingify(values))}>
+    <Form onSubmit={values => alert(JSON.stringify(values))}>
       {({ isValid, submit }) => (
     		<form onSubmit={e => {
           		e.preventDefault();
@@ -94,6 +94,12 @@ const App = () => (
 ```
 
 Now, when we hit enter anywhere within the `<form>`, it will run the `onSubmit` on the HouseForm `<Form>` component.
+
+### Interactive Example of HouseForm with HTML Form Element
+
+<br/>
+
+<ClickToIFrame title="HouseForm HTML Action StackBlitz Example" src="https://stackblitz.com/edit/houseform-v1-example-html-forms?embed=1&file=App.tsx"/>
 
 ## Forms with Network Requests via `action` Attribute
 
@@ -157,3 +163,9 @@ export default function App() {
 With this code, your page will not refresh and execute the `action` logic until the form is validated by HouseForm and marked as valid. 
 
 > Make sure your HTML `<input>` elements also have a `name` associated with them - otherwise, their values will not be submitted to the `action` server via [`FormData`](https://developer.mozilla.org/en-US/docs/Web/API/FormData) properly.
+
+### Interactive Example of HouseForm with HTML Form `action` Property
+
+<br/>
+
+<ClickToIFrame title="HouseForm HTML Action StackBlitz Example" src="https://stackblitz.com/edit/houseform-v1-html-form-action?embed=1&file=pages/index.js"/>
