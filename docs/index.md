@@ -47,7 +47,7 @@ Good question, let's break that down:
 - **Headless**: HouseForm includes absolutely no UI components to it. While it uses components to introduce new behavior to your forms, it does not render any UI elements of any kind. Instead, it's a "BYOM" (that's "Bring Your Own Markup") library, expecting you to pass the expected markup for your UI.
 - **Runtime agnostic**: Because HouseForm is headless, you can run HouseForm the same way you would in React for the browser as you would React for SSR, the same as you would React Native without a DOM implementation.
 
-# Video Introduction
+## Video Introduction
 
 [James Perkins](https://www.youtube.com/@james-perkins) recently made an incredible video intro to HouseForm over on his YouTube channel:
 
@@ -180,3 +180,7 @@ function isEmailUnique(val: string) {
 ```
 
 > While this example is long, it's a real-world example of what your web login form might look like!
+
+## Interactive Example
+
+<ClickToIFrame title="HouseForm StackBlitz Example" src="https://stackblitz.com/edit/houseform-v1-example?embed=1&file=App.tsx"/>
