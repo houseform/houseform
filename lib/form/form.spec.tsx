@@ -565,3 +565,42 @@ test("Form's `getFieldValue` should show dot notation for incorrect syntax", asy
   await user.click(getByText("Submit"));
   expect(await findByText("Test")).toBeInTheDocument();
 });
+
+test("Form should show all field errors if requested", async () => {
+  const SubmitValues = () => {
+    return (
+      <Form>
+        {({ errors }) => (
+          <>
+            <Field<string>
+              name={"email"}
+              initialValue=""
+              onMountValidate={z
+                .string()
+                .min(1, "Should have a min length of 1")}
+            >
+              {() => <></>}
+            </Field>
+            <Field<string>
+              name={"email"}
+              initialValue=""
+              onMountValidate={z
+                .string()
+                .min(3, "Should have a min length of 3")}
+            >
+              {() => <></>}
+            </Field>
+            {errors.map((error) => (
+              <p key={error}>{error}</p>
+            ))}
+          </>
+        )}
+      </Form>
+    );
+  };
+
+  const { findByText } = render(<SubmitValues />);
+
+  expect(await findByText("Should have a min length of 1")).toBeInTheDocument();
+  expect(await findByText("Should have a min length of 3")).toBeInTheDocument();
+});
