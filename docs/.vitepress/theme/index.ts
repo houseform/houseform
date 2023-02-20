@@ -5,15 +5,13 @@ import ClickToIFrame from "./ClickToIFrame.vue";
 import { h } from 'vue'
 import HomePage from './HomePage.vue';
 
-const modules = import.meta.glob('../../../.all-contributorsrc', { as: 'raw' })
-
-const allContributors = await modules["../../../.all-contributorsrc"]();
+import allContributorsStr from '../../../.all-contributorsrc?raw';
 
 export default {
   ...DefaultTheme,
   Layout() {
     return h(DefaultTheme.Layout, null, {
-      'home-features-after': () => h(HomePage, {allContributors: JSON.parse(allContributors)}),
+      'home-features-after': () => h(HomePage, {allContributors: JSON.parse(allContributorsStr)}),
     })
   },
   enhanceApp(ctx: EnhanceAppContext) {
