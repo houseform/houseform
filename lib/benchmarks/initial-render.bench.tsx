@@ -75,7 +75,7 @@ function ReactHookFormInitialRenderBenchmark() {
 }
 
 describe("Renders 1,000 form items", () => {
-  bench("Houseform", async () => {
+  bench("HouseForm", async () => {
     cleanup();
 
     const { findByText } = render(<HouseFormInitialRenderBenchmark />);

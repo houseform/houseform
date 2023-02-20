@@ -119,7 +119,7 @@ function ReactHookFormOnSubmitBenchmark() {
 }
 
 describe("Submits 1,000 form items", () => {
-  bench("Houseform", async () => {
+  bench("HouseForm", async () => {
     cleanup();
 
     const { getByText, findByText } = render(<HouseFormOnSubmitBenchmark />);
