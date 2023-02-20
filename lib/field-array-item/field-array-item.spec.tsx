@@ -393,3 +393,46 @@ test("field array item should work with listenTo as the listener", async () => {
 
   expect(getByText("Must be at least 3")).toBeInTheDocument();
 });
+
+test("field array item should provide an error when improperly prefixed", async () => {
+  expect(() =>
+    render(
+      <Form>
+        {() => (
+          <div>
+            <Field<string> name={"test"} initialValue={"T"}>
+              {({ setValue }) => (
+                <button onClick={() => setValue("Tes")}>Set value</button>
+              )}
+            </Field>
+            <FieldArray<{ thing: number }>
+              initialValue={[{ thing: 1 }]}
+              name={"people"}
+            >
+              {({ value }) => (
+                <>
+                  {value.map((person, i) => (
+                    <FieldArrayItem<number>
+                      key={`person[${i}].thing`}
+                      name={`person[${i}].thing`}
+                      onChangeValidate={z.number().min(3, "Must be at least 3")}
+                      listenTo={[`test`]}
+                    >
+                      {({ errors }) => (
+                        <div>
+                          {errors.map((error) => (
+                            <p key={error}>{error}</p>
+                          ))}
+                        </div>
+                      )}
+                    </FieldArrayItem>
+                  ))}
+                </>
+              )}
+            </FieldArray>
+          </div>
+        )}
+      </Form>
+    )
+  ).toThrowError();
+});
