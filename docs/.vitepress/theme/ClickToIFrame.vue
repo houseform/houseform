@@ -40,7 +40,7 @@ function open() {
   </div>
 </template>
 
-<style>
+<style scoped>
 .click-to-iframe-container > * {
   width: 100%;
   height: 500px;
