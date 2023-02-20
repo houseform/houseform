@@ -227,6 +227,50 @@ test("Form should show isTouched proper", async () => {
   expect(await findByText("Form is touched")).toBeInTheDocument();
 });
 
+test("Form should handle setIsTouched helper", async () => {
+  const { getByText, findByText } = render(
+    <Form>
+      {({ setIsTouched }) => (
+        <>
+          <Field name={"test"}>
+            {({ isTouched }) => (
+              <p>{isTouched ? "Is touched" : "Is not touched"}</p>
+            )}
+          </Field>
+          <button onClick={() => setIsTouched(true)}>Touch</button>
+        </>
+      )}
+    </Form>
+  );
+
+  expect(getByText("Is not touched")).toBeInTheDocument();
+
+  await user.click(getByText("Touch"));
+
+  expect(await findByText("Is touched")).toBeInTheDocument();
+});
+
+test("Form should handle setIsDirty helper", async () => {
+  const { getByText, findByText } = render(
+    <Form>
+      {({ setIsDirty }) => (
+        <>
+          <Field name={"test"}>
+            {({ isDirty }) => <p>{isDirty ? "Is dirty" : "Is not dirty"}</p>}
+          </Field>
+          <button onClick={() => setIsDirty(true)}>Dirty</button>
+        </>
+      )}
+    </Form>
+  );
+
+  expect(getByText("Is not dirty")).toBeInTheDocument();
+
+  await user.click(getByText("Dirty"));
+
+  expect(await findByText("Is dirty")).toBeInTheDocument();
+});
+
 test("Form should reset isTouched when all touched fields are not touched anymore", async () => {
   const { getByText, findByText } = render(
     <Form onSubmit={() => {}}>
