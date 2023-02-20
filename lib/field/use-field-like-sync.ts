@@ -42,7 +42,7 @@ export const useFieldLikeSync = <
     formContext.formFieldsRef.current.push(newMutable);
 
     return () => {
-      formContext.formFieldsRef.current.slice(
+      formContext.formFieldsRef.current.splice(
         formContext.formFieldsRef.current.indexOf(newMutable),
         1
       );
