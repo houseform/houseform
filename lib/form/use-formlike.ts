@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useRerender } from "../utils/use-rerender";
 
-export interface FormlikeField<T = any> {
+export interface FormlikeField {
   errors: string[];
   isDirty: boolean;
   setIsDirty: (val: boolean) => void;
@@ -78,30 +78,44 @@ export const useFormlike = <T extends FormlikeField>() => {
     }
   }, [rerender]);
 
-  return {
-    formFieldsRef,
-    getErrors,
-    getFieldBoolean,
-    recomputeErrors,
-    recomputeIsDirty,
-    recomputeIsTouched,
-    setIsTouched,
-    setIsDirty,
-    get errors() {
-      shouldRerenderErrorOnRecompute.current = true;
-      return getErrors();
-    },
-    get isValid() {
-      shouldRerenderIsValidOnRecompute.current = true;
-      return getValidBoolean();
-    },
-    get isDirty() {
-      shouldRerenderIsDirtyOnRecompute.current = true;
-      return getFieldBoolean("isDirty");
-    },
-    get isTouched() {
-      shouldRerenderIsTouchedOnRecompute.current = true;
-      return getFieldBoolean("isTouched");
-    },
-  };
+  const formLike = useMemo(
+    () => ({
+      formFieldsRef,
+      getErrors,
+      getFieldBoolean,
+      recomputeErrors,
+      recomputeIsDirty,
+      recomputeIsTouched,
+      setIsTouched,
+      setIsDirty,
+      get errors() {
+        shouldRerenderErrorOnRecompute.current = true;
+        return getErrors();
+      },
+      get isValid() {
+        shouldRerenderIsValidOnRecompute.current = true;
+        return getValidBoolean();
+      },
+      get isDirty() {
+        shouldRerenderIsDirtyOnRecompute.current = true;
+        return getFieldBoolean("isDirty");
+      },
+      get isTouched() {
+        shouldRerenderIsTouchedOnRecompute.current = true;
+        return getFieldBoolean("isTouched");
+      },
+    }),
+    [
+      getErrors,
+      getFieldBoolean,
+      getValidBoolean,
+      recomputeErrors,
+      recomputeIsDirty,
+      recomputeIsTouched,
+      setIsDirty,
+      setIsTouched,
+    ]
+  );
+
+  return formLike;
 };
