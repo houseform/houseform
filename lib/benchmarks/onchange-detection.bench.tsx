@@ -175,7 +175,7 @@ describe("Validates onChange on 1,000 form items", () => {
     await findAllByText("Must be at least three");
   });
 
-  bench("React Hook Forms", async () => {
+  bench("React Hook Form", async () => {
     cleanup();
 
     const { getByTestId, findAllByText, queryAllByText } = render(
