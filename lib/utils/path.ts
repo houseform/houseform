@@ -16,14 +16,12 @@ const reEscapeChar = /\\(\\)?/g;
  * @returns {Array} Returns the property path array.
  */
 export const stringToPath = (str: string) => {
-  const result = [];
-  if (str.charCodeAt(0) === 46 /* . */) {
-    result.push("");
-  }
+  const result = [] as string[];
   str.replace(rePropName, (match, number, quote, subString) => {
-    result.push(
-      quote ? subString.replace(reEscapeChar, "$1") : number || match
-    );
+    const resultToPush = quote
+      ? subString.replace(reEscapeChar, "$1")
+      : number || match;
+    resultToPush && result.push(resultToPush);
     return undefined as any;
   });
   return result;
@@ -62,9 +60,6 @@ export const getPath = (obj: object, path: string) => {
     if (i === pathArray.length - 1) {
       return current[key];
     } else {
-      if (!current[key]) {
-        current[key] = {};
-      }
       current = current[key];
     }
   }

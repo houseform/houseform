@@ -1,6 +1,22 @@
 import { expect, test } from "vitest";
 import { fillPath, getPath, stringToPath } from "houseform";
 
+test("stringToPath to adapt dot notation with prefixed dot", () => {
+  expect(stringToPath(".test.one.other")).toStrictEqual([
+    "test",
+    "one",
+    "other",
+  ]);
+});
+
+test("stringToPath to adapt dot notation with postfixed dot", () => {
+  expect(stringToPath("test.one.other.")).toStrictEqual([
+    "test",
+    "one",
+    "other",
+  ]);
+});
+
 test("stringToPath to adapt dot notation", () => {
   expect(stringToPath("test.one.other")).toStrictEqual([
     "test",
@@ -43,6 +59,10 @@ test("fillPath should add a key to an object without prefixed keys", () => {
 
 test("getPath should get a key from an object", () => {
   expect(getPath({ test: "value" }, "test")).toStrictEqual("value");
+});
+
+test("getPath should return undefined", () => {
+  expect(getPath({ test: "value" }, "test.other")).toStrictEqual(undefined);
 });
 
 test("getPath should get a deep key from an object", () => {
