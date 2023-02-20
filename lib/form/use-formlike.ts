@@ -37,6 +37,12 @@ export const useFormlike = <T extends FormlikeField>() => {
     }, [] as string[]);
   }, [formFieldsRef]);
 
+  const getValidBoolean = useCallback(() => {
+    return formFieldsRef.current.some((field) => {
+      return !field.errors.length;
+    });
+  }, [formFieldsRef]);
+
   const getFieldBoolean = useCallback(
     (booleanFieldName: keyof T) => {
       return formFieldsRef.current.some((field) => {
@@ -87,7 +93,7 @@ export const useFormlike = <T extends FormlikeField>() => {
     },
     get isValid() {
       shouldRerenderIsValidOnRecompute.current = true;
-      return getErrors().length === 0;
+      return getValidBoolean();
     },
     get isDirty() {
       shouldRerenderIsDirtyOnRecompute.current = true;
