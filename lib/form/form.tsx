@@ -25,6 +25,8 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
   props: FormProps<T>,
   ref: ForwardedRef<FormInstance<T>>
 ) {
+  const { onSubmit, children: childrenFn } = props;
+
   const formLike = useFormlike<
     FieldInstance<any, T> | FieldArrayInstance<any, T>
   >();
@@ -97,9 +99,9 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
 
     if (!validArrays.every((isValid) => !!isValid)) return false;
 
-    props.onSubmit?.(values, baseValue);
+    onSubmit?.(values, baseValue);
     return true;
-  }, [baseValue, formLike.formFieldsRef, props]);
+  }, [baseValue, formLike, onSubmit]);
 
   const value = useMemo(() => {
     return Object.assign(baseValue, { submit });
