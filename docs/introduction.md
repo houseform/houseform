@@ -16,17 +16,6 @@ head:
 
 # Introduction
 
-<div align="center">
-
-<img
-height="320"
-width="320"
-alt="A ledger with a house shape"
-src="/logo.svg"
-/>
-
-</div>
-
 HouseForm is a field-first, [Zod](https://github.com/colinhacks/zod)-powered, headless, runtime agnostic form validation library for React.
 
 > Whoa. What does that mean?

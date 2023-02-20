@@ -8,6 +8,7 @@ export default defineConfig({
   lang: "en-US",
   title: "HouseForm",
   description: description,
+  lastUpdated: true,
   head: [
     ['meta', { property: 'og:image', content: ogImage }],
     ["meta", { name: "twitter:image", content: ogImage }],
@@ -21,6 +22,9 @@ export default defineConfig({
     socialLinks: [
       { icon: "github", link: "https://github.com/crutchcorn/houseform" },
     ],
+    editLink: {
+      pattern: 'https://github.com/crutchcorn/houseform/edit/main/docs/:path'
+    },
     nav: [
       { text: "Introduction", link: "/introduction" },
       { text: "Guides", link: "/guides/basic-usage" },
@@ -49,7 +53,7 @@ export default defineConfig({
             link: "/introduction",
           },
           {
-            text: "Comparison to X",
+            text: "Comparisons",
             link: "/comparison",
           },
         ],
@@ -107,10 +111,24 @@ export default defineConfig({
       },
       {
         text: "API",
+        collapsed: false,
+        collapsible: true,
         items: [
           {
-            text: "API Reference",
-            link: "/reference",
+            text: "Form",
+            link: "/reference/form",
+          },
+          {
+            text: "Field",
+            link: "/reference/field",
+          },
+          {
+            text: "Array",
+            link: "/reference/array",
+          },
+          {
+            text: "Array Item",
+            link: "/reference/array-item",
           },
         ],
       },
