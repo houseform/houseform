@@ -25,6 +25,8 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
   props: FormProps<T>,
   ref: ForwardedRef<FormInstance<T>>
 ) {
+  const { onSubmit, children } = props;
+
   const formLike = useFormlike<
     FieldInstance<any, T> | FieldArrayInstance<any, T>
   >();
@@ -97,9 +99,9 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
 
     if (!validArrays.every((isValid) => !!isValid)) return false;
 
-    props.onSubmit?.(values, baseValue);
+    onSubmit?.(values, baseValue);
     return true;
-  }, [baseValue, formLike.formFieldsRef, props]);
+  }, [baseValue, formLike, onSubmit]);
 
   const value = useMemo(() => {
     return Object.assign(baseValue, { submit });
@@ -107,9 +109,9 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
 
   useImperativeHandle(ref, () => value, [value]);
 
-  const children = useMemo(() => props.children(value), [value]);
-
-  return <FormContext.Provider value={value}>{children}</FormContext.Provider>;
+  return (
+    <FormContext.Provider value={value}>{children(value)}</FormContext.Provider>
+  );
 }
 
 export const Form = memo(forwardRef(FormComp)) as <T = Record<string, any>>(
