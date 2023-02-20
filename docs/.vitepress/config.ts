@@ -28,7 +28,7 @@ export default defineConfig({
     nav: [
       { text: "Introduction", link: "/introduction" },
       { text: "Guides", link: "/guides/basic-usage" },
-      { text: "Reference", link: "/reference" },
+      { text: "Reference", link: "/reference/form" },
       {
         text: "v1",
         items: [
