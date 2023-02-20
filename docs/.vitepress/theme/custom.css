@@ -1,11 +1,54 @@
 :root {
     --vp-c-brand: #8d57ff;
-    --vp-c-brand-dark: #7045cc;
-    --vp-c-brand-darker: #543399;
+    --vp-c-brand-dark: #7734ff;
+    --vp-c-brand-darker: #5406ff;
 }
 
 html.dark {
-    --vp-c-brand: #dac8ff;
-    --vp-c-brand-dark: #e1c8ff;
-    --vp-c-brand-darker: #e8c8ff;
+    --vp-c-brand: #DBCAFF;
+    --vp-c-brand-dark: #c8aeff;
+    --vp-c-brand-darker: #b58eff;
+    --vp-button-brand-text: var(--vp-c-bg);
+    --vp-button-brand-hover-text: var(--vp-c-bg-elv);
+    --vp-button-brand-active-text: var(--vp-c-bg-elv-down);
+}
+
+:root {
+    --vp-home-hero-name-color: transparent;
+    --vp-home-hero-name-background: -webkit-linear-gradient(
+            120deg,
+            #b293ef 30%,
+            #572eab
+    );
+    --vp-home-hero-image-background-image: linear-gradient(
+            -45deg,
+            #c7affa 30%,
+            #b7a2e6
+    );
+    --vp-home-hero-image-filter: blur(30px);
+}
+
+.dark {
+    --vp-home-hero-name-background: -webkit-linear-gradient(
+            120deg,
+            #b293ef 30%,
+            #956ce6
+    );
+    --vp-home-hero-image-background-image: linear-gradient(
+            -45deg,
+            #572eab 30%,
+            #906fda
+    );
+}
+
+@media (min-width: 640px) {
+    :root {
+        --vp-home-hero-image-filter: blur(56px);
+    }
+}
+
+@media (min-width: 960px) {
+    :root {
+        --vp-home-hero-image-filter: blur(72px);
+    }
 }
