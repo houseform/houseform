@@ -17,7 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 const arr = Array.from({ length: 1000 }, (_, i) => i);
 
-function HouseFormOnChangeBenchmark() {
+function HouseFormOnBlurBenchmark() {
   return (
     <Form>
       {() => (
@@ -28,7 +28,7 @@ function HouseFormOnChangeBenchmark() {
                 key={i}
                 name={`num[${i}]`}
                 initialValue={num}
-                onChangeValidate={z.number().min(3, "Must be at least three")}
+                onBlurValidate={z.number().min(3, "Must be at least three")}
               >
                 {({ value, setValue, onBlur, errors }) => {
                   return (
@@ -56,11 +56,11 @@ function HouseFormOnChangeBenchmark() {
   );
 }
 
-function FormikOnChangeBenchmark() {
+function FormikOnBlurBenchmark() {
   return (
     <Formik
-      validateOnChange={true}
-      validateOnBlur={false}
+      validateOnChange={false}
+      validateOnBlur={true}
       validateOnMount={false}
       initialValues={{
         num: arr,
@@ -98,12 +98,12 @@ function FormikOnChangeBenchmark() {
   );
 }
 
-function ReactHookFormOnChangeBenchmark() {
+function ReactHookFormOnBlurBenchmark() {
   const { control, handleSubmit } = useForm({
     defaultValues: {
       num: arr,
     },
-    mode: "onChange",
+    mode: "onBlur",
     resolver: zodResolver(
       z.object({
         num: z.array(z.number().min(3, "Must be at least three")),
@@ -144,19 +144,19 @@ function ReactHookFormOnChangeBenchmark() {
   );
 }
 
-describe("Validates onChange on 1,000 form items", () => {
+describe("Validates onBlur on 1,000 form items", () => {
   bench("HouseForm", async () => {
     cleanup();
 
     const { getByTestId, findAllByText, queryAllByText } = render(
-      <HouseFormOnChangeBenchmark />
+      <HouseFormOnBlurBenchmark />
     );
 
     if (queryAllByText("Must be at least three")?.length) {
       throw "Should not be present yet";
     }
 
-    fireEvent.change(getByTestId("value1"), { target: { value: 0 } });
+    fireEvent.blur(getByTestId("value1"));
 
     await findAllByText("Must be at least three");
   });
@@ -165,14 +165,14 @@ describe("Validates onChange on 1,000 form items", () => {
     cleanup();
 
     const { getByTestId, findAllByText, queryAllByText } = render(
-      <FormikOnChangeBenchmark />
+      <FormikOnBlurBenchmark />
     );
 
     if (queryAllByText("Must be at least three")?.length) {
       throw "Should not be present yet";
     }
 
-    fireEvent.change(getByTestId("value1"), { target: { value: 0 } });
+    fireEvent.blur(getByTestId("value1"));
 
     await findAllByText("Must be at least three");
   });
@@ -181,14 +181,14 @@ describe("Validates onChange on 1,000 form items", () => {
     cleanup();
 
     const { getByTestId, findAllByText, queryAllByText } = render(
-      <ReactHookFormOnChangeBenchmark />
+      <ReactHookFormOnBlurBenchmark />
     );
 
     if (queryAllByText("Must be at least three")?.length) {
       throw "Should not be present yet";
     }
 
-    fireEvent.change(getByTestId("value1"), { target: { value: 0 } });
+    fireEvent.blur(getByTestId("value1"));
 
     await findAllByText("Must be at least three");
   });
