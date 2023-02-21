@@ -19,13 +19,14 @@ import { FormContext } from "./context";
 export interface FormProps<T> {
   onSubmit?: (values: T, form: FormInstance<T>) => void;
   children: (props: FormInstance<T>) => JSX.Element;
+  memoChildrenArr?: any[];
 }
 
 function FormComp<T extends Record<string, any> = Record<string, any>>(
   props: FormProps<T>,
   ref: ForwardedRef<FormInstance<T>>
 ) {
-  const { onSubmit, children } = props;
+  const { onSubmit, children, memoChildrenArr } = props;
 
   const formLike = useFormlike<
     FieldInstance<any, T> | FieldArrayInstance<any, T>
@@ -109,8 +110,17 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
 
   useImperativeHandle(ref, () => value, [value]);
 
+  const memoizedChildren = useMemo(
+    () => {
+      return children(value);
+    },
+    memoChildrenArr ? memoChildrenArr.concat(value) : [children, value]
+  );
+
   return (
-    <FormContext.Provider value={value}>{children(value)}</FormContext.Provider>
+    <FormContext.Provider value={value}>
+      {memoizedChildren}
+    </FormContext.Provider>
   );
 }
 

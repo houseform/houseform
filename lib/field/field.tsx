@@ -17,6 +17,7 @@ export interface FieldRenderProps<T = any, F = any>
   extends FieldInstanceProps<T, F> {
   children: (props: FieldInstance<T, F>) => JSX.Element;
   initialValue?: T;
+  memoChildrenArr?: any[];
 }
 
 function FieldComp<T = any, F = any>(
@@ -24,6 +25,7 @@ function FieldComp<T = any, F = any>(
   ref: ForwardedRef<FieldInstance<T, F>>
 ) {
   const formContext = useContext(FormContext);
+  const { children, memoChildrenArr } = props;
 
   const {
     value,
@@ -114,7 +116,16 @@ function FieldComp<T = any, F = any>(
 
   useImperativeHandle(ref, () => fieldInstance, [fieldInstance]);
 
-  return props.children(fieldInstance);
+  const memoizedChildren = useMemo(
+    () => {
+      return children(fieldInstance);
+    },
+    memoChildrenArr
+      ? memoChildrenArr.concat(fieldInstance)
+      : [children, fieldInstance]
+  );
+
+  return memoizedChildren;
 }
 
 export const Field = memo(forwardRef(FieldComp)) as <T = any, F = any>(
