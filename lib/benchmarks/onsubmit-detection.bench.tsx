@@ -17,10 +17,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 const arr = Array.from({ length: 1000 }, (_, i) => i);
 
-function HouseFormOnMountBenchmark() {
+function HouseFormOnSubmitBenchmark() {
   return (
     <Form>
-      {() => (
+      {({ submit }) => (
         <>
           {arr.map((num, i) => {
             return (
@@ -28,7 +28,7 @@ function HouseFormOnMountBenchmark() {
                 key={i}
                 name={`num[${i}]`}
                 initialValue={num}
-                onMountValidate={z.number().min(3, "Must be at least three")}
+                onSubmitValidate={z.number().min(3, "Must be at least three")}
               >
                 {({ value, setValue, onBlur, errors }) => {
                   return (
@@ -50,18 +50,19 @@ function HouseFormOnMountBenchmark() {
               </Field>
             );
           })}
+          <button onClick={submit}>Submit</button>
         </>
       )}
     </Form>
   );
 }
 
-function FormikOnMountBenchmark() {
+function FormikOnSubmitBenchmark() {
   return (
     <Formik
       validateOnChange={false}
       validateOnBlur={false}
-      validateOnMount={true}
+      validateOnMount={false}
       initialValues={{
         num: arr,
       }}
@@ -72,7 +73,7 @@ function FormikOnMountBenchmark() {
       )}
       onSubmit={() => {}}
     >
-      {() => (
+      {({ submitForm }) => (
         <>
           {arr.map((num, i) => (
             <FormikField key={i} name={`num[${i}]`} data-testid={`value${i}`}>
@@ -92,17 +93,73 @@ function FormikOnMountBenchmark() {
               )}
             </FormikField>
           ))}
+          <button onClick={submitForm}>Submit</button>
         </>
       )}
     </Formik>
   );
 }
 
-describe("Validates onMount on 1,000 form items", () => {
+function ReactHookFormOnSubmitBenchmark() {
+  const { control, handleSubmit } = useForm({
+    defaultValues: {
+      num: arr,
+    },
+    mode: "onSubmit",
+    resolver: zodResolver(
+      z.object({
+        num: z.array(z.number().min(3, "Must be at least three")),
+      })
+    ),
+  });
+
+  return (
+    <>
+      {arr.map((num, i) => {
+        return (
+          <Controller
+            key={i}
+            control={control}
+            render={({
+              field: { value, onBlur, onChange },
+              fieldState: { error },
+            }) => {
+              return (
+                <div>
+                  <input
+                    data-testid={`value${i}`}
+                    type="number"
+                    value={value}
+                    onBlur={onBlur}
+                    onChange={(event) => onChange(event.target.valueAsNumber)}
+                    placeholder={`Number ${i}`}
+                  />
+                  {error && <p>{error.message}</p>}
+                </div>
+              );
+            }}
+            name={`num.${i}`}
+          />
+        );
+      })}
+      <button onClick={handleSubmit(() => {})}>Submit</button>
+    </>
+  );
+}
+
+describe("Validates onSubmit on 1,000 form items", () => {
   bench("HouseForm", async () => {
     cleanup();
 
-    const { findAllByText } = render(<HouseFormOnMountBenchmark />);
+    const { getByText, findAllByText, queryAllByText } = render(
+      <HouseFormOnSubmitBenchmark />
+    );
+
+    if (queryAllByText("Must be at least three")?.length) {
+      throw "Should not be present yet";
+    }
+
+    fireEvent.click(getByText("Submit"));
 
     await findAllByText("Must be at least three");
   });
@@ -110,11 +167,32 @@ describe("Validates onMount on 1,000 form items", () => {
   bench("Formik", async () => {
     cleanup();
 
-    const { findAllByText } = render(<FormikOnMountBenchmark />);
+    const { getByText, findAllByText, queryAllByText } = render(
+      <FormikOnSubmitBenchmark />
+    );
+
+    if (queryAllByText("Must be at least three")?.length) {
+      throw "Should not be present yet";
+    }
+
+    fireEvent.click(getByText("Submit"));
 
     await findAllByText("Must be at least three");
   });
 
-  // Does not support this feature
-  bench.todo("React Hook Form");
+  bench("React Hook Form", async () => {
+    cleanup();
+
+    const { getByText, findAllByText, queryAllByText } = render(
+      <ReactHookFormOnSubmitBenchmark />
+    );
+
+    if (queryAllByText("Must be at least three")?.length) {
+      throw "Should not be present yet";
+    }
+
+    fireEvent.click(getByText("Submit"));
+
+    await findAllByText("Must be at least three");
+  });
 });
