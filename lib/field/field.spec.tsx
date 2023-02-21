@@ -733,3 +733,55 @@ test("Field should show not errors with valid onMount validator zod usage", asyn
 
   expect(queryByText("You must input a valid email")).not.toBeInTheDocument();
 });
+
+test("Field should only run listeners when value changes", async () => {
+  const arr = Array.from({ length: 5 }, (_, i) => i);
+  const { getByTestId, getAllByText, queryAllByText } = render(
+    <Form>
+      {() => (
+        <>
+          {arr.map((num, i) => {
+            return (
+              <Field
+                listenTo={i === 0 ? ["num[1]"] : undefined}
+                key={i}
+                name={`num[${i}]`}
+                initialValue={num}
+                onChangeValidate={z.number().min(3, "Must be at least three")}
+              >
+                {({ value, setValue, onBlur, errors }) => {
+                  return (
+                    <div>
+                      <input
+                        data-listento={i === 0 ? "num[1]" : undefined}
+                        data-testid={`value${i}`}
+                        type="number"
+                        value={value}
+                        onBlur={onBlur}
+                        onChange={(e) => setValue(e.target.valueAsNumber)}
+                        placeholder={`Number ${i}`}
+                      />
+                      {errors.map((error) => (
+                        <p key={error}>{error}</p>
+                      ))}
+                    </div>
+                  );
+                }}
+              </Field>
+            );
+          })}
+        </>
+      )}
+    </Form>
+  );
+
+  if (queryAllByText("Must be at least three")?.length) {
+    throw "Should not be present yet";
+  }
+
+  fireEvent.change(getByTestId("value1"), { target: { value: 0 } });
+
+  await waitFor(() =>
+    expect(getAllByText("Must be at least three")).toHaveLength(2)
+  );
+});

@@ -134,19 +134,13 @@ export const useFieldLike = <
       val: UseFieldLikeProps<T, F, TT>["initialValue"]
     ) => {
       let validationFn = props.onChangeValidate;
-      if (
-        validationFnName === "onBlurValidate" &&
-        (props as unknown as FieldInstance<T, F>["props"])?.onBlurValidate
-      ) {
+      if (validationFnName === "onBlurValidate") {
         validationFn = (props as unknown as FieldInstance<T, F>["props"])
-          .onBlurValidate;
+          ?.onBlurValidate;
       }
-      if (
-        validationFnName === "onMountValidate" &&
-        (props as unknown as FieldInstance<T, F>["props"])?.onMountValidate
-      ) {
+      if (validationFnName === "onMountValidate") {
         validationFn = (props as unknown as FieldInstance<T, F>["props"])
-          .onMountValidate;
+          ?.onMountValidate;
       }
       if (validationFn) {
         validate(val as T, formContext, validationFn)
