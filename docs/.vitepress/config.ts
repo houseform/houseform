@@ -68,6 +68,10 @@ export default defineConfig({
             link: "/guides/basic-usage",
           },
           {
+            text: "Custom Validators",
+            link: "/guides/custom-validators",
+          },
+          {
             text: "HTML Forms",
             link: "/guides/html-forms",
           },

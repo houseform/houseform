@@ -7,6 +7,8 @@ Let's take a look at how to validate a field using:
 - Zod and a custom function
 - A non-Zod async function
 
+> While we'll be using `onChangeValidate` for these docs, they apply to all validation methods.
+
 ## Zod Custom Validators
 
 If using Zod, you can use a custom validator using one of three methods:
@@ -125,4 +127,19 @@ Because `async` functions return a promise behind-the-scenes, you may also choos
 
 ### Form Metadata Access in Async Field Validator
 
- 
+There may be times where you want to access the form's metadata or the metadata of another field in your custom validator. This is possible by using the second argument of the `onChangeValidate` function, which is a [FormInstance](https://houseform.dev/reference/form.html#interface-forminstance):
+
+```jsx
+<Field
+  listenTo={['password']}
+  name="confirmpassword"
+  onChangeValidate={async (val, form) => {
+    if (form.getFieldValue('password')?.value !== val) {
+      throw 'Passwords must match';
+    }
+    return true;
+  }}
+>
+```
+
+ <ClickToIFrame title="HouseForm Async Validator StackBlitz Example" src="https://stackblitz.com/edit/houseform-v1-example-async-validator?file=App.tsx"/>
