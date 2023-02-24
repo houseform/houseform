@@ -10,7 +10,7 @@ export default defineConfig({
   description: description,
   lastUpdated: true,
   head: [
-    ['meta', { property: 'og:image', content: ogImage }],
+    ["meta", { property: "og:image", content: ogImage }],
     ["meta", { name: "twitter:image", content: ogImage }],
     ["meta", { name: "theme-color", content: "#DBCAFF" }],
     ["meta", { property: "twitter:card", content: "summary_large_image" }],
@@ -23,7 +23,7 @@ export default defineConfig({
       { icon: "github", link: "https://github.com/crutchcorn/houseform" },
     ],
     editLink: {
-      pattern: 'https://github.com/crutchcorn/houseform/edit/main/docs/:path'
+      pattern: "https://github.com/crutchcorn/houseform/edit/main/docs/:path",
     },
     nav: [
       { text: "Introduction", link: "/introduction" },
@@ -133,5 +133,10 @@ export default defineConfig({
         ],
       },
     ],
+    algolia: {
+      appId: "QGHOLO73E8",
+      apiKey: "9d1a7907ef0806e2ad207f5ba634595d",
+      indexName: "houseform",
+    },
   },
 });
