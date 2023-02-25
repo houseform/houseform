@@ -262,6 +262,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       "isValid",
       "isDirty",
       "isTouched",
+      "submit",
     ] as const;
     const val = {
       submit,
