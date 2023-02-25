@@ -700,3 +700,146 @@ test("Form should submit when errors are present and submitWhenInvalid is true",
 
   expect(getByText("Submitted")).toBeInTheDocument();
 });
+
+test("Form submission should receive initially empty errors array", async () => {
+  const Comp = () => {
+    const [formErrors, setFormErrors] = useState<string[] | null>(null);
+
+    if (formErrors !== null) {
+      return <p>Form errors: {JSON.stringify(formErrors)}</p>;
+    }
+    return (
+      <Form
+        onSubmit={(values, form) => {
+          setFormErrors(form.errors);
+        }}
+      >
+        {({ submit }) => <button onClick={submit}>Submit</button>}
+      </Form>
+    );
+  };
+
+  const { getByText, container } = render(<Comp />);
+
+  user.click(getByText("Submit"));
+
+  await waitFor(() => expect(getByText(/Form errors/)).toBeInTheDocument());
+
+  expect(container).toMatchInlineSnapshot(`
+    <div>
+      <p>
+        Form errors: 
+        []
+      </p>
+    </div>
+  `);
+});
+
+test("Form submission should receive correct errors array when errors are in use in form itself", async () => {
+  const Comp = () => {
+    const [formErrors, setFormErrors] = useState<string[] | null>(null);
+
+    if (formErrors !== null) {
+      return <p>Form errors: {JSON.stringify(formErrors)}</p>;
+    }
+    return (
+      <Form
+        submitWhenInvalid={true}
+        onSubmit={(values, form) => {
+          setFormErrors(form.errors);
+        }}
+      >
+        {({ submit, errors }) => (
+          <div>
+            <button onClick={submit}>Submit</button>
+            <Field
+              name={"test"}
+              initialValue={""}
+              onMountValidate={z
+                .string()
+                .min(12, "You must have 12 characters")}
+            >
+              {({ errors }) => (
+                <>{errors && errors.length && <p>There are errors</p>}</>
+              )}
+            </Field>
+            <p>{JSON.stringify(errors)}</p>
+          </div>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByText, container } = render(<Comp />);
+
+  await waitFor(() =>
+    expect(getByText(/There are errors/)).toBeInTheDocument()
+  );
+
+  user.click(getByText("Submit"));
+
+  await waitFor(() => expect(getByText(/Form errors/)).toBeInTheDocument());
+
+  expect(container).toMatchInlineSnapshot(`
+    <div>
+      <p>
+        Form errors: 
+        ["You must have 12 characters"]
+      </p>
+    </div>
+  `);
+});
+
+test("Form submission should receive correct errors array when errors are not in use in form itself", async () => {
+  const Comp = () => {
+    const [formErrors, setFormErrors] = useState<string[] | null>(null);
+
+    if (formErrors !== null) {
+      return <p>Form errors: {JSON.stringify(formErrors)}</p>;
+    }
+    return (
+      <Form
+        submitWhenInvalid={true}
+        onSubmit={(values, form) => {
+          setFormErrors(form.errors);
+        }}
+      >
+        {({ submit, errors }) => (
+          <div>
+            <button onClick={submit}>Submit</button>
+            <Field
+              name={"test"}
+              initialValue={""}
+              onMountValidate={z
+                .string()
+                .min(12, "You must have 12 characters")}
+            >
+              {({ errors }) => (
+                <>{errors && errors.length && <p>There are errors</p>}</>
+              )}
+            </Field>
+          </div>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByText, container } = render(<Comp />);
+
+  await waitFor(() =>
+    expect(getByText(/There are errors/)).toBeInTheDocument()
+  );
+
+  user.click(getByText("Submit"));
+
+  await waitFor(() => expect(getByText(/Form errors/)).toBeInTheDocument());
+
+  expect(container).toMatchInlineSnapshot(`
+    <div>
+      <p>
+        Form errors: 
+        ["You must have 12 characters"]
+      </p>
+    </div>
+  `);
+});

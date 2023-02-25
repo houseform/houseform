@@ -120,9 +120,7 @@ function FieldComp<T = any, F = any>(
     () => {
       return children(fieldInstance);
     },
-    memoChild
-      ? memoChild.concat(fieldInstance)
-      : [children, fieldInstance]
+    memoChild ? memoChild.concat(fieldInstance) : [children, fieldInstance]
   );
 
   return memoizedChildren;

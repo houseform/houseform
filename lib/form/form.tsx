@@ -129,6 +129,46 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     }
   }, [getFieldBoolean]);
 
+  const errorGetter = useCallback(() => {
+    shouldRerenderErrorOnRecompute.current = true;
+    if (_errors === null) {
+      const val = getErrors();
+      _setErrors(val);
+      return val;
+    }
+    return _errors;
+  }, [_errors, getErrors]);
+
+  const isValidGetter = useCallback(() => {
+    shouldRerenderIsValidOnRecompute.current = true;
+    if (_isValid === null) {
+      const val = getValidBoolean();
+      _setIsValid(val);
+      return val;
+    }
+    return _isValid;
+  }, [_isValid, getValidBoolean]);
+
+  const isDirtyGetter = useCallback(() => {
+    if (_isDirty === null) {
+      shouldRerenderIsDirtyOnRecompute.current = true;
+      const val = getFieldBoolean("isDirty");
+      _setIsDirty(val);
+      return val;
+    }
+    return _isDirty;
+  }, [_isDirty, getFieldBoolean]);
+
+  const isTouchedGetter = useCallback(() => {
+    if (_isTouched === null) {
+      shouldRerenderIsTouchedOnRecompute.current = true;
+      const val = getFieldBoolean("isTouched");
+      _setIsTouched(val);
+      return val;
+    }
+    return _isTouched;
+  }, [_isTouched, getFieldBoolean]);
+
   const baseValue = useMemo(() => {
     return {
       getFieldValue,
@@ -143,24 +183,32 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       recomputeErrors,
       recomputeIsDirty,
       recomputeIsTouched,
-      errors: _errors ?? [],
-      isValid: _isValid ?? true,
-      isDirty: _isDirty ?? false,
-      isTouched: _isTouched ?? false,
+      get errors() {
+        return errorGetter();
+      },
+      get isValid() {
+        return isValidGetter();
+      },
+      get isDirty() {
+        return isDirtyGetter();
+      },
+      get isTouched() {
+        return isTouchedGetter();
+      },
       submit: () => Promise.resolve(true),
     };
   }, [
     getFieldValue,
     isSubmitted,
+    setIsTouched,
+    setIsDirty,
     recomputeErrors,
     recomputeIsDirty,
     recomputeIsTouched,
-    setIsDirty,
-    setIsTouched,
-    _errors,
-    _isValid,
-    _isDirty,
-    _isTouched,
+    errorGetter,
+    isValidGetter,
+    isDirtyGetter,
+    isTouchedGetter,
   ]);
 
   const submit = useCallback(async () => {
@@ -212,56 +260,25 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     return {
       ...baseValue,
       submit,
-      _errors,
-      _isValid,
-      _isDirty,
-      _isTouched,
       get errors() {
-        shouldRerenderErrorOnRecompute.current = true;
-        if (_errors === null) {
-          const val = getErrors();
-          _setErrors(val);
-          return val;
-        }
-        return _errors;
+        return errorGetter();
       },
       get isValid() {
-        shouldRerenderIsValidOnRecompute.current = true;
-        if (_isValid === null) {
-          const val = getValidBoolean();
-          _setIsValid(val);
-          return val;
-        }
-        return _isValid;
+        return isValidGetter();
       },
       get isDirty() {
-        if (_isDirty === null) {
-          shouldRerenderIsDirtyOnRecompute.current = true;
-          const val = getFieldBoolean("isDirty");
-          _setIsDirty(val);
-          return val;
-        }
-        return _isDirty;
+        return isDirtyGetter();
       },
       get isTouched() {
-        if (_isTouched === null) {
-          shouldRerenderIsTouchedOnRecompute.current = true;
-          const val = getFieldBoolean("isTouched");
-          _setIsTouched(val);
-          return val;
-        }
-        return _isTouched;
+        return isTouchedGetter();
       },
     };
   }, [
-    _errors,
-    _isDirty,
-    _isTouched,
-    _isValid,
     baseValue,
-    getErrors,
-    getFieldBoolean,
-    getValidBoolean,
+    errorGetter,
+    isDirtyGetter,
+    isTouchedGetter,
+    isValidGetter,
     submit,
   ]);
 
