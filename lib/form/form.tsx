@@ -257,8 +257,13 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
   }, [baseValue, onSubmit, submitWhenInvalid]);
 
   const value = useMemo(() => {
-    return {
-      ...baseValue,
+    const omittedKeysToPick = [
+      "errors",
+      "isValid",
+      "isDirty",
+      "isTouched",
+    ] as const;
+    const val = {
       submit,
       get errors() {
         return errorGetter();
@@ -272,7 +277,20 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       get isTouched() {
         return isTouchedGetter();
       },
-    };
+    } as any as typeof baseValue;
+
+    // We cannot pick any of the `omittedKeysToPick` keys. This is because they're
+    // also getters, which means that we ruin the "only use when needed" logic
+    for (const key of Object.keys(baseValue)) {
+      if (omittedKeysToPick.includes(key as "errors")) continue;
+      const _key = key as Exclude<
+        keyof typeof baseValue,
+        (typeof omittedKeysToPick)[number]
+      >;
+      val[_key] = baseValue[_key] as never;
+    }
+
+    return val;
   }, [
     baseValue,
     errorGetter,
