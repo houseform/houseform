@@ -1,7 +1,7 @@
-import { expect, test } from "vitest";
+import { expect, test, vi } from "vitest";
 import { useRef, useState } from "react";
 import { Field, FieldArray, Form } from "houseform";
-import { render, waitFor } from "@testing-library/react";
+import { cleanup, render, waitFor } from "@testing-library/react";
 import { z } from "zod";
 import { FormInstance } from "houseform";
 import * as React from "react";
@@ -987,4 +987,72 @@ test("Form submission should receive correct isDirty", async () => {
       </p>
     </div>
   `);
+});
+
+test("Form's memoChild should prevent re-renders", async () => {
+  const formNonMemoHasRendered = vi.fn();
+  const NonMemoComp = () => {
+    const [counter, setCounter] = useState(0);
+
+    return (
+      <div>
+        <Form submitWhenInvalid={true}>
+          {() => {
+            formNonMemoHasRendered();
+            return <div />;
+          }}
+        </Form>
+        <button onClick={() => setCounter((v) => v + 1)}>Add to counter</button>
+        <p>Counter: {counter}</p>
+      </div>
+    );
+  };
+
+  const { getByText: getByTextForNonMemo } = render(<NonMemoComp />);
+
+  expect(getByTextForNonMemo("Counter: 0")).toBeInTheDocument();
+
+  expect(formNonMemoHasRendered).toHaveBeenCalledTimes(1);
+
+  user.click(getByTextForNonMemo("Add to counter"));
+
+  await waitFor(() =>
+    expect(getByTextForNonMemo("Counter: 1")).toBeInTheDocument()
+  );
+
+  expect(formNonMemoHasRendered).toHaveBeenCalledTimes(2);
+
+  cleanup();
+
+  const formMemoHasRendered = vi.fn();
+  const MemoComp = () => {
+    const [counter, setCounter] = useState(0);
+
+    return (
+      <div>
+        <Form memoChild={[]} submitWhenInvalid={true}>
+          {() => {
+            formMemoHasRendered();
+            return <div />;
+          }}
+        </Form>
+        <button onClick={() => setCounter((v) => v + 1)}>Add to counter</button>
+        <p>Counter: {counter}</p>
+      </div>
+    );
+  };
+
+  const { getByText: getByTextForMemo } = render(<MemoComp />);
+
+  expect(getByTextForMemo("Counter: 0")).toBeInTheDocument();
+
+  expect(formMemoHasRendered).toHaveBeenCalledTimes(1);
+
+  user.click(getByTextForMemo("Add to counter"));
+
+  await waitFor(() =>
+    expect(getByTextForMemo("Counter: 1")).toBeInTheDocument()
+  );
+
+  expect(formMemoHasRendered).toHaveBeenCalledTimes(1);
 });
