@@ -149,7 +149,7 @@ test("Form should not submit if there are errors with onSubmitValidate", async (
 });
 
 test("Form should show isValid proper", async () => {
-  const { getByText, getByPlaceholderText } = render(
+  const { findByText, getByPlaceholderText } = render(
     <Form onSubmit={() => {}}>
       {({ isValid }) => (
         <>
@@ -177,11 +177,11 @@ test("Form should show isValid proper", async () => {
     </Form>
   );
 
-  expect(getByText("Is valid")).toBeInTheDocument();
+  expect(await findByText("Is valid")).toBeInTheDocument();
 
   await user.type(getByPlaceholderText("Email"), "test");
 
-  expect(getByText("Is not valid")).toBeInTheDocument();
+  expect(await findByText("Is not valid")).toBeInTheDocument();
 });
 
 test("Form should show isSubmitted proper", async () => {
