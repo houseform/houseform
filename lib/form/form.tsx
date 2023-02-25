@@ -14,7 +14,6 @@ import { FieldInstance } from "../field";
 import { FieldArrayInstance } from "../field-array";
 import { FormInstance } from "./types";
 import { FormContext } from "./context";
-import { useRerender } from "../utils/use-rerender";
 
 export interface FormProps<T> {
   onSubmit?: (values: T, form: FormInstance<T>) => void;
@@ -76,8 +75,6 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
   const shouldRerenderIsDirtyOnRecompute = useRef(false);
 
   const shouldRerenderIsTouchedOnRecompute = useRef(false);
-
-  const rerender = useRerender();
 
   const getErrors = useCallback(() => {
     return formFieldsRef.current.reduce((acc, field) => {
@@ -145,6 +142,10 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       recomputeErrors,
       recomputeIsDirty,
       recomputeIsTouched,
+      errors: _errors ?? [],
+      isValid: _isValid ?? true,
+      isDirty: _isDirty ?? false,
+      isTouched: _isTouched ?? false,
       submit: () => Promise.resolve(true),
     };
   }, [
@@ -155,6 +156,10 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     recomputeIsTouched,
     setIsDirty,
     setIsTouched,
+    _errors,
+    _isValid,
+    _isDirty,
+    _isTouched,
   ]);
 
   const submit = useCallback(async () => {
@@ -170,7 +175,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
           try {
             await validate(
               formField.value,
-              baseValue as any,
+              baseValue,
               formField.props[type as "onChangeValidate"]!
             );
             return true;
@@ -194,7 +199,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     if (!validArrays.every((isValid) => !!isValid)) return false;
 
     // TODO: Add tests to see if it gets cached version of `isDirty`, `isTouched`, `isValid`, and `errors`
-    onSubmit?.(values, baseValue as any);
+    onSubmit?.(values, baseValue);
     return true;
   }, [baseValue, onSubmit]);
 
