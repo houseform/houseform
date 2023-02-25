@@ -4,6 +4,7 @@ import { Field, FieldArray, Form } from "houseform";
 import { render, waitFor } from "@testing-library/react";
 import { z } from "zod";
 import { FormInstance } from "houseform";
+import * as React from "react";
 
 test("Form should render children", () => {
   const { getByText } = render(
@@ -603,4 +604,22 @@ test("Form should show all field errors if requested", async () => {
 
   expect(await findByText("Should have a min length of 1")).toBeInTheDocument();
   expect(await findByText("Should have a min length of 3")).toBeInTheDocument();
+});
+
+test("Assigning a form to a ref should not break the application", async () => {
+  const Comp = () => {
+    const [formRef, setFormRef] = React.useState<FormInstance>();
+
+    const setFormRefCB = React.useCallback((r: any) => {
+      setFormRef(r);
+    }, []);
+
+    return (
+      <Form ref={setFormRefCB}>{({ isValid, submit }) => <p>Testing</p>}</Form>
+    );
+  };
+
+  const { getByText } = render(<Comp />);
+
+  expect(getByText("Testing")).toBeInTheDocument();
 });
