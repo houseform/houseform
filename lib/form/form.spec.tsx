@@ -623,3 +623,80 @@ test("Assigning a form to a ref should not break the application", async () => {
 
   expect(getByText("Testing")).toBeInTheDocument();
 });
+
+test("Form should not submit when errors are present", async () => {
+  const Comp = () => {
+    const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+
+    if (isSubmitted) return <p>Submitted</p>;
+
+    return (
+      <Form onSubmit={(values) => setIsSubmitted(true)}>
+        {({ submit }) => (
+          <>
+            <Field<string>
+              name={"email"}
+              initialValue=""
+              onMountValidate={z.string().min(12, "Must have 12 characters")}
+            >
+              {({ errors }) => (
+                <>{errors && errors.length && <p>There are errors</p>}</>
+              )}
+            </Field>
+            <button onClick={submit}>Submit</button>
+          </>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByText, queryByText } = render(<Comp />);
+
+  await waitFor(() =>
+    expect(getByText("There are errors")).toBeInTheDocument()
+  );
+
+  await user.click(getByText("Submit"));
+
+  expect(queryByText("Submitted")).not.toBeInTheDocument();
+});
+
+test("Form should submit when errors are present and submitWhenInvalid is true", async () => {
+  const Comp = () => {
+    const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+
+    if (isSubmitted) return <p>Submitted</p>;
+
+    return (
+      <Form
+        submitWhenInvalid={true}
+        onSubmit={(values) => setIsSubmitted(true)}
+      >
+        {({ submit }) => (
+          <>
+            <Field<string>
+              name={"email"}
+              initialValue=""
+              onMountValidate={z.string().min(12, "Must have 12 characters")}
+            >
+              {({ errors }) => (
+                <>{errors && errors.length && <p>There are errors</p>}</>
+              )}
+            </Field>
+            <button onClick={submit}>Submit</button>
+          </>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByText } = render(<Comp />);
+
+  await waitFor(() =>
+    expect(getByText("There are errors")).toBeInTheDocument()
+  );
+
+  await user.click(getByText("Submit"));
+
+  expect(getByText("Submitted")).toBeInTheDocument();
+});

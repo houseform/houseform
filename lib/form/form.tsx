@@ -19,13 +19,14 @@ export interface FormProps<T> {
   onSubmit?: (values: T, form: FormInstance<T>) => void;
   children: (props: FormInstance<T>) => JSX.Element;
   memoChild?: any[];
+  submitWhenInvalid?: boolean;
 }
 
 function FormComp<T extends Record<string, any> = Record<string, any>>(
   props: FormProps<T>,
   ref: ForwardedRef<FormInstance<T>>
 ) {
-  const { onSubmit, children, memoChild } = props;
+  const { onSubmit, children, memoChild, submitWhenInvalid = false } = props;
 
   const formFieldsRef = useRef<
     Array<FieldInstance<any, T> | FieldArrayInstance<any, T>>
@@ -196,12 +197,16 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       })
     );
 
-    if (!validArrays.every((isValid) => !!isValid)) return false;
+    if (!submitWhenInvalid) {
+      if (!validArrays.every((isValid) => !!isValid)) {
+        return false;
+      }
+    }
 
     // TODO: Add tests to see if it gets cached version of `isDirty`, `isTouched`, `isValid`, and `errors`
     onSubmit?.(values, baseValue);
     return true;
-  }, [baseValue, onSubmit]);
+  }, [baseValue, onSubmit, submitWhenInvalid]);
 
   const value = useMemo(() => {
     return {
