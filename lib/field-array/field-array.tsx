@@ -20,14 +20,14 @@ export interface FieldArrayRenderProps<T = any, F = any>
   extends FieldInstanceBaseProps<T, F> {
   children: (props: FieldArrayInstance<T, F>) => JSX.Element;
   initialValue?: T[];
-  memoChildrenArr?: any[];
+  memoChild?: any[];
 }
 
 function FieldArrayComp<T = any, F = any>(
   props: FieldArrayRenderProps<T, F>,
   ref: ForwardedRef<FieldArrayInstance<T, F>>
 ) {
-  const { children, memoChildrenArr } = props;
+  const { children, memoChild } = props;
 
   const {
     value,
@@ -189,8 +189,8 @@ function FieldArrayComp<T = any, F = any>(
     () => {
       return children(fieldArrayInstance);
     },
-    memoChildrenArr
-      ? memoChildrenArr.concat(fieldArrayInstance)
+    memoChild
+      ? memoChild.concat(fieldArrayInstance)
       : [children, fieldArrayInstance]
   );
 

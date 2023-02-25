@@ -17,7 +17,7 @@ export interface FieldRenderProps<T = any, F = any>
   extends FieldInstanceProps<T, F> {
   children: (props: FieldInstance<T, F>) => JSX.Element;
   initialValue?: T;
-  memoChildrenArr?: any[];
+  memoChild?: any[];
 }
 
 function FieldComp<T = any, F = any>(
@@ -25,7 +25,7 @@ function FieldComp<T = any, F = any>(
   ref: ForwardedRef<FieldInstance<T, F>>
 ) {
   const formContext = useContext(FormContext);
-  const { children, memoChildrenArr } = props;
+  const { children, memoChild } = props;
 
   const {
     value,
@@ -120,8 +120,8 @@ function FieldComp<T = any, F = any>(
     () => {
       return children(fieldInstance);
     },
-    memoChildrenArr
-      ? memoChildrenArr.concat(fieldInstance)
+    memoChild
+      ? memoChild.concat(fieldInstance)
       : [children, fieldInstance]
   );
 

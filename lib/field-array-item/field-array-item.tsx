@@ -23,14 +23,14 @@ import { FieldArrayInstance } from "../field-array";
 export interface FieldArrayItemRenderProps<T = any, F = any>
   extends FieldInstanceProps<T, F> {
   children: (props: FieldInstance<T, F>) => JSX.Element;
-  memoChildrenArr?: any[];
+  memoChild?: any[];
 }
 
 export function FieldArrayItemComp<T = any, F = any>(
   props: FieldArrayItemRenderProps<T, F>,
   ref: ForwardedRef<FieldInstance<T, F>>
 ) {
-  const { children, memoChildrenArr } = props;
+  const { children, memoChild } = props;
 
   const {
     _normalizedDotName,
@@ -193,8 +193,8 @@ export function FieldArrayItemComp<T = any, F = any>(
     () => {
       return children(fieldArrayInstance);
     },
-    memoChildrenArr
-      ? memoChildrenArr.concat(fieldArrayInstance)
+    memoChild
+      ? memoChild.concat(fieldArrayInstance)
       : [children, fieldArrayInstance]
   );
 

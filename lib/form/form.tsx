@@ -19,14 +19,14 @@ import { useRerender } from "../utils/use-rerender";
 export interface FormProps<T> {
   onSubmit?: (values: T, form: FormInstance<T>) => void;
   children: (props: FormInstance<T>) => JSX.Element;
-  memoChildrenArr?: any[];
+  memoChild?: any[];
 }
 
 function FormComp<T extends Record<string, any> = Record<string, any>>(
   props: FormProps<T>,
   ref: ForwardedRef<FormInstance<T>>
 ) {
-  const { onSubmit, children, memoChildrenArr } = props;
+  const { onSubmit, children, memoChild } = props;
 
   const formFieldsRef = useRef<
     Array<FieldInstance<any, T> | FieldArrayInstance<any, T>>
@@ -262,7 +262,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       return children(value);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    memoChildrenArr ? memoChildrenArr.concat(value) : [children, value]
+    memoChild ? memoChild.concat(value) : [children, value]
   );
 
   return (
