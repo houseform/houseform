@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@hookform/error-message': ^2.0.1
   '@hookform/resolvers': ^2.9.11
   '@testing-library/jest-dom': ^5.16.5
   '@testing-library/react': ^13.4.0
@@ -39,6 +40,7 @@ specifiers:
   zod-formik-adapter: ^1.2.0
 
 devDependencies:
+  '@hookform/error-message': 2.0.1_zf7ga3u4zrffjlingb6kh5ipva
   '@hookform/resolvers': 2.9.11_react-hook-form@7.43.1
   '@testing-library/jest-dom': 5.16.5
   '@testing-library/react': 13.4.0_biqbaboplfbrettd7655fr4n2y
@@ -1815,6 +1817,18 @@ packages:
       strip-json-comments: 3.1.1
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /@hookform/error-message/2.0.1_zf7ga3u4zrffjlingb6kh5ipva:
+    resolution: {integrity: sha512-U410sAr92xgxT1idlu9WWOVjndxLdgPUHEB8Schr27C9eh7/xUnITWpCMF93s+lGiG++D4JnbSnrb5A21AdSNg==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+      react-hook-form: ^7.0.0
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      react-hook-form: 7.43.1_react@18.2.0
     dev: true
 
   /@hookform/resolvers/2.9.11_react-hook-form@7.43.1:
