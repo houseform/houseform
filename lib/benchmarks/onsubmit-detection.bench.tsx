@@ -14,6 +14,7 @@ import { FieldProps } from "formik/dist/Field";
 import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ErrorMessage } from "@hookform/error-message";
 
 const arr = Array.from({ length: 1000 }, (_, i) => i);
 
@@ -101,6 +102,43 @@ function FormikOnSubmitBenchmark() {
 }
 
 function ReactHookFormOnSubmitBenchmark() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      num: arr,
+    },
+    mode: "onSubmit",
+    resolver: zodResolver(
+      z.object({
+        num: z.array(z.number().min(3, "Must be at least three")),
+      })
+    ),
+  });
+
+  return (
+    <>
+      {arr.map((num, i) => {
+        return (
+          <div key={i}>
+            <input
+              {...register(`num.${i}`)}
+              data-testid={`value${i}`}
+              type="number"
+              placeholder={`Number ${i}`}
+            />
+            <ErrorMessage errors={errors} name={`num.${i}`} />
+          </div>
+        );
+      })}
+      <button onClick={handleSubmit(() => {})}>Submit</button>
+    </>
+  );
+}
+
+function ReactHookFormHeadlessOnSubmitBenchmark() {
   const { control, handleSubmit } = useForm({
     defaultValues: {
       num: arr,
@@ -185,6 +223,22 @@ describe("Validates onSubmit on 1,000 form items", () => {
 
     const { getByText, findAllByText, queryAllByText } = render(
       <ReactHookFormOnSubmitBenchmark />
+    );
+
+    if (queryAllByText("Must be at least three")?.length) {
+      throw "Should not be present yet";
+    }
+
+    fireEvent.click(getByText("Submit"));
+
+    await findAllByText("Must be at least three");
+  });
+
+  bench("React Hook Form (Headless)", async () => {
+    cleanup();
+
+    const { getByText, findAllByText, queryAllByText } = render(
+      <ReactHookFormHeadlessOnSubmitBenchmark />
     );
 
     if (queryAllByText("Must be at least three")?.length) {

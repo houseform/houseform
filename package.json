@@ -32,6 +32,7 @@
     "zod": ">=3.9.0"
   },
   "devDependencies": {
+    "@hookform/error-message": "^2.0.1",
     "@hookform/resolvers": "^2.9.11",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",

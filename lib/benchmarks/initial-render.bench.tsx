@@ -1,7 +1,7 @@
 import { describe, bench } from "vitest";
 
 import { Field, Form } from "houseform";
-import { cleanup, render } from "@testing-library/react";
+import { cleanup, findByTestId, render } from "@testing-library/react";
 import { Formik, Field as FormikField } from "formik";
 import { FieldProps } from "formik/dist/Field";
 import { Controller, useForm } from "react-hook-form";
@@ -15,9 +15,16 @@ function HouseFormInitialRenderBenchmark() {
         <>
           {arr.map((num, i) => {
             return (
-              <Field key={i} name={`num[${i}]`} initialValue={num}>
-                {({ value }) => {
-                  return <p>{value}</p>;
+              <Field<number> key={i} name={`num[${i}]`} initialValue={num}>
+                {({ value, onBlur, setValue }) => {
+                  return (
+                    <input
+                      data-testid={num}
+                      value={value}
+                      onBlur={onBlur}
+                      onChange={(e) => setValue(e.target.valueAsNumber)}
+                    />
+                  );
                 }}
               </Field>
             );
@@ -41,7 +48,15 @@ function FormikInitialRenderBenchmark() {
           {arr.map((num, i) => (
             <FormikField key={i} name={`num[${i}]`}>
               {({ field }: FieldProps) => {
-                return <p>{field.value}</p>;
+                return (
+                  <input
+                    data-testid={num}
+                    value={field.value}
+                    name={field.name}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                  />
+                );
               }}
             </FormikField>
           ))}
@@ -51,7 +66,7 @@ function FormikInitialRenderBenchmark() {
   );
 }
 
-function ReactHookFormInitialRenderBenchmark() {
+function ReactHookFormHeadlessInitialRenderBenchmark() {
   const { control } = useForm({
     defaultValues: {
       num: arr,
@@ -65,7 +80,15 @@ function ReactHookFormInitialRenderBenchmark() {
           <Controller
             key={i}
             control={control}
-            render={({ field: { value } }) => <p>{value}</p>}
+            render={({ field: { value, onChange, onBlur, ref } }) => (
+              <input
+                ref={ref}
+                data-testid={num}
+                value={value}
+                onChange={onChange}
+                onBlur={onBlur}
+              />
+            )}
             name={`num.${i}`}
           />
         );
@@ -74,28 +97,54 @@ function ReactHookFormInitialRenderBenchmark() {
   );
 }
 
+function ReactHookFormInitialRenderBenchmark() {
+  const { register } = useForm({
+    defaultValues: {
+      num: arr,
+    },
+  });
+
+  return (
+    <>
+      {arr.map((num, i) => (
+        <input data-testid={num} key={i} {...register(`num.${i}`)} />
+      ))}
+    </>
+  );
+}
+
 describe("Renders 1,000 form items", () => {
   bench("HouseForm", async () => {
     cleanup();
 
-    const { findByText } = render(<HouseFormInitialRenderBenchmark />);
+    const { findByTestId } = render(<HouseFormInitialRenderBenchmark />);
 
-    await findByText("999");
+    await findByTestId("999");
   });
 
   bench("Formik", async () => {
     cleanup();
 
-    const { findByText } = render(<FormikInitialRenderBenchmark />);
+    const { findByTestId } = render(<FormikInitialRenderBenchmark />);
 
-    await findByText("999");
+    await findByTestId("999");
   });
 
   bench("React Hook Form", async () => {
     cleanup();
 
-    const { findByText } = render(<ReactHookFormInitialRenderBenchmark />);
+    const { findByTestId } = render(<ReactHookFormInitialRenderBenchmark />);
 
-    await findByText("999");
+    await findByTestId("999");
+  });
+
+  bench("React Hook Form (Headless)", async () => {
+    cleanup();
+
+    const { findByTestId } = render(
+      <ReactHookFormHeadlessInitialRenderBenchmark />
+    );
+
+    await findByTestId("999");
   });
 });

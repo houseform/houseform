@@ -117,4 +117,5 @@ describe("Validates onMount on 1,000 form items", () => {
 
   // Does not support this feature
   bench.todo("React Hook Form");
+  bench.todo("React Hook Form (Headless)");
 });

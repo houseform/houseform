@@ -5,6 +5,7 @@ import { useState } from "react";
 import { cleanup, fireEvent, render } from "@testing-library/react";
 import { Formik, Field as FormikField } from "formik";
 import { Controller, useForm } from "react-hook-form";
+import { FieldProps } from "formik/dist/Field";
 
 const arr = Array.from({ length: 1000 }, (_, i) => i);
 
@@ -33,8 +34,14 @@ function HouseFormOnSubmitBenchmark() {
           {arr.map((num, i) => {
             return (
               <Field key={i} name={`num[${i}]`} initialValue={num}>
-                {() => {
-                  return <></>;
+                {({ value, onBlur, setValue }) => {
+                  return (
+                    <input
+                      onBlur={onBlur}
+                      onChange={(e) => setValue(e.target.valueAsNumber)}
+                      value={value}
+                    />
+                  );
                 }}
               </Field>
             );
@@ -71,8 +78,15 @@ function FormikOnSubmitBenchmark() {
           <button onClick={submitForm}>Submit</button>
           {arr.map((num, i) => (
             <FormikField key={i} name={`num[${i}]`}>
-              {() => {
-                return <></>;
+              {({ field }: FieldProps) => {
+                return (
+                  <input
+                    name={field.name}
+                    value={field.value}
+                    onBlur={field.onBlur}
+                    onChange={field.onChange}
+                  />
+                );
               }}
             </FormikField>
           ))}
@@ -83,6 +97,35 @@ function FormikOnSubmitBenchmark() {
 }
 
 function ReactHookFormOnSubmitBenchmark() {
+  const { register, handleSubmit } = useForm({
+    defaultValues: {
+      num: arr,
+    },
+  });
+
+  const [val, setVal] = useState<Record<string, any> | null>(null);
+
+  if (val) {
+    return (
+      <p>
+        <span>Value:</span>
+        {JSON.stringify(val)}
+      </p>
+    );
+  }
+
+  return (
+    <>
+      <button onClick={handleSubmit((data) => setVal(data))}>Submit</button>
+
+      {arr.map((num, i) => {
+        return <input key={i} {...register(`num.${i}`)} />;
+      })}
+    </>
+  );
+}
+
+function ReactHookFormHeadlessOnSubmitBenchmark() {
   const { control, handleSubmit } = useForm({
     defaultValues: {
       num: arr,
@@ -144,6 +187,18 @@ describe("Submits 1,000 form items", () => {
 
     const { getByText, findByText } = render(
       <ReactHookFormOnSubmitBenchmark />
+    );
+
+    fireEvent.click(getByText("Submit"));
+
+    await findByText("Value:");
+  });
+
+  bench("React Hook Form (Headless)", async () => {
+    cleanup();
+
+    const { getByText, findByText } = render(
+      <ReactHookFormHeadlessOnSubmitBenchmark />
     );
 
     fireEvent.click(getByText("Submit"));

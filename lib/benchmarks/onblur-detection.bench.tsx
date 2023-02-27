@@ -12,8 +12,8 @@ import { Formik, Field as FormikField } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { FieldProps } from "formik/dist/Field";
 import { Controller, useForm } from "react-hook-form";
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ErrorMessage } from "@hookform/error-message";
 
 const arr = Array.from({ length: 1000 }, (_, i) => i);
 
@@ -99,6 +99,43 @@ function FormikOnBlurBenchmark() {
 }
 
 function ReactHookFormOnBlurBenchmark() {
+  const {
+    register,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      num: arr,
+    },
+    mode: "onBlur",
+    resolver: zodResolver(
+      z.object({
+        num: z.array(z.number().min(3, "Must be at least three")),
+      })
+    ),
+  });
+
+  return (
+    <>
+      {arr.map((num, i) => {
+        return (
+          <div key={i}>
+            <input
+              {...register(`num.${i}`, {
+                valueAsNumber: true,
+              })}
+              data-testid={`value${i}`}
+              type="number"
+              placeholder={`Number ${i}`}
+            />
+            <ErrorMessage errors={errors} name={`num.${i}`} />
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
+function ReactHookFormHeadlessOnBlurBenchmark() {
   const { control, handleSubmit } = useForm({
     defaultValues: {
       num: arr,
@@ -182,6 +219,22 @@ describe("Validates onBlur on 1,000 form items", () => {
 
     const { getByTestId, findAllByText, queryAllByText } = render(
       <ReactHookFormOnBlurBenchmark />
+    );
+
+    if (queryAllByText("Must be at least three")?.length) {
+      throw "Should not be present yet";
+    }
+
+    fireEvent.blur(getByTestId("value1"));
+
+    await findAllByText("Must be at least three");
+  });
+
+  bench("React Hook Form (Headless)", async () => {
+    cleanup();
+
+    const { getByTestId, findAllByText, queryAllByText } = render(
+      <ReactHookFormHeadlessOnBlurBenchmark />
     );
 
     if (queryAllByText("Must be at least three")?.length) {

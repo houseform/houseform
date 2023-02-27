@@ -14,6 +14,7 @@ import { FieldProps } from "formik/dist/Field";
 import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ErrorMessage } from "@hookform/error-message";
 
 const arr = Array.from({ length: 1000 }, (_, i) => i);
 
@@ -99,6 +100,41 @@ function FormikOnChangeBenchmark() {
 }
 
 function ReactHookFormOnChangeBenchmark() {
+  const {
+    register,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      num: arr,
+    },
+    mode: "onChange",
+    resolver: zodResolver(
+      z.object({
+        num: z.array(z.number().min(3, "Must be at least three")),
+      })
+    ),
+  });
+
+  return (
+    <>
+      {arr.map((num, i) => {
+        return (
+          <div key={i}>
+            <input
+              data-testid={`value${i}`}
+              {...register(`num.${i}`)}
+              type="number"
+              placeholder={`Number ${i}`}
+            />
+            <ErrorMessage errors={errors} name={`num.${i}`} />
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
+function ReactHookFormHeadlessOnChangeBenchmark() {
   const { control, handleSubmit } = useForm({
     defaultValues: {
       num: arr,
@@ -182,6 +218,22 @@ describe("Validates onChange on 1,000 form items", () => {
 
     const { getByTestId, findAllByText, queryAllByText } = render(
       <ReactHookFormOnChangeBenchmark />
+    );
+
+    if (queryAllByText("Must be at least three")?.length) {
+      throw "Should not be present yet";
+    }
+
+    fireEvent.change(getByTestId("value1"), { target: { value: 0 } });
+
+    await findAllByText("Must be at least three");
+  });
+
+  bench("React Hook Form (Headless)", async () => {
+    cleanup();
+
+    const { getByTestId, findAllByText, queryAllByText } = render(
+      <ReactHookFormHeadlessOnChangeBenchmark />
     );
 
     if (queryAllByText("Must be at least three")?.length) {
