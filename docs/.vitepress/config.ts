@@ -111,6 +111,10 @@ export default defineConfig({
             text: "TypeScript",
             link: "/guides/typescript",
           },
+          {
+            text: "Performance Optimizations",
+            link: "/guides/performance-optimizations",
+          },
         ],
       },
       {

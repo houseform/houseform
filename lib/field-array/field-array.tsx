@@ -20,12 +20,15 @@ export interface FieldArrayRenderProps<T = any, F = any>
   extends FieldInstanceBaseProps<T, F> {
   children: (props: FieldArrayInstance<T, F>) => JSX.Element;
   initialValue?: T[];
+  memoChild?: any[];
 }
 
 function FieldArrayComp<T = any, F = any>(
   props: FieldArrayRenderProps<T, F>,
   ref: ForwardedRef<FieldArrayInstance<T, F>>
 ) {
+  const { children, memoChild } = props;
+
   const {
     value,
     errors,
@@ -182,9 +185,18 @@ function FieldArrayComp<T = any, F = any>(
 
   useImperativeHandle(ref, () => fieldArrayInstance, [fieldArrayInstance]);
 
+  const memoizedChildren = useMemo(
+    () => {
+      return children(fieldArrayInstance);
+    },
+    memoChild
+      ? memoChild.concat(fieldArrayInstance)
+      : [children, fieldArrayInstance]
+  );
+
   return (
     <FieldArrayContext.Provider value={fieldArrayInstance}>
-      {props.children(fieldArrayInstance)}
+      {memoizedChildren}
     </FieldArrayContext.Provider>
   );
 }
