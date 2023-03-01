@@ -15,10 +15,11 @@ An example `Form` usage is:
 
 The `Form` component takes the following props:
 
-| Method     | Parameters                                                   | Expected Return | Description                                                  |
-| ---------- | ------------------------------------------------------------ | --------------- | ------------------------------------------------------------ |
-| `onSubmit` | `Record<string, any>`, [`FormInstance`](#interface-forminstance) |                 | The function to call when the form is submitted. The first argument is the values of a form submitted. It might look something like:<br />`{email: "test@example.com", password: "Hunter2!", confirmpassword: "Hunter2!"}` |
-| `children` | [`FormInstance`](#interface-forminstance)                          | `JSX.Element`   | This is the component child function to pass, which accepts the arguments for FormInstance. |
+| Method      | Parameters                                                   | Expected Return | Description                                                  |
+| ----------- | ------------------------------------------------------------ | --------------- | ------------------------------------------------------------ |
+| `onSubmit`  | `Record<string, any>`, [`FormInstance`](#interface-forminstance) |                 | The function to call when the form is submitted. The first argument is the values of a form submitted. It might look something like:<br />`{email: "test@example.com", password: "Hunter2!", confirmpassword: "Hunter2!"}` |
+| `children`  | [`FormInstance`](#interface-forminstance)                    | `JSX.Element`   | This is the component child function to pass, which accepts the arguments for FormInstance. |
+| `memoChild` | `any[]`                                                      |                 | An array of items passed to the inner `useMemo` [which helps prevent re-renders on the form.](/guides/performance-optimizations) |
 
 ### _Interface_ `FormInstance`
 

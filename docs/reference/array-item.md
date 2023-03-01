@@ -34,4 +34,5 @@ An `ArrayFieldItem` is a helper used to validate sub-items in a `FieldArray`. An
 | `onBlurValidate`   | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the user has blurred the field. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error. |
 | `onMountValidate`   | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the component is mounted . Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error. |
 | `onSubmitValidate` | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the user has submitted the form. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error. |
+| `memoChild` | `any[]` | An array of items passed to the inner `useMemo` [which helps prevent re-renders on the field array item.](/guides/performance-optimizations) |
 
