@@ -85,8 +85,8 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
 
   const getValidBoolean = useCallback(() => {
     if (formFieldsRef.current.length === 0) return true;
-    return formFieldsRef.current.some((field) => {
-      return !field.errors.length;
+    return formFieldsRef.current.every((field) => {
+      return field.errors.length === 0;
     });
   }, [formFieldsRef]);
 
