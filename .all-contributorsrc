@@ -69,6 +69,15 @@
         "doc",
         "test"
       ]
+    },
+    {
+      "login": "nordowl",
+      "name": "Jonas D.",
+      "avatar_url": "https://avatars.githubusercontent.com/u/71926058?v=4",
+      "profile": "https://github.com/nordowl",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoHost": "https://github.com",
