@@ -27,12 +27,12 @@ This form will submit with the following object:
 {test: {other: "Test"}}
 ```
 
-## Interoplate Nested Field Names
+## Interpolate Nested Field Names
 
-You may also interpolate external valeus into your field names using the `brackets["syntax"]`, like so:
+You may also interpolate external values into your field names using the `brackets["syntax"]`, like so:
 
 ```jsx
-const someVal = "test";
+const someVal = "other";
 
 return (
   <Form onSubmit={(values) => {alert(JSON.stringify(values))}}>
