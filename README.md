@@ -50,6 +50,9 @@ Thanks goes to these wonderful people
       <td align="center" valign="top" width="14.28%"><a href="https://chasingtherain.vercel.app/"><img src="https://avatars.githubusercontent.com/u/48197694?v=4?s=100" width="100px;" alt="ChasingRain"/><br /><sub><b>ChasingRain</b></sub></a><br /><a href="https://github.com/crutchcorn/houseform/commits?author=chasingtherain" title="Code">💻</a> <a href="https://github.com/crutchcorn/houseform/commits?author=chasingtherain" title="Documentation">📖</a> <a href="https://github.com/crutchcorn/houseform/commits?author=chasingtherain" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/nordowl"><img src="https://avatars.githubusercontent.com/u/71926058?v=4?s=100" width="100px;" alt="Jonas D."/><br /><sub><b>Jonas D.</b></sub></a><br /><a href="https://github.com/crutchcorn/houseform/commits?author=nordowl" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://shivan.xyz"><img src="https://avatars.githubusercontent.com/u/51132467?v=4?s=100" width="100px;" alt="Shivan Sivakumaran"/><br /><sub><b>Shivan Sivakumaran</b></sub></a><br /><a href="https://github.com/crutchcorn/houseform/commits?author=shivan-s" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 
