@@ -6,7 +6,7 @@ An `ArrayField` is a wrapper used to handle arrays of form items. An example `Ar
 <FieldArray name={"numbers"} initialValue={[1]}>
   {({ add, value }) => (
     <>
-      {value.map(<p key={num}>{num}</p>)}
+      {value.map((num) => <p key={num}>{num}</p>)}
       <button onClick={() => add(1)}>Set value</button>
     </>
   )}
