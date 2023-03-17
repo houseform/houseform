@@ -1056,3 +1056,79 @@ test("Form's memoChild should prevent re-renders", async () => {
 
   expect(formMemoHasRendered).toHaveBeenCalledTimes(1);
 });
+
+test("Form submission should receive FormInstance value", async () => {
+  const Comp = () => {
+    const [formValue, setFormValue] = useState<Record<string, any> | null>(
+      null
+    );
+
+    if (formValue !== null) {
+      return <p>Form values: {JSON.stringify(formValue)}</p>;
+    }
+
+    return (
+      <Form
+        onSubmit={(values, form) => {
+          setFormValue(form.value);
+        }}
+      >
+        {({ submit }) => (
+          <div>
+            <button onClick={submit}>Submit</button>
+            <Field name={"test"} initialValue={"hello-world"}>
+              {() => <></>}
+            </Field>
+          </div>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByText, container } = render(<Comp />);
+
+  user.click(getByText("Submit"));
+
+  await waitFor(() => expect(getByText(/Form values/)).toBeInTheDocument());
+
+  expect(container).toMatchInlineSnapshot(`
+    <div>
+      <p>
+        Form values: 
+        {"test":"hello-world"}
+      </p>
+    </div>
+  `);
+});
+
+test("Form should use value to conditionally hide field based on another's value", async () => {
+  const Comp = () => {
+    return (
+      <Form onSubmit={(values, form) => {}}>
+        {({ submit, value }) => (
+          <div>
+            <button onClick={submit}>Submit</button>
+            <Field name={"always"} initialValue={"hi"}>
+              {({ setValue }) => (
+                <button onClick={() => setValue("bye")}>Set</button>
+              )}
+            </Field>
+            {value.always === "bye" ? null : (
+              <Field name={"conditionally"} initialValue={""}>
+                {() => <p>I am here</p>}
+              </Field>
+            )}
+          </div>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByText, queryByText } = render(<Comp />);
+
+  await waitFor(() => expect(getByText("I am here")).toBeInTheDocument());
+
+  user.click(getByText("Set"));
+
+  await waitFor(() => expect(queryByText("I am here")).toBeInTheDocument());
+});
