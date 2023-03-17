@@ -31,6 +31,9 @@
     "react": ">=16.8.0",
     "zod": ">=3.9.0"
   },
+  "resolutions": {
+    "tinybench": "2.4.0"
+  },
   "devDependencies": {
     "@hookform/error-message": "^2.0.1",
     "@hookform/resolvers": "^2.9.11",

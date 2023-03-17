@@ -1,5 +1,8 @@
 lockfileVersion: 5.4
 
+overrides:
+  tinybench: 2.4.0
+
 specifiers:
   '@hookform/error-message': ^2.0.1
   '@hookform/resolvers': ^2.9.11

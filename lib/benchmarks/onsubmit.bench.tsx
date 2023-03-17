@@ -162,47 +162,79 @@ function ReactHookFormHeadlessOnSubmitBenchmark() {
 }
 
 describe("Submits 1,000 form items", () => {
-  bench("HouseForm", async () => {
-    cleanup();
+  bench(
+    "HouseForm",
+    async () => {
+      const { getByText, findByText } = render(<HouseFormOnSubmitBenchmark />);
 
-    const { getByText, findByText } = render(<HouseFormOnSubmitBenchmark />);
+      fireEvent.click(getByText("Submit"));
 
-    fireEvent.click(getByText("Submit"));
+      await findByText("Value:");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
+    }
+  );
 
-    await findByText("Value:");
-  });
+  bench(
+    "Formik",
+    async () => {
+      const { getByText, findByText } = render(<FormikOnSubmitBenchmark />);
 
-  bench("Formik", async () => {
-    cleanup();
+      fireEvent.click(getByText("Submit"));
 
-    const { getByText, findByText } = render(<FormikOnSubmitBenchmark />);
+      await findByText("Value:");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
+    }
+  );
 
-    fireEvent.click(getByText("Submit"));
+  bench(
+    "React Hook Form",
+    async () => {
+      const { getByText, findByText } = render(
+        <ReactHookFormOnSubmitBenchmark />
+      );
 
-    await findByText("Value:");
-  });
+      fireEvent.click(getByText("Submit"));
 
-  bench("React Hook Form", async () => {
-    cleanup();
+      await findByText("Value:");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
+    }
+  );
 
-    const { getByText, findByText } = render(
-      <ReactHookFormOnSubmitBenchmark />
-    );
+  bench(
+    "React Hook Form (Headless)",
+    async () => {
+      const { getByText, findByText } = render(
+        <ReactHookFormHeadlessOnSubmitBenchmark />
+      );
 
-    fireEvent.click(getByText("Submit"));
+      fireEvent.click(getByText("Submit"));
 
-    await findByText("Value:");
-  });
-
-  bench("React Hook Form (Headless)", async () => {
-    cleanup();
-
-    const { getByText, findByText } = render(
-      <ReactHookFormHeadlessOnSubmitBenchmark />
-    );
-
-    fireEvent.click(getByText("Submit"));
-
-    await findByText("Value:");
-  });
+      await findByText("Value:");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
+    }
+  );
 });

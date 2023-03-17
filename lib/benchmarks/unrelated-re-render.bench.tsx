@@ -144,59 +144,93 @@ function ReactHookFormReRenderBenchmark() {
 }
 
 describe("Renders unrelated data in large forms", () => {
-  bench("HouseForm", async () => {
-    cleanup();
+  bench(
+    "HouseForm",
+    async function (this) {
+      const { findByTestId, findByText } = render(
+        <HouseFormReRenderBenchmark />
+      );
 
-    const { findByTestId, findByText } = render(<HouseFormReRenderBenchmark />);
+      await findByTestId("999");
+      await findByText("Count: 0");
+      fireEvent.click(await findByText("Add"));
 
-    await findByTestId("999");
-    await findByText("Count: 0");
-    fireEvent.click(await findByText("Add"));
+      await findByText("Count: 1");
+      await findByTestId("999");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
+    }
+  );
 
-    await findByText("Count: 1");
-    await findByTestId("999");
-  });
+  bench(
+    "Formik",
+    async () => {
+      const { findByTestId, findByText } = render(<FormikReRenderBenchmark />);
 
-  bench("Formik", async () => {
-    cleanup();
+      await findByTestId("999");
+      await findByText("Count: 0");
+      fireEvent.click(await findByText("Add"));
 
-    const { findByTestId, findByText } = render(<FormikReRenderBenchmark />);
+      await findByText("Count: 1");
+      await findByTestId("999");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
+    }
+  );
 
-    await findByTestId("999");
-    await findByText("Count: 0");
-    fireEvent.click(await findByText("Add"));
+  bench(
+    "React Hook Form",
+    async () => {
+      const { findByTestId, findByText } = render(
+        <ReactHookFormReRenderBenchmark />
+      );
 
-    await findByText("Count: 1");
-    await findByTestId("999");
-  });
+      await findByTestId("999");
+      await findByText("Count: 0");
+      fireEvent.click(await findByText("Add"));
 
-  bench("React Hook Form", async () => {
-    cleanup();
+      await findByText("Count: 1");
+      await findByTestId("999");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
+    }
+  );
 
-    const { findByTestId, findByText } = render(
-      <ReactHookFormReRenderBenchmark />
-    );
+  bench(
+    "React Hook Form (Headless)",
+    async () => {
+      const { findByTestId, findByText } = render(
+        <ReactHookFormHeadlessReRenderBenchmark />
+      );
 
-    await findByTestId("999");
-    await findByText("Count: 0");
-    fireEvent.click(await findByText("Add"));
+      await findByTestId("999");
+      await findByText("Count: 0");
+      fireEvent.click(await findByText("Add"));
 
-    await findByText("Count: 1");
-    await findByTestId("999");
-  });
-
-  bench("React Hook Form (Headless)", async () => {
-    cleanup();
-
-    const { findByTestId, findByText } = render(
-      <ReactHookFormHeadlessReRenderBenchmark />
-    );
-
-    await findByTestId("999");
-    await findByText("Count: 0");
-    fireEvent.click(await findByText("Add"));
-
-    await findByText("Count: 1");
-    await findByTestId("999");
-  });
+      await findByText("Count: 1");
+      await findByTestId("999");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
+    }
+  );
 });

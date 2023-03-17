@@ -182,67 +182,99 @@ function ReactHookFormHeadlessOnBlurBenchmark() {
 }
 
 describe("Validates onBlur on 1,000 form items", () => {
-  bench("HouseForm", async () => {
-    cleanup();
+  bench(
+    "HouseForm",
+    async () => {
+      const { getByTestId, findAllByText, queryAllByText } = render(
+        <HouseFormOnBlurBenchmark />
+      );
 
-    const { getByTestId, findAllByText, queryAllByText } = render(
-      <HouseFormOnBlurBenchmark />
-    );
+      if (queryAllByText("Must be at least three")?.length) {
+        throw "Should not be present yet";
+      }
 
-    if (queryAllByText("Must be at least three")?.length) {
-      throw "Should not be present yet";
+      fireEvent.blur(getByTestId("value1"));
+
+      await findAllByText("Must be at least three");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
     }
+  );
 
-    fireEvent.blur(getByTestId("value1"));
+  bench(
+    "Formik",
+    async () => {
+      const { getByTestId, findAllByText, queryAllByText } = render(
+        <FormikOnBlurBenchmark />
+      );
 
-    await findAllByText("Must be at least three");
-  });
+      if (queryAllByText("Must be at least three")?.length) {
+        throw "Should not be present yet";
+      }
 
-  bench("Formik", async () => {
-    cleanup();
+      fireEvent.blur(getByTestId("value1"));
 
-    const { getByTestId, findAllByText, queryAllByText } = render(
-      <FormikOnBlurBenchmark />
-    );
-
-    if (queryAllByText("Must be at least three")?.length) {
-      throw "Should not be present yet";
+      await findAllByText("Must be at least three");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
     }
+  );
 
-    fireEvent.blur(getByTestId("value1"));
+  bench(
+    "React Hook Form",
+    async () => {
+      const { getByTestId, findAllByText, queryAllByText } = render(
+        <ReactHookFormOnBlurBenchmark />
+      );
 
-    await findAllByText("Must be at least three");
-  });
+      if (queryAllByText("Must be at least three")?.length) {
+        throw "Should not be present yet";
+      }
 
-  bench("React Hook Form", async () => {
-    cleanup();
+      fireEvent.blur(getByTestId("value1"));
 
-    const { getByTestId, findAllByText, queryAllByText } = render(
-      <ReactHookFormOnBlurBenchmark />
-    );
-
-    if (queryAllByText("Must be at least three")?.length) {
-      throw "Should not be present yet";
+      await findAllByText("Must be at least three");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
     }
+  );
 
-    fireEvent.blur(getByTestId("value1"));
+  bench(
+    "React Hook Form (Headless)",
+    async () => {
+      const { getByTestId, findAllByText, queryAllByText } = render(
+        <ReactHookFormHeadlessOnBlurBenchmark />
+      );
 
-    await findAllByText("Must be at least three");
-  });
+      if (queryAllByText("Must be at least three")?.length) {
+        throw "Should not be present yet";
+      }
 
-  bench("React Hook Form (Headless)", async () => {
-    cleanup();
+      fireEvent.blur(getByTestId("value1"));
 
-    const { getByTestId, findAllByText, queryAllByText } = render(
-      <ReactHookFormHeadlessOnBlurBenchmark />
-    );
-
-    if (queryAllByText("Must be at least three")?.length) {
-      throw "Should not be present yet";
+      await findAllByText("Must be at least three");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
     }
-
-    fireEvent.blur(getByTestId("value1"));
-
-    await findAllByText("Must be at least three");
-  });
+  );
 });
