@@ -68,6 +68,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
   const [_isValid, _setIsValid] = useState<boolean | null>(null);
   const [_isDirty, _setIsDirty] = useState<boolean | null>(null);
   const [_isTouched, _setIsTouched] = useState<boolean | null>(null);
+  const [_value, _setValue] = useState<T | null>(null);
 
   const shouldRerenderErrorOnRecompute = useRef(false);
 
@@ -76,6 +77,8 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
   const shouldRerenderIsDirtyOnRecompute = useRef(false);
 
   const shouldRerenderIsTouchedOnRecompute = useRef(false);
+
+  const shouldRerenderValueOnRecompute = useRef(false);
 
   const getErrors = useCallback(() => {
     return formFieldsRef.current.reduce((acc, field) => {
@@ -104,6 +107,13 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     [formFieldsRef]
   );
 
+  const getFormValue = useCallback(() => {
+    return formFieldsRef.current.reduce((prev, field) => {
+      fillPath(prev, field.props.name, field.value);
+      return prev;
+    }, {} as T);
+  }, [formFieldsRef]);
+
   const recomputeErrors = useCallback(() => {
     if (shouldRerenderErrorOnRecompute.current) {
       const val = getErrors();
@@ -128,6 +138,13 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       _setIsTouched(val);
     }
   }, [getFieldBoolean]);
+
+  const recomputeFormValue = useCallback(() => {
+    if (shouldRerenderValueOnRecompute.current) {
+      const val = getFormValue();
+      _setValue(val);
+    }
+  }, [getFormValue]);
 
   const errorGetter = useCallback(() => {
     shouldRerenderErrorOnRecompute.current = true;
@@ -169,6 +186,16 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     return _isTouched;
   }, [_isTouched, getFieldBoolean]);
 
+  const valueGetter = useCallback(() => {
+    if (_value === null) {
+      shouldRerenderValueOnRecompute.current = true;
+      const val = getFormValue();
+      _setValue(val);
+      return val;
+    }
+    return _value;
+  }, [_value, getFormValue]);
+
   const baseValue = useMemo(() => {
     return {
       getFieldValue,
@@ -183,6 +210,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       recomputeErrors,
       recomputeIsDirty,
       recomputeIsTouched,
+      recomputeFormValue,
       get errors() {
         return errorGetter();
       },
@@ -195,6 +223,9 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       get isTouched() {
         return isTouchedGetter();
       },
+      get value() {
+        return valueGetter();
+      },
       submit: () => Promise.resolve(true),
     };
   }, [
@@ -205,10 +236,12 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     recomputeErrors,
     recomputeIsDirty,
     recomputeIsTouched,
+    recomputeFormValue,
     errorGetter,
     isValidGetter,
     isDirtyGetter,
     isTouchedGetter,
+    valueGetter,
   ]);
 
   const submit = useCallback(async () => {
@@ -263,6 +296,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       "isDirty",
       "isTouched",
       "submit",
+      "value",
     ] as const;
     const val = {
       submit,
@@ -277,6 +311,9 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       },
       get isTouched() {
         return isTouchedGetter();
+      },
+      get value() {
+        return valueGetter();
       },
     } as any as typeof baseValue;
 
@@ -298,6 +335,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     isDirtyGetter,
     isTouchedGetter,
     isValidGetter,
+    valueGetter,
     submit,
   ]);
 
