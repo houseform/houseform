@@ -99,21 +99,37 @@ function FormikOnMountBenchmark() {
 }
 
 describe("Validates onMount on 1,000 form items", () => {
-  bench("HouseForm", async () => {
-    cleanup();
+  bench(
+    "HouseForm",
+    async () => {
+      const { findAllByText } = render(<HouseFormOnMountBenchmark />);
 
-    const { findAllByText } = render(<HouseFormOnMountBenchmark />);
+      await findAllByText("Must be at least three");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
+    }
+  );
 
-    await findAllByText("Must be at least three");
-  });
+  bench(
+    "Formik",
+    async () => {
+      const { findAllByText } = render(<FormikOnMountBenchmark />);
 
-  bench("Formik", async () => {
-    cleanup();
-
-    const { findAllByText } = render(<FormikOnMountBenchmark />);
-
-    await findAllByText("Must be at least three");
-  });
+      await findAllByText("Must be at least three");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
+    }
+  );
 
   // Does not support this feature
   bench.todo("React Hook Form");

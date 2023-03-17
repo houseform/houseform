@@ -114,37 +114,69 @@ function ReactHookFormInitialRenderBenchmark() {
 }
 
 describe("Renders 1,000 form items", () => {
-  bench("HouseForm", async () => {
-    cleanup();
+  bench(
+    "HouseForm",
+    async () => {
+      const { findByTestId } = render(<HouseFormInitialRenderBenchmark />);
 
-    const { findByTestId } = render(<HouseFormInitialRenderBenchmark />);
+      await findByTestId("999");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
+    }
+  );
 
-    await findByTestId("999");
-  });
+  bench(
+    "Formik",
+    async () => {
+      const { findByTestId } = render(<FormikInitialRenderBenchmark />);
 
-  bench("Formik", async () => {
-    cleanup();
+      await findByTestId("999");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
+    }
+  );
 
-    const { findByTestId } = render(<FormikInitialRenderBenchmark />);
+  bench(
+    "React Hook Form",
+    async () => {
+      const { findByTestId } = render(<ReactHookFormInitialRenderBenchmark />);
 
-    await findByTestId("999");
-  });
+      await findByTestId("999");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
+    }
+  );
 
-  bench("React Hook Form", async () => {
-    cleanup();
+  bench(
+    "React Hook Form (Headless)",
+    async () => {
+      const { findByTestId } = render(
+        <ReactHookFormHeadlessInitialRenderBenchmark />
+      );
 
-    const { findByTestId } = render(<ReactHookFormInitialRenderBenchmark />);
-
-    await findByTestId("999");
-  });
-
-  bench("React Hook Form (Headless)", async () => {
-    cleanup();
-
-    const { findByTestId } = render(
-      <ReactHookFormHeadlessInitialRenderBenchmark />
-    );
-
-    await findByTestId("999");
-  });
+      await findByTestId("999");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
+    }
+  );
 });

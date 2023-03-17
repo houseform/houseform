@@ -122,7 +122,7 @@ function ReactHookFormOnChangeBenchmark() {
           <div key={i}>
             <input
               data-testid={`value${i}`}
-              {...register(`num.${i}`)}
+              {...register(`num.${i}`, { valueAsNumber: true })}
               type="number"
               placeholder={`Number ${i}`}
             />
@@ -181,67 +181,99 @@ function ReactHookFormHeadlessOnChangeBenchmark() {
 }
 
 describe("Validates onChange on 1,000 form items", () => {
-  bench("HouseForm", async () => {
-    cleanup();
+  bench(
+    "HouseForm",
+    async () => {
+      const { getByTestId, findAllByText, queryAllByText } = render(
+        <HouseFormOnChangeBenchmark />
+      );
 
-    const { getByTestId, findAllByText, queryAllByText } = render(
-      <HouseFormOnChangeBenchmark />
-    );
+      if (queryAllByText("Must be at least three")?.length) {
+        throw "Should not be present yet";
+      }
 
-    if (queryAllByText("Must be at least three")?.length) {
-      throw "Should not be present yet";
+      fireEvent.change(getByTestId("value1"), { target: { value: 0 } });
+
+      await findAllByText("Must be at least three");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
     }
+  );
 
-    fireEvent.change(getByTestId("value1"), { target: { value: 0 } });
+  bench(
+    "Formik",
+    async () => {
+      const { getByTestId, findAllByText, queryAllByText } = render(
+        <FormikOnChangeBenchmark />
+      );
 
-    await findAllByText("Must be at least three");
-  });
+      if (queryAllByText("Must be at least three")?.length) {
+        throw "Should not be present yet";
+      }
 
-  bench("Formik", async () => {
-    cleanup();
+      fireEvent.change(getByTestId("value1"), { target: { value: 0 } });
 
-    const { getByTestId, findAllByText, queryAllByText } = render(
-      <FormikOnChangeBenchmark />
-    );
-
-    if (queryAllByText("Must be at least three")?.length) {
-      throw "Should not be present yet";
+      await findAllByText("Must be at least three");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
     }
+  );
 
-    fireEvent.change(getByTestId("value1"), { target: { value: 0 } });
+  bench(
+    "React Hook Form",
+    async () => {
+      const { getByTestId, findAllByText, queryAllByText } = render(
+        <ReactHookFormOnChangeBenchmark />
+      );
 
-    await findAllByText("Must be at least three");
-  });
+      if (queryAllByText("Must be at least three")?.length) {
+        throw "Should not be present yet";
+      }
 
-  bench("React Hook Form", async () => {
-    cleanup();
+      fireEvent.change(getByTestId("value1"), { target: { value: 0 } });
 
-    const { getByTestId, findAllByText, queryAllByText } = render(
-      <ReactHookFormOnChangeBenchmark />
-    );
-
-    if (queryAllByText("Must be at least three")?.length) {
-      throw "Should not be present yet";
+      await findAllByText("Must be at least three");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
     }
+  );
 
-    fireEvent.change(getByTestId("value1"), { target: { value: 0 } });
+  bench(
+    "React Hook Form (Headless)",
+    async () => {
+      const { getByTestId, findAllByText, queryAllByText } = render(
+        <ReactHookFormHeadlessOnChangeBenchmark />
+      );
 
-    await findAllByText("Must be at least three");
-  });
+      if (queryAllByText("Must be at least three")?.length) {
+        throw "Should not be present yet";
+      }
 
-  bench("React Hook Form (Headless)", async () => {
-    cleanup();
+      fireEvent.change(getByTestId("value1"), { target: { value: 0 } });
 
-    const { getByTestId, findAllByText, queryAllByText } = render(
-      <ReactHookFormHeadlessOnChangeBenchmark />
-    );
-
-    if (queryAllByText("Must be at least three")?.length) {
-      throw "Should not be present yet";
+      await findAllByText("Must be at least three");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
     }
-
-    fireEvent.change(getByTestId("value1"), { target: { value: 0 } });
-
-    await findAllByText("Must be at least three");
-  });
+  );
 });
