@@ -35,6 +35,7 @@ function FieldComp<T = any, F = any>(
     isTouched,
     isDirty,
     isValid,
+    isValidating,
     runFieldValidation,
     valueRef,
     _normalizedDotName,
@@ -83,6 +84,7 @@ function FieldComp<T = any, F = any>(
       isTouched,
       isDirty,
       isValid,
+      isValidating,
       onBlur,
       _normalizedDotName,
       validate,
@@ -98,6 +100,7 @@ function FieldComp<T = any, F = any>(
     isTouched,
     isDirty,
     isValid,
+    isValidating,
     onBlur,
     _normalizedDotName,
     validate,
@@ -113,6 +116,7 @@ function FieldComp<T = any, F = any>(
     isValid,
     isDirty,
     isTouched,
+    isValidating,
   });
 
   useImperativeHandle(ref, () => fieldInstance, [fieldInstance]);

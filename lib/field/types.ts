@@ -33,6 +33,7 @@ export interface FieldInstance<T = any, F = any> {
   isTouched: boolean;
   setIsDirty: (val: boolean) => void;
   isDirty: boolean;
+  isValidating: boolean;
   validate: (
     validationType: "onChangeValidate" | "onBlurValidate" | "onMountValidate"
   ) => void;

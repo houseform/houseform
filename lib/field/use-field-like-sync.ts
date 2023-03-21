@@ -16,6 +16,7 @@ export interface UseFieldLikeSyncProps<
   isDirty: TT["isDirty"];
   isValid: TT["isValid"];
   isTouched: TT["isTouched"];
+  isValidating: TT["isValidating"];
 }
 
 export const useFieldLikeSync = <
@@ -30,6 +31,7 @@ export const useFieldLikeSync = <
   isDirty,
   isValid,
   isTouched,
+  isValidating,
 }: UseFieldLikeSyncProps<T, F, TT>) => {
   const formContext = useContext(FormContext);
 
@@ -71,6 +73,10 @@ export const useFieldLikeSync = <
   useIsomorphicLayoutEffect(() => {
     mutableRef.current.isTouched = isTouched;
   }, [isTouched, mutableRef]);
+
+  useIsomorphicLayoutEffect(() => {
+    mutableRef.current.isValidating = isValidating;
+  }, [isValidating, mutableRef]);
 
   /**
    * Recompute form errors when field errors change

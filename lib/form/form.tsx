@@ -33,6 +33,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
   >([]);
 
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
 
   const getFieldValue = useCallback(
     (name: string) => {
@@ -176,6 +177,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       onBlurListenerRefs,
       onMountListenerRefs,
       isSubmitted,
+      isValidating,
       setIsSubmitted,
       formFieldsRef,
       setIsTouched,
@@ -200,6 +202,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
   }, [
     getFieldValue,
     isSubmitted,
+    isValidating,
     setIsTouched,
     setIsDirty,
     recomputeErrors,
@@ -213,6 +216,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
 
   const submit = useCallback(async () => {
     setIsSubmitted(true);
+    setIsValidating(true);
     const values = {} as T;
 
     const validArrays = await Promise.all(
@@ -244,6 +248,8 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
         return true;
       })
     );
+
+    setIsValidating(false);
 
     if (!submitWhenInvalid) {
       if (!validArrays.every((isValid) => !!isValid)) {

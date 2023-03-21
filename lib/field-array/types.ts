@@ -29,6 +29,7 @@ export interface FieldArrayInstance<T = any, F = any>
   setIsDirty: (val: boolean) => void;
   isDirty: boolean;
   isTouched: boolean;
+  isValidating: boolean;
   validate: (
     validationType: "onChangeValidate" | "onBlurValidate" | "onMountValidate"
   ) => void;

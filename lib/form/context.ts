@@ -21,6 +21,7 @@ export const initialFormContext = {
   isValid: false,
   isDirty: false,
   isTouched: false,
+  isValidating: false,
   isSubmitted: false,
 } as FormInstance;
 /* c8 ignore stop */
