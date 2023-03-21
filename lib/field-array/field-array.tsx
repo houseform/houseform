@@ -7,9 +7,8 @@ import React, {
   useMemo,
   useRef,
 } from "react";
-import { FieldInstanceBaseProps } from "../field/types";
 import { FieldArrayContext } from "./context";
-import { FieldArrayInstance } from "./types";
+import { FieldArrayInstance, FieldArrayInstanceProps } from "./types";
 import {
   useFieldLike,
   useListenToListenToArray,
@@ -17,10 +16,8 @@ import {
 import { useFieldLikeSync } from "../field/use-field-like-sync";
 
 export interface FieldArrayRenderProps<T = any, F = any>
-  extends FieldInstanceBaseProps<T, F> {
+  extends FieldArrayInstanceProps<T, F> {
   children: (props: FieldArrayInstance<T, F>) => JSX.Element;
-  initialValue?: T[];
-  memoChild?: any[];
 }
 
 function FieldArrayComp<T = any, F = any>(
