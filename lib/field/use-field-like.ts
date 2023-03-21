@@ -191,7 +191,7 @@ export const useFieldLike = <
           typeof t === "function";
         const newVal = isPrevAFunction(val) ? val(prev) : (val as typeof value);
         setIsDirty(true);
-        setIsTouched(true);
+        // setIsTouched(true);
 
         /**
          * Call `listenTo` field subscribers for other fields.
