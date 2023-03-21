@@ -169,6 +169,20 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     return _isTouched;
   }, [_isTouched, getFieldBoolean]);
 
+  const reset = useCallback(() => {
+    formFieldsRef.current.forEach((field) => {
+      const value = field.props.resetWithValue || field.props.initialValue;
+
+      if (Array.isArray(field.value)) {
+        (field as FieldArrayInstance).setValues(value || []);
+      } else {
+        (field as FieldInstance).setValue(value || "");
+      }
+    });
+    _setIsDirty(false);
+    _setIsTouched(false);
+  }, [_setIsTouched, _setIsDirty]);
+
   const baseValue = useMemo(() => {
     return {
       getFieldValue,
@@ -183,6 +197,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       recomputeErrors,
       recomputeIsDirty,
       recomputeIsTouched,
+      reset,
       get errors() {
         return errorGetter();
       },
@@ -266,6 +281,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     ] as const;
     const val = {
       submit,
+      reset,
       get errors() {
         return errorGetter();
       },

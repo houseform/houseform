@@ -14,6 +14,7 @@ export interface FormInstance<T = any> {
   recomputeIsTouched: () => void;
   errors: string[];
   submit: () => Promise<boolean>;
+  reset: () => void;
   isValid: boolean;
   setIsTouched: (val: boolean) => void;
   isTouched: boolean;

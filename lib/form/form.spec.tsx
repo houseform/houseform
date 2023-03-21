@@ -1,7 +1,13 @@
 import { expect, test, vi } from "vitest";
 import { useRef, useState } from "react";
 import { Field, FieldArray, Form } from "houseform";
-import { cleanup, render, waitFor } from "@testing-library/react";
+import {
+  cleanup,
+  findByText,
+  getByPlaceholderText,
+  render,
+  waitFor,
+} from "@testing-library/react";
 import { z } from "zod";
 import { FormInstance } from "houseform";
 import * as React from "react";
@@ -1055,4 +1061,96 @@ test("Form's memoChild should prevent re-renders", async () => {
   );
 
   expect(formMemoHasRendered).toHaveBeenCalledTimes(1);
+});
+
+test("Form should reset correctly", async () => {
+  const ResetValues = () => {
+    return (
+      <Form
+        onSubmit={(_values, { reset }) => {
+          reset();
+        }}
+      >
+        {({ submit, isDirty, isTouched }) => (
+          <>
+            <Field<string>
+              name={"test['other']['email']"}
+              initialValue="test@example.com"
+            >
+              {({ value, setValue }) => (
+                <input
+                  placeholder="Email"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+            <Field<string> name={"test['other']['password']"}>
+              {({ value, setValue }) => (
+                <input
+                  placeholder="Password"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+            <Field<string>
+              name={"test['other']['resetWithValue']"}
+              initialValue="initialValue"
+              resetWithValue="resetWithValue"
+            >
+              {({ value, setValue }) => (
+                <input
+                  placeholder="ResetWithValue"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+            <button onClick={submit}>Submit</button>
+            <p>{isDirty ? "isDirty" : "isNotDirty"}</p>
+            <p>{isTouched ? "isTouched" : "isNotTouched"}</p>
+          </>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByText, container, getByPlaceholderText } = render(
+    <ResetValues />
+  );
+
+  await user.type(getByPlaceholderText("Email"), "test");
+  await user.type(getByPlaceholderText("Password"), "test");
+  await user.type(getByPlaceholderText("ResetWithValue"), "test");
+
+  await user.click(getByText("Submit"));
+
+  await waitFor(() =>
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        <input
+          placeholder="Email"
+          value="test@example.com"
+        />
+        <input
+          placeholder="Password"
+          value=""
+        />
+        <input
+          placeholder="ResetWithValue"
+          value="resetWithValue"
+        />
+        <button>
+          Submit
+        </button>
+        <p>
+          isNotDirty
+        </p>
+        <p>
+          isNotTouched
+        </p>
+      </div>
+      `)
+  );
 });
