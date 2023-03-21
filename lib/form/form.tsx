@@ -225,6 +225,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     isValidGetter,
     isDirtyGetter,
     isTouchedGetter,
+    reset,
   ]);
 
   const submit = useCallback(async () => {
@@ -279,10 +280,11 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       "isDirty",
       "isTouched",
       "submit",
+      "reset",
     ] as const;
     const val = {
-      submit,
       reset,
+      submit,
       get errors() {
         return errorGetter();
       },
@@ -310,6 +312,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
 
     return val;
   }, [
+    reset,
     baseValue,
     errorGetter,
     isDirtyGetter,
