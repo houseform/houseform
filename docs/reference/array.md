@@ -30,22 +30,23 @@ The `ArrayField` component takes the following props:
 
 ### _Interface_ `FieldArrayInstance`
 
-| Property       | Type                                       | Description                                                                           |
-|----------------|--------------------------------------------|---------------------------------------------------------------------------------------|
-| `value`        | `T`                                        | `T` is the type of the Field that's passed to the `<Field<T>>` component.             |
-| `setValue`     | `(val: T) => void`                         | A function useful to change the value of a field                                      |
-| `setValues`    | `(val: T[]) => void`                       | A function useful to change the value of the form array.                              |
-| `errors`       | `string[]`                                 | The list of errors currently applied to the field.                                    |
-| `setErrors`    | `(errors: string[]) => void`               | A way to set the errors present on the field.                                         |
-| `isValid`      | `boolean`                                  | A helper property to check if `errors` is an empty array.                             |
-| `isTouched`    | `boolean`                                  | A boolean to say if the field has been focused and blurred, regardless of user input. |
-| `setIsTouched` | `(val: boolean) => void`                   |                                                                                       |
-| `isDirty`      | `boolean`                                  | A boolean to say if the field has had any kind of user input.                         |
-| `setIsDirty`   | `(val: boolean) => void`                   |                                                                                       |
-| `props`        | [`ArrayFieldProps`](#array-field-props)    | The properties originally passed to a field from the component.                       |
-| `add`          | `(val: T) => void`                         | A helper utility to add an item to the form array.                                    |
-| `remove`       | `(index: number) => void`                  | A helper utility to remove an item via an index from the form array.                  |
-| `insert`       | `(index: number, val: T) => void`          | A helper utility to insert an item at the index to the form array.                    |
-| `move`         | `(from: number, to: number) => void`       | A helper utility to move an item from one index to another in the form array.         |
-| `replace`      | `(index: number, val: T) => void`          | A helper utility to replace an item at an index on the form array.                    |
-| `swap`         | `(indexA: number, indexB: number) => void` | A helper utility to swap two items on the form array.                                 |
+| Property       | Type                                                         | Description                                                  |
+| -------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| `value`        | `T`                                                          | `T` is the type of the Field that's passed to the `<Field<T>>` component. |
+| `setValue`     | `(val: T) => void`                                           | A function useful to change the value of a field             |
+| `setValues`    | `(val: T[]) => void`                                         | A function useful to change the value of the form array.     |
+| `errors`       | `string[]`                                                   | The list of errors currently applied to the field.           |
+| `setErrors`    | `(errors: string[]) => void`                                 | A way to set the errors present on the field.                |
+| `isValid`      | `boolean`                                                    | A helper property to check if `errors` is an empty array.    |
+| `isTouched`    | `boolean`                                                    | A boolean to say if the field has been focused and blurred, regardless of user input. |
+| `setIsTouched` | `(val: boolean) => void`                                     |                                                              |
+| `isDirty`      | `boolean`                                                    | A boolean to say if the field has had any kind of user input. |
+| `setIsDirty`   | `(val: boolean) => void`                                     |                                                              |
+| `props`        | [`ArrayFieldProps`](#array-field-props)                      | The properties originally passed to a field from the component. |
+| `add`          | `(val: T) => void`                                           | A helper utility to add an item to the form array.           |
+| `remove`       | `(index: number) => void`                                    | A helper utility to remove an item via an index from the form array. |
+| `insert`       | `(index: number, val: T) => void`                            | A helper utility to insert an item at the index to the form array. |
+| `move`         | `(from: number, to: number) => void`                         | A helper utility to move an item from one index to another in the form array. |
+| `replace`      | `(index: number, val: T) => void`                            | A helper utility to replace an item at an index on the form array. |
+| `swap`         | `(indexA: number, indexB: number) => void`                   | A helper utility to swap two items on the form array.        |
+| `validate`     | `(rule: 'onChangeValidate' \| 'onSubmitValidate' \| 'onMountValidate' \| 'onBlurValidate') => void` | A method of running manual change detection on a field arrary. |

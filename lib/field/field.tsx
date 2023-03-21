@@ -38,6 +38,7 @@ function FieldComp<T = any, F = any>(
     runFieldValidation,
     valueRef,
     _normalizedDotName,
+    validate,
   } = useFieldLike<T, F, FieldInstance<T, F>>({
     props,
     initialValue: "" as T,
@@ -84,6 +85,7 @@ function FieldComp<T = any, F = any>(
       isValid,
       onBlur,
       _normalizedDotName,
+      validate,
     };
   }, [
     props,
@@ -98,6 +100,7 @@ function FieldComp<T = any, F = any>(
     isValid,
     onBlur,
     _normalizedDotName,
+    validate,
   ]);
 
   const mutableRef = useRef<FieldInstance<T>>(fieldInstance);

@@ -215,6 +215,13 @@ export const useFieldLike = <
     return errors.length === 0;
   }, [errors]);
 
+  const exportedValidate = useCallback(
+    (validationFnName: Parameters<typeof runFieldValidation>[0]) => {
+      runFieldValidation(validationFnName, valueRef.current);
+    },
+    [runFieldValidation, valueRef]
+  );
+
   return {
     value,
     setErrors,
@@ -227,6 +234,7 @@ export const useFieldLike = <
     isValid,
     runFieldValidation,
     valueRef,
+    validate: exportedValidate,
     _normalizedDotName,
   };
 };
