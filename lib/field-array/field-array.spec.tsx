@@ -375,3 +375,5 @@ test.todo("Should track all subfield errors");
 test.todo("Should track all subfield isTouched");
 
 test.todo("Should track all subfield isDirty");
+
+test.todo("Manual validation should work");
