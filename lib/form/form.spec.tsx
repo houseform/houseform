@@ -1,13 +1,7 @@
 import { expect, test, vi } from "vitest";
 import { useRef, useState } from "react";
 import { Field, FieldArray, Form } from "houseform";
-import {
-  cleanup,
-  findByText,
-  getByPlaceholderText,
-  render,
-  waitFor,
-} from "@testing-library/react";
+import { cleanup, render, waitFor } from "@testing-library/react";
 import { z } from "zod";
 import { FormInstance } from "houseform";
 import * as React from "react";
