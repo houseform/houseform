@@ -13,6 +13,7 @@ export interface FormInstance<T = any> {
   recomputeIsDirty: () => void;
   recomputeIsTouched: () => void;
   errors: string[];
+  errorsMap: Record<string, string[]>;
   submit: () => Promise<boolean>;
   isValid: boolean;
   setIsTouched: (val: boolean) => void;
