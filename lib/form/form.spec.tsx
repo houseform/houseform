@@ -1057,7 +1057,7 @@ test("Form's memoChild should prevent re-renders", async () => {
   expect(formMemoHasRendered).toHaveBeenCalledTimes(1);
 });
 
-test("Form should reset correctly", async () => {
+test("Form should reset with no backup values correctly", async () => {
   const ResetValues = () => {
     return (
       <Form
@@ -1067,10 +1067,7 @@ test("Form should reset correctly", async () => {
       >
         {({ submit, isDirty, isTouched }) => (
           <>
-            <Field<string>
-              name={"test['other']['email']"}
-              initialValue="test@example.com"
-            >
+            <Field<string> name={"test['other']['email']"}>
               {({ value, setValue }) => (
                 <input
                   placeholder="Email"
@@ -1083,19 +1080,6 @@ test("Form should reset correctly", async () => {
               {({ value, setValue }) => (
                 <input
                   placeholder="Password"
-                  value={value}
-                  onChange={(e) => setValue(e.target.value)}
-                />
-              )}
-            </Field>
-            <Field<string>
-              name={"test['other']['resetWithValue']"}
-              initialValue="initialValue"
-              resetWithValue="resetWithValue"
-            >
-              {({ value, setValue }) => (
-                <input
-                  placeholder="ResetWithValue"
                   value={value}
                   onChange={(e) => setValue(e.target.value)}
                 />
@@ -1116,7 +1100,6 @@ test("Form should reset correctly", async () => {
 
   await user.type(getByPlaceholderText("Email"), "test");
   await user.type(getByPlaceholderText("Password"), "test");
-  await user.type(getByPlaceholderText("ResetWithValue"), "test");
 
   await user.click(getByText("Submit"));
 
@@ -1125,15 +1108,244 @@ test("Form should reset correctly", async () => {
       <div>
         <input
           placeholder="Email"
-          value="test@example.com"
+          value=""
         />
         <input
           placeholder="Password"
           value=""
         />
+        <button>
+          Submit
+        </button>
+        <p>
+          isNotDirty
+        </p>
+        <p>
+          isNotTouched
+        </p>
+      </div>
+      `)
+  );
+});
+
+test("Form should reset with initial values correctly", async () => {
+  const ResetValues = () => {
+    return (
+      <Form
+        onSubmit={(_values, { reset }) => {
+          reset();
+        }}
+      >
+        {({ submit, isDirty, isTouched }) => (
+          <>
+            <Field<string>
+              name={"test['other']['email']"}
+              initialValue="initial@email.com"
+            >
+              {({ value, setValue }) => (
+                <input
+                  placeholder="Email"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+            <Field<string>
+              name={"test['other']['password']"}
+              initialValue="password"
+            >
+              {({ value, setValue }) => (
+                <input
+                  placeholder="Password"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+            <button onClick={submit}>Submit</button>
+            <p>{isDirty ? "isDirty" : "isNotDirty"}</p>
+            <p>{isTouched ? "isTouched" : "isNotTouched"}</p>
+          </>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByText, container, getByPlaceholderText } = render(
+    <ResetValues />
+  );
+
+  await user.type(getByPlaceholderText("Email"), "test");
+  await user.type(getByPlaceholderText("Password"), "test");
+
+  await user.click(getByText("Submit"));
+
+  await waitFor(() =>
+    expect(container).toMatchInlineSnapshot(`
+      <div>
         <input
-          placeholder="ResetWithValue"
-          value="resetWithValue"
+          placeholder="Email"
+          value="initial@email.com"
+        />
+        <input
+          placeholder="Password"
+          value="password"
+        />
+        <button>
+          Submit
+        </button>
+        <p>
+          isNotDirty
+        </p>
+        <p>
+          isNotTouched
+        </p>
+      </div>
+      `)
+  );
+});
+
+test("Form should reset with resetWithValues correctly", async () => {
+  const ResetValues = () => {
+    return (
+      <Form
+        onSubmit={(_values, { reset }) => {
+          reset();
+        }}
+      >
+        {({ submit, isDirty, isTouched }) => (
+          <>
+            <Field<string>
+              name={"test['other']['email']"}
+              resetWithValue="initial@email.com"
+            >
+              {({ value, setValue }) => (
+                <input
+                  placeholder="Email"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+            <Field<string>
+              name={"test['other']['password']"}
+              resetWithValue="password"
+            >
+              {({ value, setValue }) => (
+                <input
+                  placeholder="Password"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+            <button onClick={submit}>Submit</button>
+            <p>{isDirty ? "isDirty" : "isNotDirty"}</p>
+            <p>{isTouched ? "isTouched" : "isNotTouched"}</p>
+          </>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByText, container, getByPlaceholderText } = render(
+    <ResetValues />
+  );
+
+  await user.type(getByPlaceholderText("Email"), "test");
+  await user.type(getByPlaceholderText("Password"), "test");
+
+  await user.click(getByText("Submit"));
+
+  await waitFor(() =>
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        <input
+          placeholder="Email"
+          value="initial@email.com"
+        />
+        <input
+          placeholder="Password"
+          value="password"
+        />
+        <button>
+          Submit
+        </button>
+        <p>
+          isNotDirty
+        </p>
+        <p>
+          isNotTouched
+        </p>
+      </div>
+      `)
+  );
+});
+
+test("Form should reset with resetWithValues and initial values correctly", async () => {
+  const ResetValues = () => {
+    return (
+      <Form
+        onSubmit={(_values, { reset }) => {
+          reset();
+        }}
+      >
+        {({ submit, isDirty, isTouched }) => (
+          <>
+            <Field<string>
+              name={"test['other']['email']"}
+              initialValue="wrong@email.com"
+              resetWithValue="initial@email.com"
+            >
+              {({ value, setValue }) => (
+                <input
+                  placeholder="Email"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+            <Field<string>
+              name={"test['other']['password']"}
+              initialValue="wrong password"
+              resetWithValue="password"
+            >
+              {({ value, setValue }) => (
+                <input
+                  placeholder="Password"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+            <button onClick={submit}>Submit</button>
+            <p>{isDirty ? "isDirty" : "isNotDirty"}</p>
+            <p>{isTouched ? "isTouched" : "isNotTouched"}</p>
+          </>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByText, container, getByPlaceholderText } = render(
+    <ResetValues />
+  );
+
+  await user.type(getByPlaceholderText("Email"), "test");
+  await user.type(getByPlaceholderText("Password"), "test");
+
+  await user.click(getByText("Submit"));
+
+  await waitFor(() =>
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        <input
+          placeholder="Email"
+          value="initial@email.com"
+        />
+        <input
+          placeholder="Password"
+          value="password"
         />
         <button>
           Submit
