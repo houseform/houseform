@@ -5,6 +5,7 @@ import { FieldArrayInstance } from "./types";
 export const initialFieldArrayContext = {
   value: [],
   setValue: () => {},
+  setValues: () => {},
   props: {
     name: "",
   },

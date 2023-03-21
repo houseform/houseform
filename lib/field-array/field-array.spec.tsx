@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { render } from "@testing-library/react";
+import { fireEvent, render } from "@testing-library/react";
 import { Field, FieldArray, FieldArrayItem, Form } from "houseform";
 import { z } from "zod";
 
@@ -260,6 +260,35 @@ test("field array should run onSubmit validation", async () => {
   await user.click(getByText("Submit"));
 
   expect(getByText("Should have at least three items")).toBeInTheDocument();
+});
+
+test("field array setValues should set the field array values", async () => {
+  const { getByText, queryByText } = render(
+    <Form>
+      {() => (
+        <FieldArray<number> name={"people"} initialValue={[1]}>
+          {({ value, setValues }) => (
+            <>
+              {value.map((num) => (
+                <p key={num}>Num {num}</p>
+              ))}
+              <button onClick={() => setValues([1, 2, 3])}>Set value</button>
+            </>
+          )}
+        </FieldArray>
+      )}
+    </Form>
+  );
+
+  expect(getByText("Num 1")).toBeInTheDocument();
+  expect(queryByText("Num 2")).not.toBeInTheDocument();
+  expect(queryByText("Num 3")).not.toBeInTheDocument();
+
+  fireEvent.click(getByText("Set value"));
+
+  expect(getByText("Num 1")).toBeInTheDocument();
+  expect(getByText("Num 2")).toBeInTheDocument();
+  expect(getByText("Num 3")).toBeInTheDocument();
 });
 
 test("field array should work with listenTo as the subject", async () => {
