@@ -22,7 +22,7 @@ jobs:
 
     runs-on: ubuntu-latest
     if:
-      ${{ github.repository == 'crutchcorn/houseform' &&
+      ${{ github.repository == 'houseform/houseform' &&
       github.event_name == 'push' }}
     steps:
       - name: 🛑 Cancel Previous Runs
