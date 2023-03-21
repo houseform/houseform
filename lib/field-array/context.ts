@@ -23,6 +23,7 @@ export const initialFieldArrayContext = {
   move: () => {},
   swap: () => {},
   replace: () => {},
+  validate: () => {},
 } as FieldArrayInstance;
 /* c8 ignore stop */
 
