@@ -828,3 +828,46 @@ test("Field should manually validate", async () => {
   await user.click(getByText("Validate"));
   expect(await findByText("Must be at least three")).toBeInTheDocument();
 });
+
+test("Field should not throw error if manually validate against non-used validation type", async () => {
+  const Comp = () => {
+    const formRef = useRef<FormInstance>(null);
+
+    const runValidate = () => {
+      formRef.current?.getFieldValue("test")!.validate("onBlurValidate");
+    };
+
+    return (
+      <div>
+        <Form ref={formRef}>
+          {() => (
+            <Field
+              name={"test"}
+              initialValue={"Te"}
+              onChangeValidate={z.string().min(3, "Must be at least three")}
+            >
+              {({ errors, value }) => {
+                return (
+                  <div>
+                    <p>Value: {value}</p>
+                    {errors.map((error) => (
+                      <p key={error}>{error}</p>
+                    ))}
+                  </div>
+                );
+              }}
+            </Field>
+          )}
+        </Form>
+        <button onClick={runValidate}>Validate</button>
+      </div>
+    );
+  };
+
+  const { getByText, queryByText, findByText } = render(<Comp />);
+
+  expect(getByText("Value: Te")).toBeInTheDocument();
+  expect(queryByText("Must be at least three")).not.toBeInTheDocument();
+  await user.click(getByText("Validate"));
+  expect(queryByText("Must be at least three")).not.toBeInTheDocument();
+});
