@@ -16,8 +16,6 @@ import { FormContext } from "../form";
 export interface FieldRenderProps<T = any, F = any>
   extends FieldInstanceProps<T, F> {
   children: (props: FieldInstance<T, F>) => JSX.Element;
-  initialValue?: T;
-  memoChild?: any[];
 }
 
 function FieldComp<T = any, F = any>(
