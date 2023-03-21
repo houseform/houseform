@@ -181,7 +181,8 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     });
     _setIsDirty(false);
     _setIsTouched(false);
-  }, [_setIsTouched, _setIsDirty]);
+    _setErrors(null);
+  }, [_setIsTouched, _setIsDirty, _setErrors]);
 
   const baseValue = useMemo(() => {
     return {
