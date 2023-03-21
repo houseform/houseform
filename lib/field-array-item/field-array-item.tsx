@@ -98,7 +98,6 @@ export function FieldArrayItemComp<T = any, F = any>(
       array.setValue(itemIndex, newArrayObject as T);
 
       setIsDirty(true);
-      setIsTouched(true);
 
       /**
        * Call `listenTo` field subscribers for other fields.

@@ -871,3 +871,39 @@ test("Field should not throw error if manually validate against non-used validat
   await user.click(getByText("Validate"));
   expect(queryByText("Must be at least three")).not.toBeInTheDocument();
 });
+
+test("isTouched should only change onBlur", async () => {
+  let touchedValue;
+  const { getByPlaceholderText } = render(
+    <Form onSubmit={(_) => {}}>
+      {() => (
+        <Field<string> name="email" initialValue="">
+          {({ value, setValue, onBlur, isTouched }) => {
+            touchedValue = isTouched;
+            return (
+              <input
+                placeholder="Email"
+                onBlur={onBlur}
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+              />
+            );
+          }}
+        </Field>
+      )}
+    </Form>
+  );
+
+  const emailInput = getByPlaceholderText("Email");
+
+  // Initially, isTouched should be false
+  expect(touchedValue).toBeFalsy();
+
+  // After changing the input value, isTouched should still be false
+  await fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+  expect(touchedValue).toBeFalsy();
+
+  // After triggering the onBlur event, isTouched should be true
+  await fireEvent.blur(emailInput);
+  expect(touchedValue).toBeTruthy();
+});
