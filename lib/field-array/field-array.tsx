@@ -147,6 +147,7 @@ function FieldArrayComp<T = any, F = any>(
       isDirty,
       setIsTouched,
       isTouched,
+      setValues,
     };
   }, [
     value,
@@ -166,6 +167,7 @@ function FieldArrayComp<T = any, F = any>(
     isDirty,
     setIsTouched,
     isTouched,
+    setValues,
   ]);
 
   const mutableRef = useRef<FieldArrayInstance<T, F>>(fieldArrayInstance);

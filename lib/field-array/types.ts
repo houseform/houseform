@@ -20,6 +20,7 @@ export interface FieldArrayInstance<T = any, F = any>
   _normalizedDotName: string;
   props: FieldArrayInstanceProps<T, F>;
   value: T[];
+  setValues: (value: T[]) => void;
   setValue: (index: number, value: T) => void;
   setErrors: (errors: string[]) => void;
   errors: string[];
