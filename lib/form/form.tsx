@@ -90,7 +90,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     const errorsMap: Record<string, string[]> = {};
     formFieldsRef.current.forEach((field) => {
       const name = field.props.name;
-      errorsMap[name] = field.errors;
+      fillPath(errorsMap, name, field.errors);
     });
     return errorsMap;
   }, [formFieldsRef]);
