@@ -12,7 +12,7 @@ import type { ZodError } from "zod";
 import { fillPath, getValidationError, stringToPath, validate } from "../utils";
 import { FieldInstance } from "../field";
 import { FieldArrayInstance } from "../field-array";
-import { FormInstance } from "./types";
+import { ErrorsMap, FormInstance } from "./types";
 import { FormContext } from "./context";
 
 export interface FormProps<T> {
@@ -65,9 +65,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
   }, []);
 
   const [_errors, _setErrors] = useState<string[] | null>(null);
-  const [_errorsMap, _setErrorsMap] = useState<Record<string, string[]> | null>(
-    null
-  );
+  const [_errorsMap, _setErrorsMap] = useState<ErrorsMap | null>(null);
   const [_isValid, _setIsValid] = useState<boolean | null>(null);
   const [_isDirty, _setIsDirty] = useState<boolean | null>(null);
   const [_isTouched, _setIsTouched] = useState<boolean | null>(null);
@@ -87,7 +85,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
   }, [formFieldsRef]);
 
   const getErrorsMap = useCallback(() => {
-    const errorsMap: Record<string, string[]> = {};
+    const errorsMap: ErrorsMap = {};
     formFieldsRef.current.forEach((field) => {
       const name = field.props.name;
       fillPath(errorsMap, name, field.errors);

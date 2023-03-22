@@ -5,6 +5,8 @@ import type { AutoPath } from "ts-toolbelt/out/Function/AutoPath";
 import type { Path } from "ts-toolbelt/out/Object/Path";
 import type { Split } from "ts-toolbelt/out/String/Split";
 
+export type ErrorsMap = Record<string, string[]>;
+
 export interface FormInstance<T = any> {
   formFieldsRef: MutableRefObject<
     Array<FieldInstance<any, T> | FieldArrayInstance<any, T>>
@@ -13,7 +15,7 @@ export interface FormInstance<T = any> {
   recomputeIsDirty: () => void;
   recomputeIsTouched: () => void;
   errors: string[];
-  errorsMap: Record<string, string[]>;
+  errorsMap: ErrorsMap;
   submit: () => Promise<boolean>;
   isValid: boolean;
   setIsTouched: (val: boolean) => void;
