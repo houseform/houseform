@@ -13,6 +13,7 @@ export const initialFieldArrayContext = {
   setErrors: () => {},
   setIsDirty: () => {},
   isValid: false,
+  isValidating: false,
   setIsTouched: () => {},
   isDirty: false,
   isTouched: false,
