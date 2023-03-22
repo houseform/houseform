@@ -92,4 +92,8 @@ export const useFieldLikeSync = <
   useIsomorphicLayoutEffect(() => {
     formContext.recomputeIsDirty();
   }, [isDirty, formContext.recomputeIsDirty]);
+
+  useIsomorphicLayoutEffect(() => {
+    formContext.recomputeIsValidating();
+  }, [isValidating, formContext.recomputeIsValidating]);
 };

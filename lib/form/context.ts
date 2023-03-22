@@ -7,6 +7,7 @@ export const initialFormContext = {
   recomputeErrors: () => {},
   recomputeIsDirty: () => {},
   recomputeIsTouched: () => {},
+  recomputeIsValidating: () => {},
   errors: [],
   submit: async () => {
     return true;
