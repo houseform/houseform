@@ -18,6 +18,7 @@ export interface FieldArrayInstanceProps<T = any, F = any>
 export interface FieldArrayInstance<T = any, F = any>
   extends FieldArrayHelpers<T> {
   _normalizedDotName: string;
+  _setIsValidating: (val: boolean) => void;
   props: FieldArrayInstanceProps<T, F>;
   value: T[];
   setValues: (value: T[]) => void;

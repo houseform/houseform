@@ -241,5 +241,6 @@ export const useFieldLike = <
     valueRef,
     validate: exportedValidate,
     _normalizedDotName,
+    _setIsValidating: setIsValidating,
   };
 };

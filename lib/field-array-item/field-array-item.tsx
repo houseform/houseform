@@ -34,6 +34,7 @@ export function FieldArrayItemComp<T = any, F = any>(
 
   const {
     _normalizedDotName,
+    _setIsValidating,
     errors,
     setErrors,
     runFieldValidation,
@@ -151,6 +152,7 @@ export function FieldArrayItemComp<T = any, F = any>(
       errors,
       value,
       _normalizedDotName,
+      _setIsValidating,
       onBlur,
       props,
       isTouched,
@@ -167,6 +169,7 @@ export function FieldArrayItemComp<T = any, F = any>(
     errors,
     value,
     _normalizedDotName,
+    _setIsValidating,
     onBlur,
     props,
     isTouched,

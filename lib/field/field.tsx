@@ -39,6 +39,7 @@ function FieldComp<T = any, F = any>(
     runFieldValidation,
     valueRef,
     _normalizedDotName,
+    _setIsValidating,
     validate,
   } = useFieldLike<T, F, FieldInstance<T, F>>({
     props,
@@ -87,6 +88,7 @@ function FieldComp<T = any, F = any>(
       isValidating,
       onBlur,
       _normalizedDotName,
+      _setIsValidating,
       validate,
     };
   }, [
@@ -103,6 +105,7 @@ function FieldComp<T = any, F = any>(
     isValidating,
     onBlur,
     _normalizedDotName,
+    _setIsValidating,
     validate,
   ]);
 

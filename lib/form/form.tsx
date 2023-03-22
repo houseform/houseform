@@ -226,6 +226,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
         ) => {
           if (!formField.props[type as "onChangeValidate"]) return true;
           try {
+            if (type === "onSubmitValidate") formField._setIsValidating(true);
             await validate(
               formField.value,
               baseValue,
@@ -235,6 +236,8 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
           } catch (error) {
             formField.setErrors(getValidationError(error as ZodError | string));
             return false;
+          } finally {
+            if (type === "onSubmitValidate") formField._setIsValidating(false);
           }
         };
         const onChangeRes = await runValidationType("onChangeValidate");
