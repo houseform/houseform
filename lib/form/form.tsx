@@ -68,6 +68,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
   const [_isValid, _setIsValid] = useState<boolean | null>(null);
   const [_isDirty, _setIsDirty] = useState<boolean | null>(null);
   const [_isTouched, _setIsTouched] = useState<boolean | null>(null);
+  const [_isValidating, _setIsValidating] = useState<boolean | null>(null);
 
   const shouldRerenderErrorOnRecompute = useRef(false);
 
@@ -76,6 +77,8 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
   const shouldRerenderIsDirtyOnRecompute = useRef(false);
 
   const shouldRerenderIsTouchedOnRecompute = useRef(false);
+
+  const shouldRerenderIsValidatingOnRecompute = useRef(false);
 
   const getErrors = useCallback(() => {
     return formFieldsRef.current.reduce((acc, field) => {
@@ -129,6 +132,13 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     }
   }, [getFieldBoolean]);
 
+  const recomputeIsValidating = useCallback(() => {
+    if (shouldRerenderIsValidatingOnRecompute.current) {
+      const val = getFieldBoolean("isValidating");
+      _setIsValidating(val);
+    }
+  }, [getFieldBoolean]);
+
   const errorGetter = useCallback(() => {
     shouldRerenderErrorOnRecompute.current = true;
     if (_errors === null) {
@@ -169,6 +179,16 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     return _isTouched;
   }, [_isTouched, getFieldBoolean]);
 
+  const isValidatingGetter = useCallback(() => {
+    if (_isValidating === null) {
+      shouldRerenderIsValidatingOnRecompute.current = true;
+      const val = getFieldBoolean("isValidating");
+      _setIsValidating(val);
+      return val;
+    }
+    return _isValidating;
+  }, [_isValidating, getFieldBoolean]);
+
   const baseValue = useMemo(() => {
     return {
       getFieldValue,
@@ -183,6 +203,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       recomputeErrors,
       recomputeIsDirty,
       recomputeIsTouched,
+      recomputeIsValidating,
       get errors() {
         return errorGetter();
       },
@@ -195,6 +216,9 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       get isTouched() {
         return isTouchedGetter();
       },
+      get isValidating() {
+        return isValidatingGetter();
+      },
       submit: () => Promise.resolve(true),
     };
   }, [
@@ -205,10 +229,12 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     recomputeErrors,
     recomputeIsDirty,
     recomputeIsTouched,
+    recomputeIsValidating,
     errorGetter,
     isValidGetter,
     isDirtyGetter,
     isTouchedGetter,
+    isValidatingGetter,
   ]);
 
   const submit = useCallback(async () => {
@@ -222,6 +248,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
         ) => {
           if (!formField.props[type as "onChangeValidate"]) return true;
           try {
+            if (type === "onSubmitValidate") formField._setIsValidating(true);
             await validate(
               formField.value,
               baseValue,
@@ -231,6 +258,8 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
           } catch (error) {
             formField.setErrors(getValidationError(error as ZodError | string));
             return false;
+          } finally {
+            if (type === "onSubmitValidate") formField._setIsValidating(false);
           }
         };
         const onChangeRes = await runValidationType("onChangeValidate");
@@ -262,6 +291,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       "isValid",
       "isDirty",
       "isTouched",
+      "isValidating",
       "submit",
     ] as const;
     const val = {
@@ -277,6 +307,9 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       },
       get isTouched() {
         return isTouchedGetter();
+      },
+      get isValidating() {
+        return isValidatingGetter();
       },
     } as any as typeof baseValue;
 
@@ -298,6 +331,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     isDirtyGetter,
     isTouchedGetter,
     isValidGetter,
+    isValidatingGetter,
     submit,
   ]);
 

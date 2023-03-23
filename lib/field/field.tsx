@@ -35,9 +35,11 @@ function FieldComp<T = any, F = any>(
     isTouched,
     isDirty,
     isValid,
+    isValidating,
     runFieldValidation,
     valueRef,
     _normalizedDotName,
+    _setIsValidating,
     validate,
   } = useFieldLike<T, F, FieldInstance<T, F>>({
     props,
@@ -83,8 +85,10 @@ function FieldComp<T = any, F = any>(
       isTouched,
       isDirty,
       isValid,
+      isValidating,
       onBlur,
       _normalizedDotName,
+      _setIsValidating,
       validate,
     };
   }, [
@@ -98,8 +102,10 @@ function FieldComp<T = any, F = any>(
     isTouched,
     isDirty,
     isValid,
+    isValidating,
     onBlur,
     _normalizedDotName,
+    _setIsValidating,
     validate,
   ]);
 
@@ -113,6 +119,7 @@ function FieldComp<T = any, F = any>(
     isValid,
     isDirty,
     isTouched,
+    isValidating,
   });
 
   useImperativeHandle(ref, () => fieldInstance, [fieldInstance]);

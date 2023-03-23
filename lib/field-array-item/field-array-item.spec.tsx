@@ -1,5 +1,9 @@
 import { expect, test } from "vitest";
-import { render, waitFor } from "@testing-library/react";
+import {
+  render,
+  waitFor,
+  waitForElementToBeRemoved,
+} from "@testing-library/react";
 import { Field, FieldArray, FieldArrayItem, Form } from "houseform";
 import { useState } from "react";
 import { z } from "zod";
@@ -111,7 +115,7 @@ test("field array item should track `isDirty`", async () => {
         >
           {({ value }) => (
             <>
-              {value.map((person, i) => (
+              {value.map((_, i) => (
                 <FieldArrayItem<number>
                   key={`people[${i}].thing`}
                   name={`people[${i}].thing`}
@@ -148,7 +152,7 @@ test("field array item should track `isTouched`", async () => {
         >
           {({ value }) => (
             <>
-              {value.map((person, i) => (
+              {value.map((_, i) => (
                 <FieldArrayItem<number>
                   key={`people[${i}].thing`}
                   name={`people[${i}].thing`}
@@ -185,7 +189,7 @@ test("field array item should validate onChange", async () => {
         >
           {({ value }) => (
             <>
-              {value.map((person, i) => (
+              {value.map((_, i) => (
                 <FieldArrayItem<number>
                   key={`people[${i}].thing`}
                   name={`people[${i}].thing`}
@@ -225,7 +229,7 @@ test("field array item should validate onBlur", async () => {
         >
           {({ value }) => (
             <>
-              {value.map((person, i) => (
+              {value.map((_, i) => (
                 <FieldArrayItem<number>
                   key={`people[${i}].thing`}
                   name={`people[${i}].thing`}
@@ -266,7 +270,7 @@ test("field array item should validate onSubmit", async () => {
           >
             {({ value }) => (
               <>
-                {value.map((person, i) => (
+                {value.map((_, i) => (
                   <FieldArrayItem<number>
                     key={`people[${i}].thing`}
                     name={`people[${i}].thing`}
@@ -322,7 +326,7 @@ test("field array item should work with listenTo as the subject", async () => {
           >
             {({ value }) => (
               <>
-                {value.map((person, i) => (
+                {value.map((_, i) => (
                   <FieldArrayItem<number>
                     key={`people[${i}].thing`}
                     name={`people[${i}].thing`}
@@ -363,7 +367,7 @@ test("field array item should work with listenTo as the listener", async () => {
           >
             {({ value }) => (
               <>
-                {value.map((person, i) => (
+                {value.map((_, i) => (
                   <FieldArrayItem<number>
                     key={`people[${i}].thing`}
                     name={`people[${i}].thing`}
@@ -411,7 +415,7 @@ test("field array item should provide an error when improperly prefixed", async 
             >
               {({ value }) => (
                 <>
-                  {value.map((person, i) => (
+                  {value.map((_, i) => (
                     <FieldArrayItem<number>
                       key={`person[${i}].thing`}
                       name={`person[${i}].thing`}
@@ -435,4 +439,136 @@ test("field array item should provide an error when improperly prefixed", async 
       </Form>
     )
   ).toThrowError();
+});
+
+test("field array item should set isValidating with onChange validation", async () => {
+  const { queryByText, getByText } = render(
+    <Form>
+      {() => (
+        <FieldArray<{ thing: number }>
+          initialValue={[{ thing: 1 }]}
+          name={"people"}
+        >
+          {({ value }) => (
+            <>
+              {value.map((_, i) => (
+                <FieldArrayItem<number>
+                  key={`people[${i}].thing`}
+                  name={`people[${i}].thing`}
+                  onChangeValidate={() =>
+                    new Promise((resolve) =>
+                      setTimeout(() => resolve(true), 50)
+                    )
+                  }
+                >
+                  {({ setValue, isValidating }) => (
+                    <div>
+                      <button onClick={() => setValue(2)}>Set value</button>
+                      {isValidating && <p>Validating</p>}
+                    </div>
+                  )}
+                </FieldArrayItem>
+              ))}
+            </>
+          )}
+        </FieldArray>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Validating")).not.toBeInTheDocument();
+
+  await user.click(getByText("Set value"));
+
+  expect(getByText("Validating")).toBeInTheDocument();
+
+  await waitForElementToBeRemoved(() => queryByText("Validating"));
+});
+
+test("field array item should set isValidating with onBlur validator", async () => {
+  const { queryByText, getByText } = render(
+    <Form>
+      {() => (
+        <FieldArray<{ thing: number }>
+          initialValue={[{ thing: 1 }]}
+          name={"people"}
+        >
+          {({ value }) => (
+            <>
+              {value.map((_, i) => (
+                <FieldArrayItem<number>
+                  key={`people[${i}].thing`}
+                  name={`people[${i}].thing`}
+                  onBlurValidate={() =>
+                    new Promise((resolve) =>
+                      setTimeout(() => resolve(true), 50)
+                    )
+                  }
+                >
+                  {({ onBlur, isValidating }) => (
+                    <div>
+                      <button onClick={() => onBlur()}>Blur</button>
+                      {isValidating && <p>Validating</p>}
+                    </div>
+                  )}
+                </FieldArrayItem>
+              ))}
+            </>
+          )}
+        </FieldArray>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Validating")).not.toBeInTheDocument();
+
+  await user.click(getByText("Blur"));
+
+  expect(getByText("Validating")).toBeInTheDocument();
+
+  await waitForElementToBeRemoved(() => queryByText("Validating"));
+});
+
+test("field array item should set isValidating with onSubmit validation", async () => {
+  const { queryByText, getByText } = render(
+    <Form>
+      {({ submit }) => (
+        <div>
+          <FieldArray<{ thing: number }>
+            initialValue={[{ thing: 1 }]}
+            name={"people"}
+          >
+            {({ value }) => (
+              <>
+                {value.map((_, i) => (
+                  <FieldArrayItem<number>
+                    key={`people[${i}].thing`}
+                    name={`people[${i}].thing`}
+                    onSubmitValidate={() =>
+                      new Promise((resolve) =>
+                        setTimeout(() => resolve(true), 50)
+                      )
+                    }
+                  >
+                    {({ isValidating }) => (
+                      <div>{isValidating && <p>Validating</p>}</div>
+                    )}
+                  </FieldArrayItem>
+                ))}
+              </>
+            )}
+          </FieldArray>
+          <button onClick={submit}>Submit</button>
+        </div>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Validating")).not.toBeInTheDocument();
+
+  await user.click(getByText("Submit"));
+
+  expect(getByText("Validating")).toBeInTheDocument();
+
+  await waitForElementToBeRemoved(() => queryByText("Validating"));
 });

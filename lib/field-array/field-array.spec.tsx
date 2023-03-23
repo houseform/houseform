@@ -1,6 +1,10 @@
 import { expect, test } from "vitest";
-import { fireEvent, render } from "@testing-library/react";
-import { Field, FieldArray, FieldArrayItem, Form } from "houseform";
+import {
+  fireEvent,
+  render,
+  waitForElementToBeRemoved,
+} from "@testing-library/react";
+import { Field, FieldArray, Form } from "houseform";
 import { z } from "zod";
 
 test("field array should track `isDirty` for the array of values", async () => {
@@ -364,6 +368,68 @@ test("field array should work with listenTo as the listener", async () => {
   await user.click(getByText("Set value"));
 
   expect(getByText("Must be at least 3")).toBeInTheDocument();
+});
+
+test("field array should set isValidating with onChange validation", async () => {
+  const { getByText, queryByText } = render(
+    <Form>
+      {() => (
+        <FieldArray<number>
+          name={"people"}
+          initialValue={[1]}
+          onChangeValidate={() =>
+            new Promise((resolve) => setTimeout(() => resolve(true), 50))
+          }
+        >
+          {({ add, isValidating }) => (
+            <>
+              {isValidating && <p>Validating</p>}
+              <button onClick={() => add(2)}>Add</button>
+            </>
+          )}
+        </FieldArray>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Validating")).not.toBeInTheDocument();
+
+  await user.click(getByText("Add"));
+
+  expect(getByText("Validating")).toBeInTheDocument();
+
+  await waitForElementToBeRemoved(() => queryByText("Validating"));
+});
+
+test("field array should set isValidating with onSubmit validation", async () => {
+  const { getByText, queryByText } = render(
+    <Form>
+      {({ submit }) => (
+        <FieldArray<number>
+          name={"people"}
+          initialValue={[1]}
+          onSubmitValidate={() =>
+            new Promise((resolve) => setTimeout(() => resolve(true), 50))
+          }
+        >
+          {({ isValidating }) => (
+            <>
+              {isValidating && <p>Validating</p>}
+              <button onClick={() => submit()}>Submit</button>
+            </>
+          )}
+        </FieldArray>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Validating")).not.toBeInTheDocument();
+
+  await user.click(getByText("Submit"));
+
+  expect(getByText("Validating")).toBeInTheDocument();
+
+  await waitForElementToBeRemoved(() => queryByText("Validating"));
 });
 
 test.todo("Should work with listenTo");

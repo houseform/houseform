@@ -1,7 +1,12 @@
 import { expect, test, vi } from "vitest";
 import { useRef, useState } from "react";
 import { Field, FieldArray, Form } from "houseform";
-import { cleanup, render, waitFor } from "@testing-library/react";
+import {
+  cleanup,
+  render,
+  waitFor,
+  waitForElementToBeRemoved,
+} from "@testing-library/react";
 import { z } from "zod";
 import { FormInstance } from "houseform";
 import * as React from "react";
@@ -1055,4 +1060,35 @@ test("Form's memoChild should prevent re-renders", async () => {
   );
 
   expect(formMemoHasRendered).toHaveBeenCalledTimes(1);
+});
+
+test("Form should set isValidating proper", async () => {
+  const { getByText, queryByText } = render(
+    <Form>
+      {({ isValidating, submit }) => (
+        <>
+          <Field
+            name={"test"}
+            onSubmitValidate={() =>
+              new Promise((resolve) => setTimeout(() => resolve(true), 50))
+            }
+          >
+            {({ value, setValue }) => (
+              <input value={value} onChange={(e) => setValue(e.target.value)} />
+            )}
+          </Field>
+          <button onClick={submit}>Submit</button>
+          {isValidating && <p>Validating</p>}
+        </>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Validating")).not.toBeInTheDocument();
+
+  await user.click(getByText("Submit"));
+
+  expect(getByText("Validating")).toBeInTheDocument();
+
+  await waitForElementToBeRemoved(() => queryByText("Validating"));
 });

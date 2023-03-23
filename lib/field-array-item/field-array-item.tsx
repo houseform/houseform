@@ -34,10 +34,12 @@ export function FieldArrayItemComp<T = any, F = any>(
 
   const {
     _normalizedDotName,
+    _setIsValidating,
     errors,
     setErrors,
     runFieldValidation,
     isValid,
+    isValidating,
     isTouched,
     setIsTouched,
     isDirty,
@@ -120,7 +122,6 @@ export function FieldArrayItemComp<T = any, F = any>(
       props.name,
       runFieldValidation,
       setIsDirty,
-      setIsTouched,
     ]
   );
 
@@ -151,11 +152,13 @@ export function FieldArrayItemComp<T = any, F = any>(
       errors,
       value,
       _normalizedDotName,
+      _setIsValidating,
       onBlur,
       props,
       isTouched,
       isValid,
       isDirty,
+      isValidating,
       setIsDirty,
       setErrors,
       setIsTouched,
@@ -166,11 +169,13 @@ export function FieldArrayItemComp<T = any, F = any>(
     errors,
     value,
     _normalizedDotName,
+    _setIsValidating,
     onBlur,
     props,
     isTouched,
     isValid,
     isDirty,
+    isValidating,
     setIsDirty,
     setErrors,
     setIsTouched,
@@ -187,6 +192,7 @@ export function FieldArrayItemComp<T = any, F = any>(
     isValid,
     isDirty,
     isTouched,
+    isValidating,
   });
 
   useImperativeHandle(ref, () => fieldArrayInstance, [fieldArrayInstance]);
