@@ -53,6 +53,7 @@ Thanks goes to these wonderful people
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://shivan.xyz"><img src="https://avatars.githubusercontent.com/u/51132467?v=4?s=100" width="100px;" alt="Shivan Sivakumaran"/><br /><sub><b>Shivan Sivakumaran</b></sub></a><br /><a href="https://github.com/houseform/houseform/commits?author=shivan-s" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://charlesfig.github.io"><img src="https://avatars.githubusercontent.com/u/39968271?v=4?s=100" width="100px;" alt="Carlos"/><br /><sub><b>Carlos</b></sub></a><br /><a href="https://github.com/houseform/houseform/commits?author=charlesfig" title="Code">💻</a> <a href="https://github.com/houseform/houseform/commits?author=charlesfig" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://jpedromagalhaes.vercel.app/"><img src="https://avatars.githubusercontent.com/u/48808846?v=4?s=100" width="100px;" alt="João Pedro Magalhães"/><br /><sub><b>João Pedro Magalhães</b></sub></a><br /><a href="https://github.com/houseform/houseform/commits?author=joaom00" title="Documentation">📖</a> <a href="https://github.com/houseform/houseform/commits?author=joaom00" title="Tests">⚠️</a> <a href="https://github.com/houseform/houseform/commits?author=joaom00" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

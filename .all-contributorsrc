@@ -97,6 +97,17 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "joaom00",
+      "name": "João Pedro Magalhães",
+      "avatar_url": "https://avatars.githubusercontent.com/u/48808846?v=4",
+      "profile": "https://jpedromagalhaes.vercel.app/",
+      "contributions": [
+        "doc",
+        "test",
+        "code"
+      ]
     }
   ],
   "repoHost": "https://github.com",
