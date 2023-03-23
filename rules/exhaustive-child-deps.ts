@@ -1,3 +1,34 @@
+/**
+ * TODO: Match react-hooks/exhaustive-deps rules:
+ *  1) Support data structures and sub-props like this:
+ *   // `props` -> `props.foo` -> `props.foo.bar` -> `props.foo.bar.baz`
+ *   //         -> `props.lol`
+ *   //         -> `props.huh` -> `props.huh.okay`
+ *   //         -> `props.wow`
+ *  2) Ignore stable references
+ *   // Next we'll define a few helpers that helps us
+ *   // tell if some values don't have to be declared as deps.
+ *   //
+ *   // Some are known to be stable based on Hook calls.
+ *   // const [state, setState] = useState() / React.useState()
+ *   //               ^^^ true for this reference
+ *   // const [state, dispatch] = useReducer() / React.useReducer()
+ *   //               ^^^ true for this reference
+ *   // const ref = useRef()
+ *   //       ^^^ true for this reference
+ *   // const onStuff = useEffectEvent(() => {})
+ *   //       ^^^ true for this reference
+ *   // False for everything else.
+ *   //
+ *   //
+ *   // Some are just functions that don't reference anything dynamic.
+ *  3) Warn about infinite loops
+ *   // `React Hook ${reactiveHookName} contains a call to '${setStateInsideEffectWithoutDeps}'. ` +
+ *   // `Without a list of dependencies, this can lead to an infinite chain of updates. ` +
+ *   // `To fix this, pass [` +
+ *   // suggestedDependencies.join(', ') +
+ *   // `] as a second argument to the ${reactiveHookName} Hook.`,
+ */
 import { ESLintUtils, TSESTree } from "@typescript-eslint/utils";
 import { FunctionScope } from "@typescript-eslint/scope-manager";
 
@@ -64,10 +95,16 @@ export const rule = createRule({
         );
 
         /**
-         * TODO: Don't assume all elements are `Identifier`s,
-         *  they could be spread elements, etc.
+         * TODO: Warn about spreads:
+         *  @see https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/src/ExhaustiveDeps.js#L643-L647
          *
+         * TODO: Warn about literals:
+         *  @see https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/src/ExhaustiveDeps.js#L681-L697
+         *
+         * Don't just assume Identifiers
          *  Cross-reference with Rules of React Hooks' exhaustive-deps rule
+         *  @see https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/src/ExhaustiveDeps.js#L738-L749
+         * @see https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/src/ExhaustiveDeps.js#L1325-L1333
          */
         const memoChildVariableNames =
           memoChildAttr.value.expression.elements.map(
@@ -86,6 +123,12 @@ export const rule = createRule({
           messageId: "exhaustiveChildDeps",
           node: memoChildAttr,
         });
+
+        /**
+         * TODO: Suggest a fix
+         *  @see https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/src/ExhaustiveDeps.js#L842-L850
+         *  @see https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/src/ExhaustiveDeps.js#L601-L613
+         */
       },
     };
   },
