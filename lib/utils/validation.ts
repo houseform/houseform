@@ -1,10 +1,10 @@
 import type { ZodError, ZodTypeAny } from "zod";
 import { FormInstance } from "../form/types";
 
-export function validate<T>(
+export function validate<T, F>(
   val: T,
-  form: FormInstance<T>,
-  validator: ZodTypeAny | ((val: T, form: FormInstance<T>) => Promise<boolean>)
+  form: FormInstance<F>,
+  validator: ZodTypeAny | ((val: T, form: FormInstance<F>) => Promise<boolean>)
 ) {
   const isZodValidator = (validator: any): validator is ZodTypeAny => {
     return validator instanceof Object && validator.parseAsync;

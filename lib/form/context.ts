@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext, useContext } from "react";
 import { FormInstance } from "./types";
 
 /* c8 ignore start */
@@ -9,6 +9,7 @@ export const initialFormContext = {
   recomputeIsTouched: () => {},
   recomputeIsValidating: () => {},
   errors: [],
+  errorsMap: {},
   submit: async () => {
     return true;
   },
@@ -24,7 +25,11 @@ export const initialFormContext = {
   isTouched: false,
   isValidating: false,
   isSubmitted: false,
-} as FormInstance;
+} as FormInstance as unknown;
 /* c8 ignore stop */
 
 export const FormContext = createContext(initialFormContext);
+
+export const useFormContext = <F>() => {
+  return useContext(FormContext) as FormInstance<F>;
+};

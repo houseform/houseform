@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import type { ZodError } from "zod";
-import { FormContext } from "../form";
+import { FormContext, useFormContext } from "../form";
 import { FieldInstance } from "./types";
 import { FieldArrayInstance } from "../field-array";
 import { getValidationError, stringToPath, validate } from "../utils";
@@ -26,7 +26,7 @@ export function useListenToListenToArray<T>({
   runFieldValidation,
   valueRef,
 }: UseListenToListenToArrayProps<T>) {
-  const formContext = useContext(FormContext);
+  const formContext = useFormContext<T>();
 
   useIsomorphicLayoutEffect(() => {
     if (!listenTo || listenTo.length === 0) return;
@@ -119,7 +119,7 @@ export const useFieldLike = <
     return stringToPath(name).join(".");
   }, [name]);
 
-  const formContext = useContext(FormContext);
+  const formContext = useFormContext<F>();
 
   const [errors, setErrors] = useState<string[]>([]);
   const [isTouched, setIsTouched] = useState<boolean>(false);

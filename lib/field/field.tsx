@@ -11,7 +11,7 @@ import {
 import { FieldInstance, FieldInstanceProps } from "./types";
 import { useFieldLike, useListenToListenToArray } from "./use-field-like";
 import { useFieldLikeSync } from "./use-field-like-sync";
-import { FormContext } from "../form";
+import { FormContext, useFormContext } from "../form";
 
 export interface FieldRenderProps<T = any, F = any>
   extends FieldInstanceProps<T, F> {
@@ -22,7 +22,7 @@ function FieldComp<T = any, F = any>(
   props: FieldRenderProps<T, F>,
   ref: ForwardedRef<FieldInstance<T, F>>
 ) {
-  const formContext = useContext(FormContext);
+  const formContext = useFormContext<F>();
   const { children, memoChild } = props;
 
   const {
