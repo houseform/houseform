@@ -7,12 +7,22 @@ const createRule = ESLintUtils.RuleCreator(
 export const rule = createRule({
   create(context) {
     return {
-      FunctionDeclaration(node) {
-        if (node.id != null) {
-          if (/^[a-z]/.test(node.id.name)) {
+      JSXElement(node) {
+        if (
+          node.openingElement.name.type === "JSXIdentifier" &&
+          node.openingElement.name.name === "Form"
+        ) {
+          if (
+            node.children.some(
+              (childNode) =>
+                childNode.type === "JSXElement" &&
+                childNode.openingElement.name.type === "JSXIdentifier" &&
+                childNode.openingElement.name.name === "p"
+            )
+          ) {
             context.report({
-              messageId: "uppercase",
-              node: node.id,
+              messageId: "incorrectField",
+              node: node,
             });
           }
         }
@@ -27,7 +37,7 @@ export const rule = createRule({
       recommended: "warn",
     },
     messages: {
-      uppercase: "Start this name with an upper-case letter.",
+      incorrectField: "Start this name with an upper-case letter.",
     },
     type: "suggestion",
     schema: [],

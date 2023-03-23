@@ -7,18 +7,28 @@ describe("ESLint", () => {
   test("Tests rules", () => {
     const ruleTester = new ESLintUtils.RuleTester({
       parser: "@typescript-eslint/parser",
+      parserOptions: { ecmaFeatures: { jsx: true } },
     });
 
     ruleTester.run("exhaustive-child-deps", rule, {
-      valid: [`function HELLO() {}`],
+      valid: [
+        `
+        <Form>
+          <div></div>
+        </Form>
+      `,
+        "<div><div></div></div>",
+      ],
       invalid: [
         {
           code: `
-            function test() {}
+            <Form>
+              <p></p>
+            </Form>
           `,
           errors: [
             {
-              messageId: "uppercase",
+              messageId: "incorrectField",
             },
           ],
         },
