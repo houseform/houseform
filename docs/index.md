@@ -21,7 +21,7 @@ hero:
       link: /comparison
     - theme: alt
       text: View on GitHub
-      link: https://github.com/crutchcorn/houseform
+      link: https://github.com/houseform/houseform
 
 features:
   - icon: ✏️

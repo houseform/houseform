@@ -12,7 +12,7 @@ Thanks for being willing to contribute!
 > requests from branches on your fork. To do this, run:
 >
 > ```
-> git remote add upstream https://github.com/crutchcorn/houseform.git
+> git remote add upstream https://github.com/houseform/houseform.git
 > git fetch upstream
 > git branch --set-upstream-to=upstream/main main
 > ```
@@ -31,7 +31,7 @@ sure to include those changes (if they exist) in your commit.
 
 ## Help needed
 
-Please checkout the [the open issues](https://github.com/crutchcorn/houseform/issues)
+Please checkout the [the open issues](https://github.com/houseform/houseform/issues)
 
 Also, please watch the repo and respond to questions/bug reports/feature
 requests! Thanks!

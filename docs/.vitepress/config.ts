@@ -20,10 +20,10 @@ export default defineConfig({
   themeConfig: {
     logo: "/logo.svg",
     socialLinks: [
-      { icon: "github", link: "https://github.com/crutchcorn/houseform" },
+      { icon: "github", link: "https://github.com/houseform/houseform" },
     ],
     editLink: {
-      pattern: "https://github.com/crutchcorn/houseform/edit/main/docs/:path",
+      pattern: "https://github.com/houseform/houseform/edit/main/docs/:path",
     },
     nav: [
       { text: "Introduction", link: "/introduction" },
@@ -35,11 +35,11 @@ export default defineConfig({
           // Change to `Changelog` when we have one
           {
             text: "Releases",
-            link: "https://github.com/crutchcorn/houseform/releases",
+            link: "https://github.com/houseform/houseform/releases",
           },
           {
             text: "Contributing",
-            link: "https://github.com/crutchcorn/houseform/blob/main/CONTRIBUTING.md",
+            link: "https://github.com/houseform/houseform/blob/main/CONTRIBUTING.md",
           },
         ],
       },

@@ -9,11 +9,19 @@ export interface FieldArrayHelpers<T> {
   swap: (indexA: number, indexB: number) => void;
 }
 
+export interface FieldArrayInstanceProps<T = any, F = any>
+  extends FieldInstanceBaseProps<T, F> {
+  initialValue?: T[];
+  memoChild?: any[];
+}
+
 export interface FieldArrayInstance<T = any, F = any>
   extends FieldArrayHelpers<T> {
   _normalizedDotName: string;
-  props: FieldInstanceBaseProps<T, F>;
+  _setIsValidating: (val: boolean) => void;
+  props: FieldArrayInstanceProps<T, F>;
   value: T[];
+  setValues: (value: T[]) => void;
   setValue: (index: number, value: T) => void;
   setErrors: (errors: string[]) => void;
   errors: string[];
@@ -22,4 +30,8 @@ export interface FieldArrayInstance<T = any, F = any>
   setIsDirty: (val: boolean) => void;
   isDirty: boolean;
   isTouched: boolean;
+  isValidating: boolean;
+  validate: (
+    validationType: "onChangeValidate" | "onBlurValidate" | "onMountValidate"
+  ) => void;
 }

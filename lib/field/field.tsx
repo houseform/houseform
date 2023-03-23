@@ -16,8 +16,6 @@ import { FormContext } from "../form";
 export interface FieldRenderProps<T = any, F = any>
   extends FieldInstanceProps<T, F> {
   children: (props: FieldInstance<T, F>) => JSX.Element;
-  initialValue?: T;
-  memoChild?: any[];
 }
 
 function FieldComp<T = any, F = any>(
@@ -37,9 +35,12 @@ function FieldComp<T = any, F = any>(
     isTouched,
     isDirty,
     isValid,
+    isValidating,
     runFieldValidation,
     valueRef,
     _normalizedDotName,
+    _setIsValidating,
+    validate,
   } = useFieldLike<T, F, FieldInstance<T, F>>({
     props,
     initialValue: "" as T,
@@ -84,8 +85,11 @@ function FieldComp<T = any, F = any>(
       isTouched,
       isDirty,
       isValid,
+      isValidating,
       onBlur,
       _normalizedDotName,
+      _setIsValidating,
+      validate,
     };
   }, [
     props,
@@ -98,8 +102,11 @@ function FieldComp<T = any, F = any>(
     isTouched,
     isDirty,
     isValid,
+    isValidating,
     onBlur,
     _normalizedDotName,
+    _setIsValidating,
+    validate,
   ]);
 
   const mutableRef = useRef<FieldInstance<T>>(fieldInstance);
@@ -112,6 +119,7 @@ function FieldComp<T = any, F = any>(
     isValid,
     isDirty,
     isTouched,
+    isValidating,
   });
 
   useImperativeHandle(ref, () => fieldInstance, [fieldInstance]);

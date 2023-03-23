@@ -1,6 +1,10 @@
 import { expect, test } from "vitest";
-import { render } from "@testing-library/react";
-import { Field, FieldArray, FieldArrayItem, Form } from "houseform";
+import {
+  fireEvent,
+  render,
+  waitForElementToBeRemoved,
+} from "@testing-library/react";
+import { Field, FieldArray, Form } from "houseform";
 import { z } from "zod";
 
 test("field array should track `isDirty` for the array of values", async () => {
@@ -262,6 +266,35 @@ test("field array should run onSubmit validation", async () => {
   expect(getByText("Should have at least three items")).toBeInTheDocument();
 });
 
+test("field array setValues should set the field array values", async () => {
+  const { getByText, queryByText } = render(
+    <Form>
+      {() => (
+        <FieldArray<number> name={"people"} initialValue={[1]}>
+          {({ value, setValues }) => (
+            <>
+              {value.map((num) => (
+                <p key={num}>Num {num}</p>
+              ))}
+              <button onClick={() => setValues([1, 2, 3])}>Set value</button>
+            </>
+          )}
+        </FieldArray>
+      )}
+    </Form>
+  );
+
+  expect(getByText("Num 1")).toBeInTheDocument();
+  expect(queryByText("Num 2")).not.toBeInTheDocument();
+  expect(queryByText("Num 3")).not.toBeInTheDocument();
+
+  fireEvent.click(getByText("Set value"));
+
+  expect(getByText("Num 1")).toBeInTheDocument();
+  expect(getByText("Num 2")).toBeInTheDocument();
+  expect(getByText("Num 3")).toBeInTheDocument();
+});
+
 test("field array should work with listenTo as the subject", async () => {
   const { queryByText, getByText } = render(
     <Form>
@@ -337,6 +370,68 @@ test("field array should work with listenTo as the listener", async () => {
   expect(getByText("Must be at least 3")).toBeInTheDocument();
 });
 
+test("field array should set isValidating with onChange validation", async () => {
+  const { getByText, queryByText } = render(
+    <Form>
+      {() => (
+        <FieldArray<number>
+          name={"people"}
+          initialValue={[1]}
+          onChangeValidate={() =>
+            new Promise((resolve) => setTimeout(() => resolve(true), 50))
+          }
+        >
+          {({ add, isValidating }) => (
+            <>
+              {isValidating && <p>Validating</p>}
+              <button onClick={() => add(2)}>Add</button>
+            </>
+          )}
+        </FieldArray>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Validating")).not.toBeInTheDocument();
+
+  await user.click(getByText("Add"));
+
+  expect(getByText("Validating")).toBeInTheDocument();
+
+  await waitForElementToBeRemoved(() => queryByText("Validating"));
+});
+
+test("field array should set isValidating with onSubmit validation", async () => {
+  const { getByText, queryByText } = render(
+    <Form>
+      {({ submit }) => (
+        <FieldArray<number>
+          name={"people"}
+          initialValue={[1]}
+          onSubmitValidate={() =>
+            new Promise((resolve) => setTimeout(() => resolve(true), 50))
+          }
+        >
+          {({ isValidating }) => (
+            <>
+              {isValidating && <p>Validating</p>}
+              <button onClick={() => submit()}>Submit</button>
+            </>
+          )}
+        </FieldArray>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Validating")).not.toBeInTheDocument();
+
+  await user.click(getByText("Submit"));
+
+  expect(getByText("Validating")).toBeInTheDocument();
+
+  await waitForElementToBeRemoved(() => queryByText("Validating"));
+});
+
 test.todo("Should work with listenTo");
 
 test.todo("Should expose meta fields to ref");
@@ -346,3 +441,5 @@ test.todo("Should track all subfield errors");
 test.todo("Should track all subfield isTouched");
 
 test.todo("Should track all subfield isDirty");
+
+test.todo("Manual validation should work");

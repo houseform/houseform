@@ -5,6 +5,7 @@ import { FieldArrayInstance } from "./types";
 export const initialFieldArrayContext = {
   value: [],
   setValue: () => {},
+  setValues: () => {},
   props: {
     name: "",
   },
@@ -12,6 +13,7 @@ export const initialFieldArrayContext = {
   setErrors: () => {},
   setIsDirty: () => {},
   isValid: false,
+  isValidating: false,
   setIsTouched: () => {},
   isDirty: false,
   isTouched: false,
@@ -22,6 +24,8 @@ export const initialFieldArrayContext = {
   move: () => {},
   swap: () => {},
   replace: () => {},
+  validate: () => {},
+  _setIsValidating: () => {},
 } as FieldArrayInstance;
 /* c8 ignore stop */
 

@@ -14,6 +14,7 @@ export interface FormInstance<T = any> {
   recomputeErrors: () => void;
   recomputeIsDirty: () => void;
   recomputeIsTouched: () => void;
+  recomputeIsValidating: () => void;
   errors: string[];
   errorsMap: ErrorsMap;
   submit: () => Promise<boolean>;
@@ -22,6 +23,7 @@ export interface FormInstance<T = any> {
   isTouched: boolean;
   setIsDirty: (val: boolean) => void;
   isDirty: boolean;
+  isValidating: boolean;
   isSubmitted: boolean;
   setIsSubmitted: (val: boolean) => void;
   getFieldValue(

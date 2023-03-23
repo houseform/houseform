@@ -7,9 +7,8 @@ import React, {
   useMemo,
   useRef,
 } from "react";
-import { FieldInstanceBaseProps } from "../field/types";
 import { FieldArrayContext } from "./context";
-import { FieldArrayInstance } from "./types";
+import { FieldArrayInstance, FieldArrayInstanceProps } from "./types";
 import {
   useFieldLike,
   useListenToListenToArray,
@@ -17,10 +16,8 @@ import {
 import { useFieldLikeSync } from "../field/use-field-like-sync";
 
 export interface FieldArrayRenderProps<T = any, F = any>
-  extends FieldInstanceBaseProps<T, F> {
+  extends FieldArrayInstanceProps<T, F> {
   children: (props: FieldArrayInstance<T, F>) => JSX.Element;
-  initialValue?: T[];
-  memoChild?: any[];
 }
 
 function FieldArrayComp<T = any, F = any>(
@@ -37,11 +34,14 @@ function FieldArrayComp<T = any, F = any>(
     isTouched,
     isDirty,
     isValid,
+    isValidating,
     _normalizedDotName,
+    _setIsValidating,
     runFieldValidation,
     valueRef,
     setIsDirty,
     setIsTouched,
+    validate,
   } = useFieldLike<T, F, FieldArrayInstance<T, F>>({
     props,
     initialValue: [] as T[],
@@ -143,13 +143,17 @@ function FieldArrayComp<T = any, F = any>(
       setValue,
       props,
       _normalizedDotName,
+      _setIsValidating,
       errors,
       setErrors,
       isValid,
+      isValidating,
       setIsDirty,
       isDirty,
       setIsTouched,
       isTouched,
+      setValues,
+      validate,
     };
   }, [
     value,
@@ -162,13 +166,17 @@ function FieldArrayComp<T = any, F = any>(
     setValue,
     props,
     _normalizedDotName,
+    _setIsValidating,
     errors,
     setErrors,
     isValid,
+    isValidating,
     setIsDirty,
     isDirty,
     setIsTouched,
     isTouched,
+    setValues,
+    validate,
   ]);
 
   const mutableRef = useRef<FieldArrayInstance<T, F>>(fieldArrayInstance);
@@ -177,6 +185,7 @@ function FieldArrayComp<T = any, F = any>(
     value,
     mutableRef,
     isValid,
+    isValidating,
     isDirty,
     isTouched,
     props,

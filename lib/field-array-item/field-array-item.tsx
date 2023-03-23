@@ -34,14 +34,17 @@ export function FieldArrayItemComp<T = any, F = any>(
 
   const {
     _normalizedDotName,
+    _setIsValidating,
     errors,
     setErrors,
     runFieldValidation,
     isValid,
+    isValidating,
     isTouched,
     setIsTouched,
     isDirty,
     setIsDirty,
+    validate,
   } = useFieldLike<T, F, FieldInstance<T, F>>({
     props,
     initialValue: "" as T,
@@ -97,7 +100,6 @@ export function FieldArrayItemComp<T = any, F = any>(
       array.setValue(itemIndex, newArrayObject as T);
 
       setIsDirty(true);
-      setIsTouched(true);
 
       /**
        * Call `listenTo` field subscribers for other fields.
@@ -120,7 +122,6 @@ export function FieldArrayItemComp<T = any, F = any>(
       props.name,
       runFieldValidation,
       setIsDirty,
-      setIsTouched,
     ]
   );
 
@@ -151,28 +152,34 @@ export function FieldArrayItemComp<T = any, F = any>(
       errors,
       value,
       _normalizedDotName,
+      _setIsValidating,
       onBlur,
       props,
       isTouched,
       isValid,
       isDirty,
+      isValidating,
       setIsDirty,
       setErrors,
       setIsTouched,
+      validate,
     };
   }, [
     setValue,
     errors,
     value,
     _normalizedDotName,
+    _setIsValidating,
     onBlur,
     props,
     isTouched,
     isValid,
     isDirty,
+    isValidating,
     setIsDirty,
     setErrors,
     setIsTouched,
+    validate,
   ]);
 
   const mutableRef = useRef<FieldInstance<T>>(fieldArrayInstance);
@@ -185,6 +192,7 @@ export function FieldArrayItemComp<T = any, F = any>(
     isValid,
     isDirty,
     isTouched,
+    isValidating,
   });
 
   useImperativeHandle(ref, () => fieldArrayInstance, [fieldArrayInstance]);

@@ -1,6 +1,11 @@
 import { expect, test } from "vitest";
-import { fireEvent, render, waitFor } from "@testing-library/react";
-import { Field, FieldInstance, Form } from "houseform";
+import {
+  fireEvent,
+  render,
+  waitFor,
+  waitForElementToBeRemoved,
+} from "@testing-library/react";
+import { Field, FieldInstance, Form, FormInstance } from "houseform";
 
 import { z } from "zod";
 import { useEffect, useRef, useState } from "react";
@@ -784,4 +789,283 @@ test("Field should only run listeners when value changes", async () => {
   await waitFor(() =>
     expect(getAllByText("Must be at least three")).toHaveLength(2)
   );
+});
+
+test("Field should manually validate", async () => {
+  const Comp = () => {
+    const formRef = useRef<FormInstance>(null);
+
+    const runValidate = () => {
+      formRef.current?.getFieldValue("test")!.validate("onChangeValidate");
+    };
+
+    return (
+      <div>
+        <Form ref={formRef}>
+          {() => (
+            <Field
+              name={"test"}
+              initialValue={"Te"}
+              onChangeValidate={z.string().min(3, "Must be at least three")}
+            >
+              {({ errors, value }) => {
+                return (
+                  <div>
+                    <p>Value: {value}</p>
+                    {errors.map((error) => (
+                      <p key={error}>{error}</p>
+                    ))}
+                  </div>
+                );
+              }}
+            </Field>
+          )}
+        </Form>
+        <button onClick={runValidate}>Validate</button>
+      </div>
+    );
+  };
+
+  const { getByText, queryByText, findByText } = render(<Comp />);
+
+  expect(getByText("Value: Te")).toBeInTheDocument();
+  expect(queryByText("Must be at least three")).not.toBeInTheDocument();
+  await user.click(getByText("Validate"));
+  expect(await findByText("Must be at least three")).toBeInTheDocument();
+});
+
+test("Field should not throw error if manually validate against non-used validation type", async () => {
+  const Comp = () => {
+    const formRef = useRef<FormInstance>(null);
+
+    const runValidate = () => {
+      formRef.current?.getFieldValue("test")!.validate("onBlurValidate");
+    };
+
+    return (
+      <div>
+        <Form ref={formRef}>
+          {() => (
+            <Field
+              name={"test"}
+              initialValue={"Te"}
+              onChangeValidate={z.string().min(3, "Must be at least three")}
+            >
+              {({ errors, value }) => {
+                return (
+                  <div>
+                    <p>Value: {value}</p>
+                    {errors.map((error) => (
+                      <p key={error}>{error}</p>
+                    ))}
+                  </div>
+                );
+              }}
+            </Field>
+          )}
+        </Form>
+        <button onClick={runValidate}>Validate</button>
+      </div>
+    );
+  };
+
+  const { getByText, queryByText, findByText } = render(<Comp />);
+
+  expect(getByText("Value: Te")).toBeInTheDocument();
+  expect(queryByText("Must be at least three")).not.toBeInTheDocument();
+  await user.click(getByText("Validate"));
+  expect(queryByText("Must be at least three")).not.toBeInTheDocument();
+});
+
+test("isTouched should only change onBlur", async () => {
+  let touchedValue;
+  const { getByPlaceholderText } = render(
+    <Form onSubmit={(_) => {}}>
+      {() => (
+        <Field<string> name="email" initialValue="">
+          {({ value, setValue, onBlur, isTouched }) => {
+            touchedValue = isTouched;
+            return (
+              <input
+                placeholder="Email"
+                onBlur={onBlur}
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+              />
+            );
+          }}
+        </Field>
+      )}
+    </Form>
+  );
+
+  const emailInput = getByPlaceholderText("Email");
+
+  // Initially, isTouched should be false
+  expect(touchedValue).toBeFalsy();
+
+  // After changing the input value, isTouched should still be false
+  await fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+  expect(touchedValue).toBeFalsy();
+
+  // After triggering the onBlur event, isTouched should be true
+  await fireEvent.blur(emailInput);
+  expect(touchedValue).toBeTruthy();
+});
+
+test("Field should set isValidating with async onMount validator function", async () => {
+  function isEmailUnique() {
+    return new Promise<boolean>((resolve) => {
+      setTimeout(() => resolve(true), 50);
+    });
+  }
+  const { queryByText, getByText } = render(
+    <Form>
+      {() => (
+        <Field<string>
+          name={"email"}
+          initialValue=""
+          onMountValidate={isEmailUnique}
+        >
+          {({ value, setValue, isValidating }) => (
+            <div>
+              <input
+                placeholder="Email"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+              />
+              {isValidating && <p>Validating</p>}
+            </div>
+          )}
+        </Field>
+      )}
+    </Form>
+  );
+
+  await waitFor(() => expect(getByText("Validating")).toBeInTheDocument());
+  await waitForElementToBeRemoved(() => queryByText("Validating"));
+});
+
+test("Field should set isValidating with async onChange validator function", async () => {
+  function isEmailUnique() {
+    return new Promise<boolean>((resolve) => {
+      setTimeout(() => resolve(true), 50);
+    });
+  }
+  const { getByPlaceholderText, queryByText, getByText } = render(
+    <Form>
+      {() => (
+        <Field<string>
+          name={"email"}
+          initialValue=""
+          onChangeValidate={isEmailUnique}
+        >
+          {({ value, setValue, isValidating }) => (
+            <div>
+              <input
+                placeholder="Email"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+              />
+              {isValidating && <p>Validating</p>}
+            </div>
+          )}
+        </Field>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Validating")).not.toBeInTheDocument();
+
+  await user.type(getByPlaceholderText("Email"), "test");
+
+  expect(getByText("Validating")).toBeInTheDocument();
+
+  await waitForElementToBeRemoved(() => queryByText("Validating"));
+});
+
+test("Field should set isValidating with async onBlur validator function", async () => {
+  function isEmailUnique() {
+    return new Promise<boolean>((resolve) => {
+      setTimeout(() => resolve(true), 50);
+    });
+  }
+  const { getByPlaceholderText, queryByText, findByText } = render(
+    <Form>
+      {() => (
+        <Field<string>
+          name={"email"}
+          initialValue=""
+          onBlurValidate={isEmailUnique}
+        >
+          {({ value, setValue, isValidating, onBlur }) => (
+            <div>
+              <input
+                placeholder="Email"
+                value={value}
+                onBlur={onBlur}
+                onChange={(e) => setValue(e.target.value)}
+              />
+              {isValidating && <p>Validating</p>}
+            </div>
+          )}
+        </Field>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Validating")).not.toBeInTheDocument();
+
+  fireEvent.change(getByPlaceholderText("Email"), {
+    target: { value: "test" },
+  });
+
+  expect(queryByText("Validating")).not.toBeInTheDocument();
+
+  fireEvent.blur(getByPlaceholderText("Email"));
+
+  expect(await findByText("Validating")).toBeInTheDocument();
+
+  await waitForElementToBeRemoved(() => queryByText("Validating"));
+});
+
+test("Field should set isValidating with async onSubmit validator function", async () => {
+  function isEmailUnique() {
+    return new Promise<boolean>((resolve) => {
+      setTimeout(() => resolve(true), 50);
+    });
+  }
+  const { getByText, queryByText } = render(
+    <Form>
+      {({ submit }) => (
+        <>
+          <Field<string>
+            name={"email"}
+            initialValue=""
+            onSubmitValidate={isEmailUnique}
+          >
+            {({ value, setValue, isValidating }) => (
+              <div>
+                <input
+                  placeholder="Email"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+                {isValidating && <p>Validating</p>}
+              </div>
+            )}
+          </Field>
+          <button onClick={submit}>submit</button>
+        </>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Validating")).not.toBeInTheDocument();
+
+  await user.click(getByText("submit"));
+
+  expect(getByText("Validating")).toBeInTheDocument();
+
+  await waitForElementToBeRemoved(() => queryByText("Validating"));
 });

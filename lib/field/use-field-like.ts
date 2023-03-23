@@ -124,6 +124,7 @@ export const useFieldLike = <
   const [errors, setErrors] = useState<string[]>([]);
   const [isTouched, setIsTouched] = useState<boolean>(false);
   const [isDirty, setIsDirty] = useState<boolean>(false);
+  const [isValidating, setIsValidating] = useState<boolean>(false);
 
   const runFieldValidation = useCallback(
     (
@@ -143,12 +144,16 @@ export const useFieldLike = <
           ?.onMountValidate;
       }
       if (validationFn) {
+        setIsValidating(true);
         validate(val as T, formContext, validationFn)
           .then(() => {
             setErrors([]);
           })
           .catch((error: string | ZodError) => {
             setErrors(getValidationError(error as ZodError | string));
+          })
+          .finally(() => {
+            setIsValidating(false);
           });
       }
     },
@@ -191,7 +196,6 @@ export const useFieldLike = <
           typeof t === "function";
         const newVal = isPrevAFunction(val) ? val(prev) : (val as typeof value);
         setIsDirty(true);
-        setIsTouched(true);
 
         /**
          * Call `listenTo` field subscribers for other fields.
@@ -215,6 +219,13 @@ export const useFieldLike = <
     return errors.length === 0;
   }, [errors]);
 
+  const exportedValidate = useCallback(
+    (validationFnName: Parameters<typeof runFieldValidation>[0]) => {
+      runFieldValidation(validationFnName, valueRef.current);
+    },
+    [runFieldValidation, valueRef]
+  );
+
   return {
     value,
     setErrors,
@@ -225,8 +236,11 @@ export const useFieldLike = <
     isTouched,
     isDirty,
     isValid,
+    isValidating,
     runFieldValidation,
     valueRef,
+    validate: exportedValidate,
     _normalizedDotName,
+    _setIsValidating: setIsValidating,
   };
 };

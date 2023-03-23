@@ -6,10 +6,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/crutchcorn/houseform"
+    "url": "https://github.com/houseform/houseform"
   },
   "homepage": "https://houseform.dev",
-  "bugs": "https://github.com/crutchcorn/houseform/issues",
+  "bugs": "https://github.com/houseform/houseform/issues",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
