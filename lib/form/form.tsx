@@ -161,14 +161,14 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     return _errors;
   }, [_errors, getErrors]);
 
-  const errorMapGetter = useCallback(() => {
+  const errorMapGetter = useCallback((): ErrorsMap<T> => {
     shouldRerenderErrorOnRecompute.current = true;
     if (_errorsMap === null) {
       const val = getErrorsMap();
       _setErrorsMap(val);
-      return val;
+      return val as never;
     }
-    return _errorsMap;
+    return _errorsMap as never;
   }, [_errorsMap, getErrorsMap]);
 
   const isValidGetter = useCallback(() => {

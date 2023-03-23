@@ -4,10 +4,13 @@ import type { FieldArrayInstance } from "../field-array/types";
 import type { AutoPath } from "ts-toolbelt/out/Function/AutoPath";
 import type { Path } from "ts-toolbelt/out/Object/Path";
 import type { Split } from "ts-toolbelt/out/String/Split";
+import { MapDeep } from "./advanced-types";
 
-export type ErrorsMap = Record<string, string[]>;
+export type ErrorsMap<T = Record<string, any>> = Record<string, any> extends T
+  ? Record<string, string[]>
+  : MapDeep<T, string[]>;
 
-export interface FormInstance<T = any> {
+export interface FormInstance<T = Record<string, any>> {
   formFieldsRef: MutableRefObject<
     Array<FieldInstance<any, T> | FieldArrayInstance<any, T>>
   >;
@@ -16,7 +19,7 @@ export interface FormInstance<T = any> {
   recomputeIsTouched: () => void;
   recomputeIsValidating: () => void;
   errors: string[];
-  errorsMap: ErrorsMap;
+  errorsMap: ErrorsMap<T>;
   submit: () => Promise<boolean>;
   isValid: boolean;
   setIsTouched: (val: boolean) => void;

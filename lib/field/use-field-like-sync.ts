@@ -1,7 +1,7 @@
 import { MutableRefObject, useContext } from "react";
 import { FieldInstance } from "./types";
 import { FieldArrayInstance } from "../field-array";
-import { FormContext } from "../form";
+import { useFormContext } from "../form";
 import useIsomorphicLayoutEffect from "../utils/use-isomorphic-layout-effect";
 
 export interface UseFieldLikeSyncProps<
@@ -33,7 +33,7 @@ export const useFieldLikeSync = <
   isTouched,
   isValidating,
 }: UseFieldLikeSyncProps<T, F, TT>) => {
-  const formContext = useContext(FormContext);
+  const formContext = useFormContext<F>();
 
   /**
    * Add mutable ref to formFieldsRef

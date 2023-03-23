@@ -8,7 +8,10 @@ import React, {
   useMemo,
   useRef,
 } from "react";
-import { FieldArrayContext } from "../field-array/context";
+import {
+  FieldArrayContext,
+  useFieldArrayContext,
+} from "../field-array/context";
 import {
   FieldInstance,
   FieldInstanceProps,
@@ -17,7 +20,7 @@ import {
   useListenToListenToArray,
 } from "../field";
 import { fillPath, getPath, stringToPath } from "../utils";
-import { FormContext } from "../form";
+import { FormContext, useFormContext } from "../form";
 import { FieldArrayInstance } from "../field-array";
 
 export interface FieldArrayItemRenderProps<T = any, F = any>
@@ -50,8 +53,8 @@ export function FieldArrayItemComp<T = any, F = any>(
     initialValue: "" as T,
   });
 
-  const array = useContext(FieldArrayContext) as FieldArrayInstance<T>;
-  const formContext = useContext(FormContext);
+  const array = useFieldArrayContext<T>();
+  const formContext = useFormContext<F>();
 
   const fullAccessorPath = useMemo(() => {
     const arrayNamePathArr = stringToPath(array.props.name);
