@@ -13,7 +13,7 @@ describe("ESLint", () => {
     ruleTester.run("exhaustive-child-deps", rule, {
       valid: [
         `
-        <Form>
+        <Form memoChild={["Test"]}>
           {() => "Hello"}
         </Form>
       `,
@@ -22,7 +22,7 @@ describe("ESLint", () => {
       invalid: [
         {
           code: `
-        <Form>
+        <Form memoChild={["Test"]}>
           {() => "Test"}
         </Form>
           `,

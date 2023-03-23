@@ -8,9 +8,34 @@ export const rule = createRule({
   create(context) {
     return {
       JSXElement(node) {
+        /**
+         * TODO:
+         *  1) Support `Field`, `FieldArray`, `FieldArrayItem`
+         *  2) Support aliasing of component names (e.g. `import { Form as MyForm } from "houseform"`)
+         *
+         *  Josh Goldberg: "Solve #2 via type checking API to check if the component is a Form component"
+         *  @see https://typescript-eslint.io/custom-rules#typed-rules
+         *  @see https://github.com/microsoft/TypeScript/wiki/Using-the-Compiler-API#using-the-type-checker
+         */
         if (
           node.openingElement.name.type !== "JSXIdentifier" ||
-          node.openingElement.name.name !== "Form"
+          node.openingElement.name.name !== "Form" ||
+          node.openingElement.attributes.length === 0
+        ) {
+          return;
+        }
+
+        const memoChildAttr = node.openingElement.attributes.find(
+          (attr): attr is TSESTree.JSXAttribute =>
+            attr.type === "JSXAttribute" && attr.name.name === "memoChild"
+        );
+
+        // Only support `memoChild={[]}`
+        if (
+          !memoChildAttr ||
+          !memoChildAttr.value ||
+          memoChildAttr.value.type !== "JSXExpressionContainer" ||
+          memoChildAttr.value.expression.type !== "ArrayExpression"
         ) {
           return;
         }
