@@ -12,7 +12,7 @@ import type { ZodError } from "zod";
 import { fillPath, getValidationError, stringToPath, validate } from "../utils";
 import { FieldInstance } from "../field";
 import { FieldArrayInstance } from "../field-array";
-import { FormInstance } from "./types";
+import { ErrorsMap, FormInstance } from "./types";
 import { FormContext } from "./context";
 
 export interface FormProps<T> {
@@ -65,25 +65,33 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
   }, []);
 
   const [_errors, _setErrors] = useState<string[] | null>(null);
+  const [_errorsMap, _setErrorsMap] = useState<ErrorsMap | null>(null);
   const [_isValid, _setIsValid] = useState<boolean | null>(null);
   const [_isDirty, _setIsDirty] = useState<boolean | null>(null);
   const [_isTouched, _setIsTouched] = useState<boolean | null>(null);
   const [_value, _setValue] = useState<T | null>(null);
+  const [_isValidating, _setIsValidating] = useState<boolean | null>(null);
 
   const shouldRerenderErrorOnRecompute = useRef(false);
-
   const shouldRerenderIsValidOnRecompute = useRef(false);
-
   const shouldRerenderIsDirtyOnRecompute = useRef(false);
-
   const shouldRerenderIsTouchedOnRecompute = useRef(false);
-
   const shouldRerenderValueOnRecompute = useRef(false);
+  const shouldRerenderIsValidatingOnRecompute = useRef(false);
 
   const getErrors = useCallback(() => {
     return formFieldsRef.current.reduce((acc, field) => {
       return acc.concat(field.errors);
     }, [] as string[]);
+  }, [formFieldsRef]);
+
+  const getErrorsMap = useCallback(() => {
+    const errorsMap: ErrorsMap = {};
+    formFieldsRef.current.forEach((field) => {
+      const name = field.props.name;
+      errorsMap[name] = field.errors;
+    });
+    return errorsMap;
   }, [formFieldsRef]);
 
   const getValidBoolean = useCallback(() => {
@@ -116,14 +124,16 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
 
   const recomputeErrors = useCallback(() => {
     if (shouldRerenderErrorOnRecompute.current) {
-      const val = getErrors();
-      _setErrors(val);
+      const errors = getErrors();
+      const errorsMap = getErrorsMap();
+      _setErrors(errors);
+      _setErrorsMap(errorsMap);
     }
     if (shouldRerenderIsValidOnRecompute.current) {
       const val = getValidBoolean();
       _setIsValid(val);
     }
-  }, [getErrors, getValidBoolean]);
+  }, [getErrors, getErrorsMap, getValidBoolean]);
 
   const recomputeIsDirty = useCallback(() => {
     if (shouldRerenderIsDirtyOnRecompute.current) {
@@ -146,6 +156,13 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     }
   }, [getFormValue]);
 
+  const recomputeIsValidating = useCallback(() => {
+    if (shouldRerenderIsValidatingOnRecompute.current) {
+      const val = getFieldBoolean("isValidating");
+      _setIsValidating(val);
+    }
+  }, [getFieldBoolean]);
+
   const errorGetter = useCallback(() => {
     shouldRerenderErrorOnRecompute.current = true;
     if (_errors === null) {
@@ -155,6 +172,16 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     }
     return _errors;
   }, [_errors, getErrors]);
+
+  const errorMapGetter = useCallback((): ErrorsMap<T> => {
+    shouldRerenderErrorOnRecompute.current = true;
+    if (_errorsMap === null) {
+      const val = getErrorsMap();
+      _setErrorsMap(val);
+      return val as never;
+    }
+    return _errorsMap as never;
+  }, [_errorsMap, getErrorsMap]);
 
   const isValidGetter = useCallback(() => {
     shouldRerenderIsValidOnRecompute.current = true;
@@ -196,6 +223,16 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     return _value;
   }, [_value, getFormValue]);
 
+  const isValidatingGetter = useCallback(() => {
+    if (_isValidating === null) {
+      shouldRerenderIsValidatingOnRecompute.current = true;
+      const val = getFieldBoolean("isValidating");
+      _setIsValidating(val);
+      return val;
+    }
+    return _isValidating;
+  }, [_isValidating, getFieldBoolean]);
+
   const baseValue = useMemo(() => {
     return {
       getFieldValue,
@@ -211,8 +248,12 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       recomputeIsDirty,
       recomputeIsTouched,
       recomputeFormValue,
+      recomputeIsValidating,
       get errors() {
         return errorGetter();
+      },
+      get errorsMap() {
+        return errorMapGetter();
       },
       get isValid() {
         return isValidGetter();
@@ -226,6 +267,9 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       get value() {
         return valueGetter();
       },
+      get isValidating() {
+        return isValidatingGetter();
+      },
       submit: () => Promise.resolve(true),
     };
   }, [
@@ -237,11 +281,14 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     recomputeIsDirty,
     recomputeIsTouched,
     recomputeFormValue,
+    recomputeIsValidating,
     errorGetter,
+    errorMapGetter,
     isValidGetter,
     isDirtyGetter,
     isTouchedGetter,
     valueGetter,
+    isValidatingGetter,
   ]);
 
   const submit = useCallback(async () => {
@@ -255,6 +302,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
         ) => {
           if (!formField.props[type as "onChangeValidate"]) return true;
           try {
+            if (type === "onSubmitValidate") formField._setIsValidating(true);
             await validate(
               formField.value,
               baseValue,
@@ -264,6 +312,8 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
           } catch (error) {
             formField.setErrors(getValidationError(error as ZodError | string));
             return false;
+          } finally {
+            if (type === "onSubmitValidate") formField._setIsValidating(false);
           }
         };
         const onChangeRes = await runValidationType("onChangeValidate");
@@ -292,9 +342,11 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
   const value = useMemo(() => {
     const omittedKeysToPick = [
       "errors",
+      "errorsMap",
       "isValid",
       "isDirty",
       "isTouched",
+      "isValidating",
       "submit",
       "value",
     ] as const;
@@ -302,6 +354,9 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       submit,
       get errors() {
         return errorGetter();
+      },
+      get errorsMap() {
+        return errorMapGetter();
       },
       get isValid() {
         return isValidGetter();
@@ -314,6 +369,9 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       },
       get value() {
         return valueGetter();
+      },
+      get isValidating() {
+        return isValidatingGetter();
       },
     } as any as typeof baseValue;
 
@@ -332,10 +390,12 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
   }, [
     baseValue,
     errorGetter,
+    errorMapGetter,
     isDirtyGetter,
     isTouchedGetter,
     isValidGetter,
     valueGetter,
+    isValidatingGetter,
     submit,
   ]);
 

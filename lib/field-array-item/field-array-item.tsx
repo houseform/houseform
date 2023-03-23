@@ -8,7 +8,10 @@ import React, {
   useMemo,
   useRef,
 } from "react";
-import { FieldArrayContext } from "../field-array/context";
+import {
+  FieldArrayContext,
+  useFieldArrayContext,
+} from "../field-array/context";
 import {
   FieldInstance,
   FieldInstanceProps,
@@ -17,7 +20,7 @@ import {
   useListenToListenToArray,
 } from "../field";
 import { fillPath, getPath, stringToPath } from "../utils";
-import { FormContext } from "../form";
+import { FormContext, useFormContext } from "../form";
 import { FieldArrayInstance } from "../field-array";
 
 export interface FieldArrayItemRenderProps<T = any, F = any>
@@ -34,10 +37,12 @@ export function FieldArrayItemComp<T = any, F = any>(
 
   const {
     _normalizedDotName,
+    _setIsValidating,
     errors,
     setErrors,
     runFieldValidation,
     isValid,
+    isValidating,
     isTouched,
     setIsTouched,
     isDirty,
@@ -48,8 +53,8 @@ export function FieldArrayItemComp<T = any, F = any>(
     initialValue: "" as T,
   });
 
-  const array = useContext(FieldArrayContext) as FieldArrayInstance<T>;
-  const formContext = useContext(FormContext);
+  const array = useFieldArrayContext<T>();
+  const formContext = useFormContext<F>();
 
   const fullAccessorPath = useMemo(() => {
     const arrayNamePathArr = stringToPath(array.props.name);
@@ -120,7 +125,6 @@ export function FieldArrayItemComp<T = any, F = any>(
       props.name,
       runFieldValidation,
       setIsDirty,
-      setIsTouched,
     ]
   );
 
@@ -151,11 +155,13 @@ export function FieldArrayItemComp<T = any, F = any>(
       errors,
       value,
       _normalizedDotName,
+      _setIsValidating,
       onBlur,
       props,
       isTouched,
       isValid,
       isDirty,
+      isValidating,
       setIsDirty,
       setErrors,
       setIsTouched,
@@ -166,11 +172,13 @@ export function FieldArrayItemComp<T = any, F = any>(
     errors,
     value,
     _normalizedDotName,
+    _setIsValidating,
     onBlur,
     props,
     isTouched,
     isValid,
     isDirty,
+    isValidating,
     setIsDirty,
     setErrors,
     setIsTouched,
@@ -187,6 +195,7 @@ export function FieldArrayItemComp<T = any, F = any>(
     isValid,
     isDirty,
     isTouched,
+    isValidating,
   });
 
   useImperativeHandle(ref, () => fieldArrayInstance, [fieldArrayInstance]);

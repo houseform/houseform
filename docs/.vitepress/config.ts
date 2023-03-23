@@ -96,8 +96,8 @@ export default defineConfig({
             link: "/guides/nested-field-values",
           },
           {
-            text: "Submission Errors",
-            link: "/guides/submission-errors",
+            text: "Displaying Errors",
+            link: "/guides/displaying-errors",
           },
           {
             text: "Access Data Externally",

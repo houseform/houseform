@@ -13,12 +13,11 @@ head:
 HouseForm is built with TypeScript and takes type safety very seriously. However, because of our API design ([which has massive benefits with colocated code](/index)), we're often not able to infer the type of various items. Because of this, it's expected that you pass many of the types you need into the related components.
 
 To work around this, when using a `<Field>` component, you should pass the type of the `Field` into the component like so:
+
 ```tsx
 <Field<string>
   name="password"
-  onChangeValidate={z
-    .string()
-    .min(8, "Must be at least 8 characters long")}
+  onChangeValidate={z.string().min(8, "Must be at least 8 characters long")}
 >
   {({ value, setValue, onBlur, errors }) => {
     // ...
@@ -54,7 +53,7 @@ The same typing properties apply to [`FieldArray` and `FieldArrayItems`](/guides
       ))}
     </>
   )}
-</FieldArray> 
+</FieldArray>
 ```
 
 ## Ref TypeScript Support
@@ -96,3 +95,96 @@ export default function App() {
 }
 ```
 
+## Form Typings
+
+While field-level typings are nice, it's also encouraged to type the `Form` component so that your `values` property on `onSubmit` are strictly typed as well:
+
+```tsx
+interface FormType {
+  username: string;
+  score: number;
+  emailSignup: boolean;
+}
+
+// ...
+
+<Form<FormType>
+  onSubmit={(values) => {
+    // `values` is type `FormType`
+  }}
+>
+  {/*...*/}
+</Form>;
+```
+
+You can then pass the fields' typings to the `Field` components:
+
+```tsx
+<Field<FormType["username"]> name="username">
+  {({ value, setValue, onBlur, errors }) => {
+    // ...
+  }}
+</Field>
+```
+
+### Error Typing
+
+Not only does typing a `Form` ensure that your `values` are typed, but it also ensures other `Form`-specific fields are typed as well.
+
+One such example is [the `errorsMap` property on `Form`](/guides/displaying-errors), which will throw errors on nested field access if `Form` is left untyped:
+
+```tsx
+import { Form, Field } from "houseform";
+
+<Form onSubmit={() => {}}>
+  {({ submit, errorsMap }) => (
+    <div>
+      <Field name="name.first"></Field>
+      <button onClick={submit}>Submit</button>
+      <div>
+        <p>Name specific errors</p>
+        {/* `errorsMap` is Record<string, string[]> by default, */}
+        {/*   so this will throw a compiler error */}
+        {errorsMap["name"]?.["first"]?.map((error) => (
+          <p>{error}</p>
+        ))}
+      </div>
+    </div>
+  )}
+</Form>;
+```
+
+To solve this, we need to pass a value to `Form` so that our TypeScript typings can map over each key and replace them with `string[]`:
+
+```tsx
+import { Form, Field } from "houseform";
+
+interface FormType {
+  name: {
+    first: string;
+  };
+}
+
+// ...
+
+<Form<FormType> onSubmit={() => {}}>
+  {({ submit, errorsMap }) => (
+    <div>
+      <Field name="name.first"></Field>
+      <button onClick={submit}>Submit</button>
+      <div>
+        <p>Name specific errors</p>
+        {/* `errorsMap` is Record<string, string[]> by default, */}
+        {/*   so this will throw a compiler error */}
+        {errorsMap["name"]?.["first"]?.map((error) => (
+          <p>{error}</p>
+        ))}
+      </div>
+    </div>
+  )}
+</Form>;
+```
+
+> This may seem like a frustrating limitation, but without explicit typings, `errorsMap` would have to be typed as `Record<string, NestedRecord | string[]>`.
+>
+> This typing in particular is frustrating since you have to type case `errorsMap`'s individual properties every time you want to use them. This was our best attempt at balancing both generic and specific needs.
