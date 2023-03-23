@@ -97,7 +97,6 @@ export const rule = createRule({
       recommended: "warn",
     },
     messages: {
-      missingChildFn: "You are missing a child function",
       exhaustiveChildDeps: "You are missing deps in the memoChild field",
     },
     type: "suggestion",

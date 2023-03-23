@@ -87,4 +87,65 @@ describe("ESLint - Exhaustive Child Deps", () => {
       invalid: [],
     });
   });
+
+  test("Form with empty memoChild and through vars should error", () => {
+    ruleTester.run("exhaustive-child-deps", rule, {
+      valid: [],
+      invalid: [
+        {
+          code: `
+      const test = <div></div>;
+      const el = <Form memoChild={[]}>
+        {() => test}
+      </Form>
+      `,
+          errors: [
+            {
+              messageId: "exhaustiveChildDeps",
+              line: 3,
+              column: 24,
+              endColumn: 38,
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  test("Form with empty memoChild and passed vars should not error", () => {
+    ruleTester.run("exhaustive-child-deps", rule, {
+      valid: [
+        `
+      <Form memoChild={[]}>
+        {(test) => test}
+      </Form>
+      `,
+      ],
+      invalid: [],
+    });
+  });
+
+  test("Form with empty memoChild and through and passed vars should error", () => {
+    ruleTester.run("exhaustive-child-deps", rule, {
+      valid: [],
+      invalid: [
+        {
+          code: `
+      const other = <div></div>;
+      const el = <Form memoChild={[]}>
+        {(test) => test || other}
+      </Form>
+      `,
+          errors: [
+            {
+              messageId: "exhaustiveChildDeps",
+              line: 3,
+              column: 24,
+              endColumn: 38,
+            },
+          ],
+        },
+      ],
+    });
+  });
 });
