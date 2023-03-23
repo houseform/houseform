@@ -25,6 +25,7 @@ export const initialFieldArrayContext = {
   swap: () => {},
   replace: () => {},
   validate: () => {},
+  _setIsValidating: () => {},
 } as FieldArrayInstance;
 /* c8 ignore stop */
 

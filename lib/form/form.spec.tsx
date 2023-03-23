@@ -1070,7 +1070,7 @@ test("Form should set isValidating proper", async () => {
           <Field
             name={"test"}
             onSubmitValidate={() =>
-              new Promise((resolve) => setTimeout(() => resolve(true), 10))
+              new Promise((resolve) => setTimeout(() => resolve(true), 50))
             }
           >
             {({ value, setValue }) => (

@@ -916,7 +916,7 @@ test("isTouched should only change onBlur", async () => {
 test("Field should set isValidating with async onMount validator function", async () => {
   function isEmailUnique() {
     return new Promise<boolean>((resolve) => {
-      setTimeout(() => resolve(true), 10);
+      setTimeout(() => resolve(true), 50);
     });
   }
   const { queryByText, getByText } = render(
@@ -949,7 +949,7 @@ test("Field should set isValidating with async onMount validator function", asyn
 test("Field should set isValidating with async onChange validator function", async () => {
   function isEmailUnique() {
     return new Promise<boolean>((resolve) => {
-      setTimeout(() => resolve(true), 10);
+      setTimeout(() => resolve(true), 50);
     });
   }
   const { getByPlaceholderText, queryByText, getByText } = render(
@@ -987,7 +987,7 @@ test("Field should set isValidating with async onChange validator function", asy
 test("Field should set isValidating with async onBlur validator function", async () => {
   function isEmailUnique() {
     return new Promise<boolean>((resolve) => {
-      setTimeout(() => resolve(true), 10);
+      setTimeout(() => resolve(true), 50);
     });
   }
   const { getByPlaceholderText, queryByText, findByText } = render(
@@ -1032,7 +1032,7 @@ test("Field should set isValidating with async onBlur validator function", async
 test("Field should set isValidating with async onSubmit validator function", async () => {
   function isEmailUnique() {
     return new Promise<boolean>((resolve) => {
-      setTimeout(() => resolve(true), 10);
+      setTimeout(() => resolve(true), 50);
     });
   }
   const { getByText, queryByText } = render(

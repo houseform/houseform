@@ -457,7 +457,7 @@ test("field array item should set isValidating with onChange validation", async 
                   name={`people[${i}].thing`}
                   onChangeValidate={() =>
                     new Promise((resolve) =>
-                      setTimeout(() => resolve(true), 10)
+                      setTimeout(() => resolve(true), 50)
                     )
                   }
                 >
@@ -501,7 +501,7 @@ test("field array item should set isValidating with onBlur validator", async () 
                   name={`people[${i}].thing`}
                   onBlurValidate={() =>
                     new Promise((resolve) =>
-                      setTimeout(() => resolve(true), 10)
+                      setTimeout(() => resolve(true), 50)
                     )
                   }
                 >
@@ -546,7 +546,7 @@ test("field array item should set isValidating with onSubmit validation", async 
                     name={`people[${i}].thing`}
                     onSubmitValidate={() =>
                       new Promise((resolve) =>
-                        setTimeout(() => resolve(true), 10)
+                        setTimeout(() => resolve(true), 50)
                       )
                     }
                   >

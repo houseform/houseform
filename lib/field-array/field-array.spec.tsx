@@ -378,7 +378,7 @@ test("field array should set isValidating with onChange validation", async () =>
           name={"people"}
           initialValue={[1]}
           onChangeValidate={() =>
-            new Promise((resolve) => setTimeout(() => resolve(true), 10))
+            new Promise((resolve) => setTimeout(() => resolve(true), 50))
           }
         >
           {({ add, isValidating }) => (
@@ -409,7 +409,7 @@ test("field array should set isValidating with onSubmit validation", async () =>
           name={"people"}
           initialValue={[1]}
           onSubmitValidate={() =>
-            new Promise((resolve) => setTimeout(() => resolve(true), 10))
+            new Promise((resolve) => setTimeout(() => resolve(true), 50))
           }
         >
           {({ isValidating }) => (
