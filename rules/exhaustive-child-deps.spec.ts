@@ -14,7 +14,7 @@ describe("ESLint", () => {
       valid: [
         `
         <Form>
-          <div></div>
+          {() => "Hello"}
         </Form>
       `,
         "<div><div></div></div>",
@@ -22,13 +22,13 @@ describe("ESLint", () => {
       invalid: [
         {
           code: `
-            <Form>
-              <p></p>
-            </Form>
+        <Form>
+          {() => "Test"}
+        </Form>
           `,
           errors: [
             {
-              messageId: "incorrectField",
+              messageId: "exhaustiveChildDeps",
             },
           ],
         },

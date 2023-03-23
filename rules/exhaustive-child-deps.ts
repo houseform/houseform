@@ -1,4 +1,4 @@
-import { ESLintUtils } from "@typescript-eslint/utils";
+import { ESLintUtils, TSESTree } from "@typescript-eslint/utils";
 
 const createRule = ESLintUtils.RuleCreator(
   (name) => `https://hi.joshuakgoldberg.com`
@@ -9,22 +9,39 @@ export const rule = createRule({
     return {
       JSXElement(node) {
         if (
-          node.openingElement.name.type === "JSXIdentifier" &&
-          node.openingElement.name.name === "Form"
+          node.openingElement.name.type !== "JSXIdentifier" ||
+          node.openingElement.name.name !== "Form"
         ) {
-          if (
-            node.children.some(
-              (childNode) =>
-                childNode.type === "JSXElement" &&
-                childNode.openingElement.name.type === "JSXIdentifier" &&
-                childNode.openingElement.name.name === "p"
-            )
-          ) {
-            context.report({
-              messageId: "incorrectField",
-              node: node,
-            });
-          }
+          return;
+        }
+
+        const childFnNode = node.children.find(
+          (childNode): childNode is TSESTree.JSXExpressionContainer =>
+            childNode.type === "JSXExpressionContainer"
+        );
+
+        if (
+          !childFnNode ||
+          // TODO: Support `function() {}` declarations (?)
+          childFnNode.expression.type !== "ArrowFunctionExpression"
+        ) {
+          // TODO: Break this logic out to its own rule
+          context.report({
+            messageId: "missingChildFn",
+            node: node,
+          });
+          return;
+        }
+
+        if (childFnNode.expression.body.type !== "Literal") {
+          return;
+        }
+
+        if (childFnNode.expression.body.value === "Test") {
+          context.report({
+            messageId: "exhaustiveChildDeps",
+            node: node,
+          });
         }
       },
     };
@@ -37,7 +54,8 @@ export const rule = createRule({
       recommended: "warn",
     },
     messages: {
-      incorrectField: "Start this name with an upper-case letter.",
+      missingChildFn: "You are missing a child function",
+      exhaustiveChildDeps: "You are missing deps in the memoChild field",
     },
     type: "suggestion",
     schema: [],
