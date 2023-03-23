@@ -81,6 +81,35 @@ import { Form, Field } from "houseform";
 </Form>;
 ```
 
+### Displaying nested field errors in a form
+
+If you have nested fields, you're able to use the `errorsMap` to access the nested value:
+
+```jsx
+import { Form, Field } from "houseform";
+
+<Form onSubmit={() => {}}>
+  {({ submit, errorsMap }) => (
+    <div>
+      <Field name="name.first"></Field>
+      <Field name="name.second"></Field>
+      <button onClick={submit}>Submit</button>
+      <div>
+        <p>Name specific errors</p>
+        {errorsMap["name"]?.["first"]?.map((error) => (
+          <p>{error}</p>
+        ))}
+        {errorsMap["name"]?.["second"]?.map((error) => (
+          <p>{error}</p>
+        ))}
+      </div>
+    </div>
+  )}
+</Form>;
+```
+
+> You may run into TypeScript errors with this method. While `errorsMap`'s typings are intended to make usage of non-nested fields easy to access, it has special TypeScript typings to ensure nested types are typed safely for more specific usage. [Please refer to our TypeScript usage docs for more](/guides/typescript).
+
 ## Set an Error from Form Submit Function
 
 There are many times where you need to run validation on a submit. While HouseForm supports per-field submission validation using `onSubmitValidate` property, sometimes there's just no alternative to running validation in the `onSubmit` function.
