@@ -1,4 +1,5 @@
 import { ESLintUtils, TSESTree } from "@typescript-eslint/utils";
+import { FunctionScope } from "@typescript-eslint/scope-manager";
 
 const createRule = ESLintUtils.RuleCreator(
   (name) => `https://hi.joshuakgoldberg.com`
@@ -50,24 +51,41 @@ export const rule = createRule({
           // TODO: Support `function() {}` declarations (?)
           childFnNode.expression.type !== "ArrowFunctionExpression"
         ) {
-          // TODO: Break this logic out to its own rule
-          context.report({
-            messageId: "missingChildFn",
-            node: node,
-          });
           return;
         }
 
-        if (childFnNode.expression.body.type !== "Literal") {
+        const scope = context.getScope();
+
+        // I'm sorry for the `as never` :(
+        const innerFnScope = scope.childScopes[0] as never as FunctionScope;
+
+        const innerVariableNames = innerFnScope.through.map(
+          (reference) => reference.identifier.name
+        );
+
+        /**
+         * TODO: Don't assume all elements are `Identifier`s,
+         *  they could be spread elements, etc.
+         *
+         *  Cross-reference with Rules of React Hooks' exhaustive-deps rule
+         */
+        const memoChildVariableNames =
+          memoChildAttr.value.expression.elements.map(
+            (element) => (element as TSESTree.Identifier).name
+          );
+
+        if (
+          innerVariableNames.every((name) =>
+            memoChildVariableNames.includes(name)
+          )
+        ) {
           return;
         }
 
-        if (childFnNode.expression.body.value === "Test") {
-          context.report({
-            messageId: "exhaustiveChildDeps",
-            node: node,
-          });
-        }
+        context.report({
+          messageId: "exhaustiveChildDeps",
+          node: memoChildAttr,
+        });
       },
     };
   },
