@@ -170,19 +170,33 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
   }, [_isTouched, getFieldBoolean]);
 
   const reset = useCallback(() => {
-    formFieldsRef.current.forEach((field) => {
-      const value = field.props.resetWithValue || field.props.initialValue;
+    formFieldsRef.current
+      // Sort by depth so that we reset the deepest fields first
+      .sort((a, b) => {
+        return (
+          stringToPath(b.props.name).length - stringToPath(a.props.name).length
+        );
+      })
+      .forEach((field) => {
+        const value = field.props.resetWithValue || field.props.initialValue;
 
-      if (!!(field as FieldArrayInstance).setValues) {
-        console.log(field.value);
-        (field as FieldArrayInstance).setValues(value || []);
-      } else {
-        (field as FieldInstance).setValue(value || "");
-      }
-    });
+        const isFieldArray = (v: typeof field): v is FieldArrayInstance => {
+          return !!(v as FieldArrayInstance).setValues;
+        };
+
+        field.setErrors([]);
+        field.setIsTouched(false);
+        field.setIsDirty(false);
+        if (isFieldArray(field)) {
+          field.setValues(value || []);
+        } else {
+          field.setValue(value || "");
+        }
+      });
+    _setErrors([]);
+    _setIsValid(false);
     _setIsDirty(false);
     _setIsTouched(false);
-    _setErrors(null);
   }, [_setIsTouched, _setIsDirty, _setErrors]);
 
   const baseValue = useMemo(() => {
