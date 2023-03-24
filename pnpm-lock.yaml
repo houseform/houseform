@@ -44,10 +44,6 @@ specifiers:
   zod: ^3.20.2
   zod-formik-adapter: ^1.2.0
 
-dependencies:
-  final-form: 4.20.9
-  react-final-form: 6.5.9_final-form@4.20.9+react@18.2.0
-
 devDependencies:
   '@hookform/error-message': 2.0.1_c97e606e9ccc4a54ad0d307ca3f50fa8
   '@hookform/resolvers': 2.9.11_react-hook-form@7.43.1
@@ -69,11 +65,13 @@ devDependencies:
   eslint-config-react-app: 7.0.1_eslint@8.33.0+typescript@4.9.5
   eslint-plugin-prettier: 4.2.1_4c1eb4fa05dd20fbbe9c30f07b58126c
   eslint-plugin-react-hooks: 4.6.0_eslint@8.33.0
+  final-form: 4.20.9
   formik: 2.2.9_react@18.2.0
   jsdom: 21.1.0
   prettier: 2.8.3
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
+  react-final-form: 6.5.9_final-form@4.20.9+react@18.2.0
   react-hook-form: 7.43.1_react@18.2.0
   react-native-web: 0.18.12_react-dom@18.2.0+react@18.2.0
   semantic-release: 20.1.0
@@ -1520,6 +1518,7 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.13.11
+    dev: true
 
   /@babel/template/7.20.7:
     resolution: {integrity: sha512-8SegXApWe6VoNw0r9JHpSteLKTpTiLZ4rMlGIm9JQ18KiCtyQiAMEazujAHrUS5flrcqYZa75ukev3P6QmUwUw==}
@@ -4634,7 +4633,7 @@ packages:
     resolution: {integrity: sha512-shA1X/7v8RmukWMNRHx0l7+Bm41hOivY78IvOiBrPVHjyWFIyqqIEMCz7yTVRc9Ea+EU4WkZ5r4MH6whSo5taw==}
     dependencies:
       '@babel/runtime': 7.20.13
-    dev: false
+    dev: true
 
   /find-up/2.1.0:
     resolution: {integrity: sha512-NWzkk0jSJtTt08+FBFMvXoeZnOJD+jTtsRmBYbAIzJdX6l7dLgR7CTubCM5/eDdPUBvLCeVasP1brfVR/9/EZQ==}
@@ -6825,7 +6824,7 @@ packages:
       '@babel/runtime': 7.20.13
       final-form: 4.20.9
       react: 18.2.0
-    dev: false
+    dev: true
 
   /react-hook-form/7.43.1_react@18.2.0:
     resolution: {integrity: sha512-+s3+s8LLytRMriwwuSqeLStVjRXFGxgjjx2jED7Z+wz1J/88vpxieRQGvJVvzrzVxshZ0BRuocFERb779m2kNg==}
@@ -6965,6 +6964,7 @@ packages:
 
   /regenerator-runtime/0.13.11:
     resolution: {integrity: sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==}
+    dev: true
 
   /regenerator-transform/0.15.1:
     resolution: {integrity: sha512-knzmNAcuyxV+gQCufkYcvOqX/qIIfHLv0u5x79kRxuGojfYVky1f15TzZEu2Avte8QGepvUNTnLskf8E6X6Vyg==}

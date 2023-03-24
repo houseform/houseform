@@ -1,11 +1,10 @@
 import { describe, bench } from "vitest";
-
 import { Field, Form } from "houseform";
 import { cleanup, findByTestId, render } from "@testing-library/react";
 import { Formik, Field as FormikField } from "formik";
 import { FieldProps } from "formik/dist/Field";
 import { Controller, useForm } from "react-hook-form";
-import { Form, Field } from 'react-final-form'
+import { Form as ReactFinalForm, Field as ReactFinalFormField} from 'react-final-form'
 
 const arr = Array.from({ length: 1000 }, (_, i) => i);
 
@@ -115,28 +114,26 @@ function ReactHookFormInitialRenderBenchmark() {
 }
 
 function ReactFinalFormInitialRenderBenchmark() {
-
+  
   return (
-    <Form
-      onSubmit={onSubmit}
-      validate={validate}
-      render={({ handleSubmit, name }) => (
-        <form onSubmit={handleSubmit}>
+    <ReactFinalForm
+      onSubmit={(values) => {}}
+    >
+      {() => (
+        <>
           {arr.map((num, i) => (
-            <Field
-              name={name}
-              render={({ input, meta }) => (
-                <div>
-                  <label>{name}</label>
-                  <textarea {...input} />
-                  {meta.touched && meta.error && <span>{meta.error}</span>}
-                </div>
+              <ReactFinalFormField name={`num[${i}]`}>
+              {({ input, meta }) => (
+                <>
+                  <input {...input} type="text" placeholder="First Name" />
+                  {meta.error && meta.touched && <span>{meta.error}</span>}
+                </>
               )}
-            />
+            </ReactFinalFormField>
           ))}
-        </form>
+        </>
       )}
-    />
+    </ReactFinalForm>
   );
 }
 
