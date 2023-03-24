@@ -117,5 +117,9 @@
         "prerelease": true
       }
     ]
+  },
+  "dependencies": {
+    "final-form": "^4.20.9",
+    "react-final-form": "^6.5.9"
   }
 }
