@@ -17,6 +17,7 @@ export interface FieldInstanceProps<T = any, F = any>
   onBlurValidate?: ValidationFunction<T, F>;
   onMountValidate?: ValidationFunction<T, F>;
   initialValue?: T;
+  resetWithValue?: T;
   memoChild?: any[];
 }
 
