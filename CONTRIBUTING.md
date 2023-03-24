@@ -23,6 +23,19 @@ Thanks for being willing to contribute!
 > all of your pull request branches based on this `main` branch. Whenever you
 > want to update your version of `main`, do a regular `git pull`.
 
+## Common Commands
+
+- `pnpm dev`: Start the development server for the `example` folder app
+- `pnpm build`: Build `houseform` from the `lib` folder
+- `pnpm bench`: Build benchmarks against `houseform` and other form libraries
+- `pnpm test`: Run integration test
+- `pnpm coverage`: Run integration test and get test coverage
+- `pnpm typecheck`: Run the type tests
+- `pnpm lint`: Run the linter
+- `pnpm format`: Run the linter and format all code
+- `pnpm docs:dev`: Start the development server for docs
+- `pnpm docs:build`: Build the docs site
+
 ## Committing and Pushing changes
 
 Please make sure to run the tests before you commit your changes. You can run
