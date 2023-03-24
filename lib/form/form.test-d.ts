@@ -1,4 +1,4 @@
-import { FieldArrayInstance, FieldInstance, Form } from "houseform";
+import { FieldArrayInstance, FieldInstance, Form, ErrorsMap } from "houseform";
 import { assertType } from "vitest";
 import { ComponentProps } from "react";
 
@@ -10,6 +10,14 @@ interface TestObject {
     };
   };
 }
+
+const specificErrorMap = 0 as unknown as ErrorsMap<TestObject>;
+const defaultErrorMap = 0 as unknown as ErrorsMap;
+
+assertType<string[]>(specificErrorMap.other.hello.world);
+assertType<string[]>(specificErrorMap.test);
+assertType<string[]>(defaultErrorMap.other);
+assertType<string[]>(defaultErrorMap.one);
 
 const FormProps = 0 as unknown as ComponentProps<typeof Form<TestObject>>;
 

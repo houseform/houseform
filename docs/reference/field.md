@@ -34,6 +34,7 @@ A field is the primitive for every input that you'd like to display to the user.
 | `errors`       | `string[]`                                                   | The list of errors currently applied to the field.           |
 | `setErrors`    | `(errors: string[]) => void`                                 | A way to set the errors present on the field.                |
 | `isValid`      | `boolean`                                                    | A helper property to check if `errors` is an empty array.    |
+| `isValidating` | `boolean`                                                    | A helper property to check if the field is running a validation.    |
 | `isTouched`    | `boolean`                                                    | A boolean to say if the field has been focused and blurred, regardless of user input. |
 | `setIsTouched` | `(val: boolean) => void`                                     |                                                              |
 | `isDirty`      | `boolean`                                                    | A boolean to say if the field has had any kind of user input. |

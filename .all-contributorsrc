@@ -97,6 +97,35 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "joaom00",
+      "name": "João Pedro Magalhães",
+      "avatar_url": "https://avatars.githubusercontent.com/u/48808846?v=4",
+      "profile": "https://jpedromagalhaes.vercel.app/",
+      "contributions": [
+        "doc",
+        "test",
+        "code"
+      ]
+    },
+    {
+      "login": "caxco93",
+      "name": "Orlando Benjamin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3190666?v=4",
+      "profile": "https://bejo.dev/",
+      "contributions": [
+        "test"
+      ]
+    },
+    {
+      "login": "mostafaegouda",
+      "name": "Mostafa Gouda",
+      "avatar_url": "https://avatars.githubusercontent.com/u/100293809?v=4",
+      "profile": "https://github.com/mostafaegouda",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "repoHost": "https://github.com",

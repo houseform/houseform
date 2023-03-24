@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext, useContext } from "react";
 import { FieldArrayInstance } from "./types";
 
 /* c8 ignore start */
@@ -13,6 +13,7 @@ export const initialFieldArrayContext = {
   setErrors: () => {},
   setIsDirty: () => {},
   isValid: false,
+  isValidating: false,
   setIsTouched: () => {},
   isDirty: false,
   isTouched: false,
@@ -24,7 +25,12 @@ export const initialFieldArrayContext = {
   swap: () => {},
   replace: () => {},
   validate: () => {},
-} as FieldArrayInstance;
+  _setIsValidating: () => {},
+} as FieldArrayInstance as unknown;
 /* c8 ignore stop */
 
 export const FieldArrayContext = createContext(initialFieldArrayContext);
+
+export const useFieldArrayContext = <T>() => {
+  return useContext(FieldArrayContext) as FieldArrayInstance<T>;
+};

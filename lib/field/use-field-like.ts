@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import type { ZodError } from "zod";
-import { FormContext } from "../form";
+import { FormContext, useFormContext } from "../form";
 import { FieldInstance } from "./types";
 import { FieldArrayInstance } from "../field-array";
 import { getValidationError, stringToPath, validate } from "../utils";
@@ -26,7 +26,7 @@ export function useListenToListenToArray<T>({
   runFieldValidation,
   valueRef,
 }: UseListenToListenToArrayProps<T>) {
-  const formContext = useContext(FormContext);
+  const formContext = useFormContext<T>();
 
   useIsomorphicLayoutEffect(() => {
     if (!listenTo || listenTo.length === 0) return;
@@ -119,11 +119,12 @@ export const useFieldLike = <
     return stringToPath(name).join(".");
   }, [name]);
 
-  const formContext = useContext(FormContext);
+  const formContext = useFormContext<F>();
 
   const [errors, setErrors] = useState<string[]>([]);
   const [isTouched, setIsTouched] = useState<boolean>(false);
   const [isDirty, setIsDirty] = useState<boolean>(false);
+  const [isValidating, setIsValidating] = useState<boolean>(false);
 
   const runFieldValidation = useCallback(
     (
@@ -143,12 +144,16 @@ export const useFieldLike = <
           ?.onMountValidate;
       }
       if (validationFn) {
+        setIsValidating(true);
         validate(val as T, formContext, validationFn)
           .then(() => {
             setErrors([]);
           })
           .catch((error: string | ZodError) => {
             setErrors(getValidationError(error as ZodError | string));
+          })
+          .finally(() => {
+            setIsValidating(false);
           });
       }
     },
@@ -231,9 +236,11 @@ export const useFieldLike = <
     isTouched,
     isDirty,
     isValid,
+    isValidating,
     runFieldValidation,
     valueRef,
     validate: exportedValidate,
     _normalizedDotName,
+    _setIsValidating: setIsValidating,
   };
 };

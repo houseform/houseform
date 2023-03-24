@@ -1,7 +1,12 @@
 import { expect, test, vi } from "vitest";
 import { useRef, useState } from "react";
-import { Field, FieldArray, Form } from "houseform";
-import { cleanup, render, waitFor } from "@testing-library/react";
+import { ErrorsMap, Field, FieldArray, Form } from "houseform";
+import {
+  cleanup,
+  render,
+  waitFor,
+  waitForElementToBeRemoved,
+} from "@testing-library/react";
 import { z } from "zod";
 import { FormInstance } from "houseform";
 import * as React from "react";
@@ -1055,6 +1060,110 @@ test("Form's memoChild should prevent re-renders", async () => {
   );
 
   expect(formMemoHasRendered).toHaveBeenCalledTimes(1);
+});
+
+test("Form errorsMap should show specific field errors only.", async () => {
+  const SubmitValues = () => {
+    return (
+      <Form>
+        {({ errorsMap }) => (
+          <>
+            <Field<string>
+              name={"email"}
+              initialValue=""
+              onMountValidate={z
+                .string()
+                .min(1, "Should have a min length of 1")}
+            >
+              {() => <></>}
+            </Field>
+            <Field<string>
+              name={"email2"}
+              initialValue=""
+              onMountValidate={z
+                .string()
+                .min(3, "Should have a min length of 3")}
+            >
+              {() => <></>}
+            </Field>
+            {errorsMap["email"]?.map((error) => (
+              <p key={error}>{error}</p>
+            ))}
+          </>
+        )}
+      </Form>
+    );
+  };
+
+  const { findByText, queryByText } = render(<SubmitValues />);
+
+  expect(await findByText("Should have a min length of 1")).toBeInTheDocument();
+  expect(queryByText("Should have a min length of 3")).not.toBeInTheDocument();
+});
+
+test("Form submission should receive initially empty errorsMap object", async () => {
+  const Comp = () => {
+    const [formErrorsMap, setFormErrorsMap] = useState<ErrorsMap | null>(null);
+
+    if (formErrorsMap !== null) {
+      return <p>Form errorsMap: {JSON.stringify(formErrorsMap)}</p>;
+    }
+    return (
+      <Form
+        onSubmit={(values, form) => {
+          setFormErrorsMap(form.errorsMap);
+        }}
+      >
+        {({ submit }) => <button onClick={submit}>Submit</button>}
+      </Form>
+    );
+  };
+
+  const { getByText, container } = render(<Comp />);
+
+  user.click(getByText("Submit"));
+
+  await waitFor(() => expect(getByText(/Form errors/)).toBeInTheDocument());
+
+  expect(container).toMatchInlineSnapshot(`
+    <div>
+      <p>
+        Form errorsMap: 
+        {}
+      </p>
+    </div>
+  `);
+});
+
+test("Form should set isValidating proper", async () => {
+  const { getByText, queryByText } = render(
+    <Form>
+      {({ isValidating, submit }) => (
+        <>
+          <Field
+            name={"test"}
+            onSubmitValidate={() =>
+              new Promise((resolve) => setTimeout(() => resolve(true), 50))
+            }
+          >
+            {({ value, setValue }) => (
+              <input value={value} onChange={(e) => setValue(e.target.value)} />
+            )}
+          </Field>
+          <button onClick={submit}>Submit</button>
+          {isValidating && <p>Validating</p>}
+        </>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Validating")).not.toBeInTheDocument();
+
+  await user.click(getByText("Submit"));
+
+  expect(getByText("Validating")).toBeInTheDocument();
+
+  await waitForElementToBeRemoved(() => queryByText("Validating"));
 });
 
 test("Form should reset with no backup values correctly", async () => {

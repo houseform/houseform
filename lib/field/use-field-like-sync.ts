@@ -1,7 +1,7 @@
 import { MutableRefObject, useContext } from "react";
 import { FieldInstance } from "./types";
 import { FieldArrayInstance } from "../field-array";
-import { FormContext } from "../form";
+import { useFormContext } from "../form";
 import useIsomorphicLayoutEffect from "../utils/use-isomorphic-layout-effect";
 
 export interface UseFieldLikeSyncProps<
@@ -16,6 +16,7 @@ export interface UseFieldLikeSyncProps<
   isDirty: TT["isDirty"];
   isValid: TT["isValid"];
   isTouched: TT["isTouched"];
+  isValidating: TT["isValidating"];
 }
 
 export const useFieldLikeSync = <
@@ -30,8 +31,9 @@ export const useFieldLikeSync = <
   isDirty,
   isValid,
   isTouched,
+  isValidating,
 }: UseFieldLikeSyncProps<T, F, TT>) => {
-  const formContext = useContext(FormContext);
+  const formContext = useFormContext<F>();
 
   /**
    * Add mutable ref to formFieldsRef
@@ -72,6 +74,10 @@ export const useFieldLikeSync = <
     mutableRef.current.isTouched = isTouched;
   }, [isTouched, mutableRef]);
 
+  useIsomorphicLayoutEffect(() => {
+    mutableRef.current.isValidating = isValidating;
+  }, [isValidating, mutableRef]);
+
   /**
    * Recompute form errors when field errors change
    */
@@ -86,4 +92,8 @@ export const useFieldLikeSync = <
   useIsomorphicLayoutEffect(() => {
     formContext.recomputeIsDirty();
   }, [isDirty, formContext.recomputeIsDirty]);
+
+  useIsomorphicLayoutEffect(() => {
+    formContext.recomputeIsValidating();
+  }, [isValidating, formContext.recomputeIsValidating]);
 };

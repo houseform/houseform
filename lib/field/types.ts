@@ -27,6 +27,7 @@ export interface FieldInstance<T = any, F = any> {
   onBlur: () => void;
   props: FieldInstanceProps<T, F>;
   _normalizedDotName: string;
+  _setIsValidating: (val: boolean) => void;
   setErrors: (error: string[]) => void;
   errors: string[];
   isValid: boolean;
@@ -34,6 +35,7 @@ export interface FieldInstance<T = any, F = any> {
   isTouched: boolean;
   setIsDirty: (val: boolean) => void;
   isDirty: boolean;
+  isValidating: boolean;
   validate: (
     validationType: "onChangeValidate" | "onBlurValidate" | "onMountValidate"
   ) => void;
