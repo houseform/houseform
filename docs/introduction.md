@@ -46,9 +46,21 @@ Good question, let's break that down:
 
 ## Installation
 
-```shell
+::: code-group
+
+```shell [npm]
 npm install houseform zod
 ```
+
+```shell [yarn]
+yarn add houseform zod
+```
+
+```shell [pnpm]
+pnpm add houseform zod
+```
+
+:::
 
 > Zod is a peer dependency of this project.
 
