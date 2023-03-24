@@ -5,6 +5,7 @@
  *   //         -> `props.lol`
  *   //         -> `props.huh` -> `props.huh.okay`
  *   //         -> `props.wow`
+ *   @see https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/src/ExhaustiveDeps.js#L1325-L1333
  *  2) Ignore stable references
  *   // Next we'll define a few helpers that helps us
  *   // tell if some values don't have to be declared as deps.
@@ -19,15 +20,17 @@
  *   // const onStuff = useEffectEvent(() => {})
  *   //       ^^^ true for this reference
  *   // False for everything else.
- *   //
+ *   @see https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/src/ExhaustiveDeps.js#L151-L163
  *   //
  *   // Some are just functions that don't reference anything dynamic.
+ *   @see https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/src/ExhaustiveDeps.js#L296
  *  3) Warn about infinite loops
  *   // `React Hook ${reactiveHookName} contains a call to '${setStateInsideEffectWithoutDeps}'. ` +
  *   // `Without a list of dependencies, this can lead to an infinite chain of updates. ` +
  *   // `To fix this, pass [` +
  *   // suggestedDependencies.join(', ') +
  *   // `] as a second argument to the ${reactiveHookName} Hook.`,
+ *   @see https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/src/ExhaustiveDeps.js#L595-L600
  */
 import { ESLintUtils, TSESTree } from "@typescript-eslint/utils";
 import { FunctionScope } from "@typescript-eslint/scope-manager";
@@ -103,8 +106,6 @@ export const rule = createRule({
          *
          * Don't just assume Identifiers
          *  Cross-reference with Rules of React Hooks' exhaustive-deps rule
-         *  @see https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/src/ExhaustiveDeps.js#L738-L749
-         * @see https://github.com/facebook/react/blob/main/packages/eslint-plugin-react-hooks/src/ExhaustiveDeps.js#L1325-L1333
          */
         const memoChildVariableNames =
           memoChildAttr.value.expression.elements.map(
