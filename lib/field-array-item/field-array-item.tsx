@@ -1,17 +1,13 @@
-import React, {
+import {
   ForwardedRef,
   forwardRef,
   memo,
   useCallback,
-  useContext,
   useImperativeHandle,
   useMemo,
   useRef,
 } from "react";
-import {
-  FieldArrayContext,
-  useFieldArrayContext,
-} from "../field-array/context";
+import { useFieldArrayContext } from "../field-array/context";
 import {
   FieldInstance,
   FieldInstanceProps,
@@ -20,8 +16,7 @@ import {
   useListenToListenToArray,
 } from "../field";
 import { fillPath, getPath, stringToPath } from "../utils";
-import { FormContext, useFormContext } from "../form";
-import { FieldArrayInstance } from "../field-array";
+import { useFormContext } from "../form";
 
 export interface FieldArrayItemRenderProps<T = any, F = any>
   extends FieldInstanceProps<T, F> {
@@ -33,7 +28,7 @@ export function FieldArrayItemComp<T = any, F = any>(
   props: FieldArrayItemRenderProps<T, F>,
   ref: ForwardedRef<FieldInstance<T, F>>
 ) {
-  const { children, memoChild } = props;
+  const { children, memoChild, preserveValue } = props;
 
   const {
     _normalizedDotName,
@@ -185,10 +180,10 @@ export function FieldArrayItemComp<T = any, F = any>(
     validate,
   ]);
 
-  const mutableRef = useRef<FieldInstance<T>>(fieldArrayInstance);
+  const fieldInstanceRef = useRef<FieldInstance<T>>(fieldArrayInstance);
 
   useFieldLikeSync<T, F, FieldInstance<T, F>>({
-    mutableRef,
+    fieldInstanceRef,
     props,
     value,
     errors,
@@ -196,6 +191,7 @@ export function FieldArrayItemComp<T = any, F = any>(
     isDirty,
     isTouched,
     isValidating,
+    preserveValue,
   });
 
   useImperativeHandle(ref, () => fieldArrayInstance, [fieldArrayInstance]);

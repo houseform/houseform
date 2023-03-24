@@ -13,6 +13,7 @@ export interface FieldArrayInstanceProps<T = any, F = any>
   extends FieldInstanceBaseProps<T, F> {
   initialValue?: T[];
   memoChild?: any[];
+  preserveValue?: boolean;
 }
 
 export interface FieldArrayInstance<T = any, F = any>

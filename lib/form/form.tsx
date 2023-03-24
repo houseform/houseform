@@ -36,17 +36,26 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
 
   const getFieldValue = useCallback(
     (name: string) => {
-      const found = formFieldsRef.current.find(
-        (field) => field.props.name === name
-      );
-      if (found) return found;
+      const formFields = formFieldsRef.current;
       const normalizedName = stringToPath(name).join(".");
-      return formFieldsRef.current.find(
+      return formFields.find(
         (field) => field._normalizedDotName === normalizedName
       );
     },
     [formFieldsRef]
   ) as FormInstance<T>["getFieldValue"];
+
+  const deleteField = useCallback(
+    (name: string) => {
+      const formFields = formFieldsRef.current;
+      const normalizedName = stringToPath(name).join(".");
+      const fieldInstance = formFields.find(
+        (field) => field._normalizedDotName === normalizedName
+      );
+      if (fieldInstance) formFields.splice(formFields.indexOf(fieldInstance));
+    },
+    [formFieldsRef]
+  ) as FormInstance<T>["deleteField"];
 
   const onChangeListenerRefs = useRef({} as Record<string, (() => void)[]>);
   const onBlurListenerRefs = useRef({} as Record<string, (() => void)[]>);
@@ -214,6 +223,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
   const baseValue = useMemo(() => {
     return {
       getFieldValue,
+      deleteField,
       onChangeListenerRefs,
       onBlurListenerRefs,
       onMountListenerRefs,
@@ -248,6 +258,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     };
   }, [
     getFieldValue,
+    deleteField,
     isSubmitted,
     setIsTouched,
     setIsDirty,
@@ -272,14 +283,11 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
         const runValidationType = async (
           type: "onChangeValidate" | "onSubmitValidate" | "onBlurValidate"
         ) => {
-          if (!formField.props[type as "onChangeValidate"]) return true;
+          const validator = formField.props[type as "onChangeValidate"];
+          if (!validator) return true;
           try {
             if (type === "onSubmitValidate") formField._setIsValidating(true);
-            await validate(
-              formField.value,
-              baseValue,
-              formField.props[type as "onChangeValidate"]!
-            );
+            await validate(formField.value, baseValue, validator);
             return true;
           } catch (error) {
             formField.setErrors(getValidationError(error as ZodError | string));

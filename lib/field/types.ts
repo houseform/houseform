@@ -18,6 +18,7 @@ export interface FieldInstanceProps<T = any, F = any>
   onMountValidate?: ValidationFunction<T, F>;
   initialValue?: T;
   memoChild?: any[];
+  preserveValue?: boolean;
 }
 
 export interface FieldInstance<T = any, F = any> {

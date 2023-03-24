@@ -1,4 +1,4 @@
-import { MutableRefObject, useContext } from "react";
+import { MutableRefObject } from "react";
 import { FieldInstance } from "./types";
 import { FieldArrayInstance } from "../field-array";
 import { useFormContext } from "../form";
@@ -9,7 +9,7 @@ export interface UseFieldLikeSyncProps<
   F,
   TT extends FieldInstance<T, F> | FieldArrayInstance<T, F>
 > {
-  mutableRef: MutableRefObject<TT>;
+  fieldInstanceRef: MutableRefObject<TT>;
   props: TT["props"];
   value: TT["value"];
   errors: TT["errors"];
@@ -17,6 +17,7 @@ export interface UseFieldLikeSyncProps<
   isValid: TT["isValid"];
   isTouched: TT["isTouched"];
   isValidating: TT["isValidating"];
+  preserveValue?: boolean;
 }
 
 export const useFieldLikeSync = <
@@ -24,7 +25,7 @@ export const useFieldLikeSync = <
   F,
   TT extends FieldInstance<T, F> | FieldArrayInstance<T, F>
 >({
-  mutableRef,
+  fieldInstanceRef,
   props,
   value,
   errors,
@@ -32,6 +33,7 @@ export const useFieldLikeSync = <
   isValid,
   isTouched,
   isValidating,
+  preserveValue,
 }: UseFieldLikeSyncProps<T, F, TT>) => {
   const formContext = useFormContext<F>();
 
@@ -39,44 +41,48 @@ export const useFieldLikeSync = <
    * Add mutable ref to formFieldsRef
    */
   useIsomorphicLayoutEffect(() => {
-    mutableRef.current.props = props;
-    const newMutable = mutableRef.current;
-    formContext.formFieldsRef.current.push(newMutable);
+    fieldInstanceRef.current.props = props;
+    const fieldInstance = fieldInstanceRef.current;
+    const formFields = formContext.formFieldsRef.current;
+    const found = formFields.find((field) => field === fieldInstance);
+    if (!found) formFields.push(fieldInstance);
 
-    return () => {
-      formContext.formFieldsRef.current.splice(
-        formContext.formFieldsRef.current.indexOf(newMutable),
-        1
-      );
-    };
-  }, [formContext.formFieldsRef, mutableRef, props]);
+    if (!preserveValue) {
+      return () => {
+        formContext.formFieldsRef.current.splice(
+          formContext.formFieldsRef.current.indexOf(fieldInstance),
+          1
+        );
+      };
+    }
+  }, [formContext.formFieldsRef, fieldInstanceRef, props, preserveValue]);
 
   /**
    * Sync the values with the mutable ref
    */
   useIsomorphicLayoutEffect(() => {
-    mutableRef.current.value = value;
-  }, [mutableRef, value]);
+    fieldInstanceRef.current.value = value;
+  }, [fieldInstanceRef, value]);
 
   useIsomorphicLayoutEffect(() => {
-    mutableRef.current.errors = errors;
-  }, [errors, mutableRef]);
+    fieldInstanceRef.current.errors = errors;
+  }, [errors, fieldInstanceRef]);
 
   useIsomorphicLayoutEffect(() => {
-    mutableRef.current.isDirty = isDirty;
-  }, [isDirty, mutableRef]);
+    fieldInstanceRef.current.isDirty = isDirty;
+  }, [isDirty, fieldInstanceRef]);
 
   useIsomorphicLayoutEffect(() => {
-    mutableRef.current.isValid = isValid;
-  }, [isValid, mutableRef]);
+    fieldInstanceRef.current.isValid = isValid;
+  }, [isValid, fieldInstanceRef]);
 
   useIsomorphicLayoutEffect(() => {
-    mutableRef.current.isTouched = isTouched;
-  }, [isTouched, mutableRef]);
+    fieldInstanceRef.current.isTouched = isTouched;
+  }, [isTouched, fieldInstanceRef]);
 
   useIsomorphicLayoutEffect(() => {
-    mutableRef.current.isValidating = isValidating;
-  }, [isValidating, mutableRef]);
+    fieldInstanceRef.current.isValidating = isValidating;
+  }, [isValidating, fieldInstanceRef]);
 
   /**
    * Recompute form errors when field errors change
