@@ -49,10 +49,7 @@ export const useFieldLikeSync = <
 
     if (!preserveValue) {
       return () => {
-        formContext.formFieldsRef.current.splice(
-          formContext.formFieldsRef.current.indexOf(fieldInstance),
-          1
-        );
+        formFields.splice(formFields.indexOf(fieldInstance), 1);
       };
     }
   }, [formContext.formFieldsRef, fieldInstanceRef, props, preserveValue]);
