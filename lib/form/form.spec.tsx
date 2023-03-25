@@ -1165,3 +1165,45 @@ test("Form should set isValidating proper", async () => {
 
   await waitForElementToBeRemoved(() => queryByText("Validating"));
 });
+
+test("Form `deleteField` should remove field", async () => {
+  const Comp = () => {
+    const [show, setShow] = useState(true);
+
+    return (
+      <Form>
+        {({ getFieldValue, deleteField }) => (
+          <div>
+            <button onClick={() => setShow(false)}>Unmount</button>
+            <button onClick={() => deleteField("email")}>Delete field</button>
+            {show && (
+              <Field<string>
+                name={"email"}
+                initialValue="emailHere"
+                preserveValue
+              >
+                {({ value }) => <input value={value} />}
+              </Field>
+            )}
+            <p>{getFieldValue("email")?.value}</p>
+          </div>
+        )}
+      </Form>
+    );
+  };
+
+  const { rerender, getByText, queryByText } = render(<Comp />);
+
+  rerender(<Comp />);
+  expect(getByText("emailHere")).toBeInTheDocument();
+
+  await user.click(getByText("Unmount"));
+
+  rerender(<Comp />);
+  expect(getByText("emailHere")).toBeInTheDocument();
+
+  await user.click(getByText("Delete field"));
+
+  rerender(<Comp />);
+  expect(queryByText("emailHere")).not.toBeInTheDocument();
+});
