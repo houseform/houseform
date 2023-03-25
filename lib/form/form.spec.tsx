@@ -1166,44 +1166,306 @@ test("Form should set isValidating proper", async () => {
   await waitForElementToBeRemoved(() => queryByText("Validating"));
 });
 
-test("Form `deleteField` should remove field", async () => {
-  const Comp = () => {
-    const [show, setShow] = useState(true);
-
+test("Form should reset with no backup values correctly", async () => {
+  const ResetValues = () => {
     return (
-      <Form>
-        {({ getFieldValue, deleteField }) => (
-          <div>
-            <button onClick={() => setShow(false)}>Unmount</button>
-            <button onClick={() => deleteField("email")}>Delete field</button>
-            {show && (
-              <Field<string>
-                name={"email"}
-                initialValue="emailHere"
-                preserveValue
-              >
-                {({ value }) => <input value={value} />}
-              </Field>
-            )}
-            <p>{getFieldValue("email")?.value}</p>
-          </div>
+      <Form
+        onSubmit={(_values, { reset }) => {
+          reset();
+        }}
+      >
+        {({ submit, isDirty, isTouched }) => (
+          <>
+            <Field<string> name={"test['other']['email']"}>
+              {({ value, setValue }) => (
+                <input
+                  placeholder="Email"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+            <Field<string> name={"test['other']['password']"}>
+              {({ value, setValue }) => (
+                <input
+                  placeholder="Password"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+            <button onClick={submit}>Submit</button>
+            <p>{isDirty ? "isDirty" : "isNotDirty"}</p>
+            <p>{isTouched ? "isTouched" : "isNotTouched"}</p>
+          </>
         )}
       </Form>
     );
   };
 
-  const { rerender, getByText, queryByText } = render(<Comp />);
+  const { getByText, container, getByPlaceholderText } = render(
+    <ResetValues />
+  );
 
-  rerender(<Comp />);
-  expect(getByText("emailHere")).toBeInTheDocument();
+  await user.type(getByPlaceholderText("Email"), "test");
+  await user.type(getByPlaceholderText("Password"), "test");
 
-  await user.click(getByText("Unmount"));
+  await user.click(getByText("Submit"));
 
-  rerender(<Comp />);
-  expect(getByText("emailHere")).toBeInTheDocument();
+  await waitFor(() =>
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        <input
+          placeholder="Email"
+          value=""
+        />
+        <input
+          placeholder="Password"
+          value=""
+        />
+        <button>
+          Submit
+        </button>
+        <p>
+          isNotDirty
+        </p>
+        <p>
+          isNotTouched
+        </p>
+      </div>
+      `)
+  );
+});
 
-  await user.click(getByText("Delete field"));
+test("Form should reset with initial values correctly", async () => {
+  const ResetValues = () => {
+    return (
+      <Form
+        onSubmit={(_values, { reset }) => {
+          reset();
+        }}
+      >
+        {({ submit, isDirty, isTouched }) => (
+          <>
+            <Field<string>
+              name={"test['other']['email']"}
+              initialValue="initial@email.com"
+            >
+              {({ value, setValue }) => (
+                <input
+                  placeholder="Email"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+            <Field<string>
+              name={"test['other']['password']"}
+              initialValue="password"
+            >
+              {({ value, setValue }) => (
+                <input
+                  placeholder="Password"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+            <button onClick={submit}>Submit</button>
+            <p>{isDirty ? "isDirty" : "isNotDirty"}</p>
+            <p>{isTouched ? "isTouched" : "isNotTouched"}</p>
+          </>
+        )}
+      </Form>
+    );
+  };
 
-  rerender(<Comp />);
-  expect(queryByText("emailHere")).not.toBeInTheDocument();
+  const { getByText, container, getByPlaceholderText } = render(
+    <ResetValues />
+  );
+
+  await user.type(getByPlaceholderText("Email"), "test");
+  await user.type(getByPlaceholderText("Password"), "test");
+
+  await user.click(getByText("Submit"));
+
+  await waitFor(() =>
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        <input
+          placeholder="Email"
+          value="initial@email.com"
+        />
+        <input
+          placeholder="Password"
+          value="password"
+        />
+        <button>
+          Submit
+        </button>
+        <p>
+          isNotDirty
+        </p>
+        <p>
+          isNotTouched
+        </p>
+      </div>
+      `)
+  );
+});
+
+test("Form should reset with resetWithValues correctly", async () => {
+  const ResetValues = () => {
+    return (
+      <Form
+        onSubmit={(_values, { reset }) => {
+          reset();
+        }}
+      >
+        {({ submit, isDirty, isTouched }) => (
+          <>
+            <Field<string>
+              name={"test['other']['email']"}
+              resetWithValue="initial@email.com"
+            >
+              {({ value, setValue }) => (
+                <input
+                  placeholder="Email"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+            <Field<string>
+              name={"test['other']['password']"}
+              resetWithValue="password"
+            >
+              {({ value, setValue }) => (
+                <input
+                  placeholder="Password"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+            <button onClick={submit}>Submit</button>
+            <p>{isDirty ? "isDirty" : "isNotDirty"}</p>
+            <p>{isTouched ? "isTouched" : "isNotTouched"}</p>
+          </>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByText, container, getByPlaceholderText } = render(
+    <ResetValues />
+  );
+
+  await user.type(getByPlaceholderText("Email"), "test");
+  await user.type(getByPlaceholderText("Password"), "test");
+
+  await user.click(getByText("Submit"));
+
+  await waitFor(() =>
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        <input
+          placeholder="Email"
+          value="initial@email.com"
+        />
+        <input
+          placeholder="Password"
+          value="password"
+        />
+        <button>
+          Submit
+        </button>
+        <p>
+          isNotDirty
+        </p>
+        <p>
+          isNotTouched
+        </p>
+      </div>
+      `)
+  );
+});
+
+test("Form should reset with resetWithValues and initial values correctly", async () => {
+  const ResetValues = () => {
+    return (
+      <Form
+        onSubmit={(_values, { reset }) => {
+          reset();
+        }}
+      >
+        {({ submit, isDirty, isTouched }) => (
+          <>
+            <Field<string>
+              name={"test['other']['email']"}
+              initialValue="wrong@email.com"
+              resetWithValue="initial@email.com"
+            >
+              {({ value, setValue }) => (
+                <input
+                  placeholder="Email"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+            <Field<string>
+              name={"test['other']['password']"}
+              initialValue="wrong password"
+              resetWithValue="password"
+            >
+              {({ value, setValue }) => (
+                <input
+                  placeholder="Password"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+            <button onClick={submit}>Submit</button>
+            <p>{isDirty ? "isDirty" : "isNotDirty"}</p>
+            <p>{isTouched ? "isTouched" : "isNotTouched"}</p>
+          </>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByText, container, getByPlaceholderText } = render(
+    <ResetValues />
+  );
+
+  await user.type(getByPlaceholderText("Email"), "test");
+  await user.type(getByPlaceholderText("Password"), "test");
+
+  await user.click(getByText("Submit"));
+
+  await waitFor(() =>
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        <input
+          placeholder="Email"
+          value="initial@email.com"
+        />
+        <input
+          placeholder="Password"
+          value="password"
+        />
+        <button>
+          Submit
+        </button>
+        <p>
+          isNotDirty
+        </p>
+        <p>
+          isNotTouched
+        </p>
+      </div>
+      `)
+  );
 });

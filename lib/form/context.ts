@@ -16,6 +16,7 @@ export const initialFormContext = {
   getFieldValue: () => {},
   deleteField: () => {},
   setIsSubmitted: () => {},
+  reset: () => {},
   onChangeListenerRefs: { current: {} },
   onBlurListenerRefs: { current: {} },
   onMountListenerRefs: { current: {} },

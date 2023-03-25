@@ -12,6 +12,7 @@ export interface FieldArrayHelpers<T> {
 export interface FieldArrayInstanceProps<T = any, F = any>
   extends FieldInstanceBaseProps<T, F> {
   initialValue?: T[];
+  resetWithValue?: T[];
   memoChild?: any[];
   preserveValue?: boolean;
 }
