@@ -1,109 +1,59 @@
 import { Field, Form } from "houseform";
 import { z } from "zod";
 
+interface FormValue {
+  email: string;
+}
+
 export default function App() {
   return (
-    <Form
+    <Form<FormValue>
       onSubmit={(values) => {
         alert("Form was submitted with: " + JSON.stringify(values));
       }}
     >
-      {({ isValid, submit }) => (
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            submit();
-          }}
-        >
-          <Field
-            name="email"
-            onBlurValidate={z.string().email("This must be an email")}
-            onSubmitValidate={isEmailUnique}
-          >
-            {({ value, setValue, onBlur, errors }) => {
-              return (
-                <div>
-                  <input
-                    value={value}
-                    onBlur={onBlur}
-                    onChange={(e) => setValue(e.target.value)}
-                    placeholder={"Email"}
-                  />
-                  {errors.map((error) => (
-                    <p key={error}>{error}</p>
-                  ))}
-                </div>
-              );
-            }}
-          </Field>
-          <Field<string>
-            name="password"
-            onChangeValidate={z
-              .string()
-              .min(8, "Must be at least 8 characters long")}
-          >
-            {({ value, setValue, onBlur, errors }) => {
-              return (
-                <div>
-                  <input
-                    value={value}
-                    onBlur={onBlur}
-                    onChange={(e) => setValue(e.target.value)}
-                    placeholder={"Password"}
-                    type="password"
-                  />
-                  {errors.map((error) => (
-                    <p key={error}>{error}</p>
-                  ))}
-                </div>
-              );
-            }}
-          </Field>
-          <Field<string>
-            name="confirmpassword"
-            listenTo={["password"]}
-            onChangeValidate={(val, form) => {
-              if (val === form.getFieldValue("password")!.value) {
-                return Promise.resolve(true);
-              } else {
-                return Promise.reject("Passwords must match");
-              }
+      {({ isValid, submit, value: formValue }) => {
+        // On first render, `value` is an empty object, since the `email` field is not yet initialized.
+        const isGmail = formValue.email?.endsWith("@gmail.com");
+        return (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              submit();
             }}
           >
-            {({ value, setValue, onBlur, errors, isTouched }) => {
-              return (
-                <div>
-                  <input
-                    value={value}
-                    onBlur={onBlur}
-                    onChange={(e) => setValue(e.target.value)}
-                    placeholder={"Password Confirmation"}
-                    type="password"
-                  />
-                  {isTouched &&
-                    errors.map((error) => <p key={error}>{error}</p>)}
-                </div>
-              );
-            }}
-          </Field>
-          <button disabled={!isValid} type="submit">
-            Submit
-          </button>
-        </form>
-      )}
+            <Field
+              name="email"
+              initialValue={"test@gmail.com"}
+              onBlurValidate={z.string().email("This must be an email")}
+            >
+              {({ value, setValue, onBlur, errors }) => {
+                return (
+                  <div>
+                    <input
+                      value={value}
+                      onBlur={onBlur}
+                      onChange={(e) => setValue(e.target.value)}
+                      placeholder={"Email"}
+                    />
+                    {errors.map((error) => (
+                      <p key={error}>{error}</p>
+                    ))}
+                  </div>
+                );
+              }}
+            </Field>
+            {isGmail && (
+              <p style={{ color: "red" }}>
+                We don&apos;t currently support gmail as an email host
+              </p>
+            )}
+            <button disabled={!isValid || isGmail} type="submit">
+              Submit
+            </button>
+          </form>
+        );
+      }}
     </Form>
   );
-}
-
-function isEmailUnique(val: string) {
-  return new Promise<boolean>((resolve, reject) => {
-    setTimeout(() => {
-      const isUnique = !val.startsWith("crutchcorn");
-      if (isUnique) {
-        resolve(true);
-      } else {
-        reject("That email is already taken");
-      }
-    }, 20);
-  });
 }

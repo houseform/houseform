@@ -22,7 +22,7 @@ export interface FormInstance<T = Record<string, any>> {
   errors: string[];
   errorsMap: ErrorsMap<T>;
   submit: () => Promise<boolean>;
-  value: T;
+  value: Partial<T>;
   reset: () => void;
   isValid: boolean;
   setIsTouched: (val: boolean) => void;
