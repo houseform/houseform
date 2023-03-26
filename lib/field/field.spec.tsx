@@ -1069,3 +1069,61 @@ test("Field should set isValidating with async onSubmit validator function", asy
 
   await waitForElementToBeRemoved(() => queryByText("Validating"));
 });
+
+test("Field should remove its value when unrendered", async () => {
+  const Comp = () => {
+    const [show, setShow] = useState(true);
+    const [values, setValues] = useState<string | null>(null);
+
+    if (values) return <p>{values}</p>;
+
+    return (
+      <Form onSubmit={(values) => setValues(JSON.stringify(values))}>
+        {({ submit }) => (
+          <div>
+            <button onClick={() => setShow(false)}>Unmount</button>
+            <button onClick={submit}>Submit</button>
+            {show && (
+              <Field<string> name={"email"} initialValue="">
+                {({ value, setValue }) => (
+                  <input
+                    placeholder="Email"
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                  />
+                )}
+              </Field>
+            )}
+            <Field<string> name={"password"} initialValue="">
+              {({ value, setValue }) => (
+                <input
+                  placeholder="Password"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+          </div>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByPlaceholderText, getByText, container } = render(<Comp />);
+
+  await user.type(getByPlaceholderText("Email"), "emailHere");
+  await user.type(getByPlaceholderText("Password"), "passwordHere");
+
+  await user.click(getByText("Unmount"));
+  await user.click(getByText("Submit"));
+
+  await waitFor(() =>
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        <p>
+          {"password":"passwordHere"}
+        </p>
+      </div>
+    `)
+  );
+});

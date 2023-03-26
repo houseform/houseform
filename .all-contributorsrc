@@ -117,6 +117,26 @@
       "contributions": [
         "test"
       ]
+    },
+    {
+      "login": "mostafaegouda",
+      "name": "Mostafa Gouda",
+      "avatar_url": "https://avatars.githubusercontent.com/u/100293809?v=4",
+      "profile": "https://github.com/mostafaegouda",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "ShooTeX",
+      "name": "Erik Simon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10850738?v=4",
+      "profile": "http://eriksimon.dev",
+      "contributions": [
+        "code",
+        "test",
+        "doc"
+      ]
     }
   ],
   "repoHost": "https://github.com",

@@ -223,6 +223,40 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     return _value;
   }, [_value, getFormValue]);
 
+  const reset = useCallback(() => {
+    formFieldsRef.current
+      // Sort by depth so that we reset the deepest fields first
+      .sort((a, b) => {
+        return (
+          stringToPath(b.props.name).length - stringToPath(a.props.name).length
+        );
+      })
+      .forEach((field) => {
+        const value = field.props.resetWithValue || field.props.initialValue;
+
+        const isFieldArray = (v: typeof field): v is FieldArrayInstance => {
+          return !!(v as FieldArrayInstance).setValues;
+        };
+
+        const isField = (v: typeof field): v is FieldInstance => {
+          return !(v as FieldArrayInstance).setValues;
+        };
+
+        field.setErrors([]);
+        field.setIsTouched(false);
+        field.setIsDirty(false);
+        if (isFieldArray(field)) {
+          field.setValues(value || []);
+        } else if (isField(field)) {
+          field.setValue(value || "");
+        }
+      });
+    _setErrors([]);
+    _setIsValid(false);
+    _setIsDirty(false);
+    _setIsTouched(false);
+  }, [_setIsTouched, _setIsDirty, _setErrors]);
+
   const isValidatingGetter = useCallback(() => {
     if (_isValidating === null) {
       shouldRerenderIsValidatingOnRecompute.current = true;
@@ -249,6 +283,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       recomputeIsTouched,
       recomputeFormValue,
       recomputeIsValidating,
+      reset,
       get errors() {
         return errorGetter();
       },
@@ -289,6 +324,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     isTouchedGetter,
     valueGetter,
     isValidatingGetter,
+    reset,
   ]);
 
   const submit = useCallback(async () => {
@@ -349,8 +385,10 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       "isValidating",
       "submit",
       "value",
+      "reset",
     ] as const;
     const val = {
+      reset,
       submit,
       get errors() {
         return errorGetter();
@@ -388,6 +426,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
 
     return val;
   }, [
+    reset,
     baseValue,
     errorGetter,
     errorMapGetter,

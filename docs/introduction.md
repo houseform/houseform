@@ -24,8 +24,8 @@ Good question, let's break that down:
 
 - **Field first**: Other React form libraries focus on the form itself - forcing you to use a schema object to define all of your fields. This introduces two problems:
 
-  1) Your field validation logic and your field UI rendering are separated. You have to look in more than one place to see the whole picture of your field logic - the field itself and the validation schema defined at the form level.
-  2) Defining per-field validation (say, one field validates by submit logic while the other validates `onBlur`, while another validates `onChange`) is challenging or downright impossible.
+  1. Your field validation logic and your field UI rendering are separated. You have to look in more than one place to see the whole picture of your field logic - the field itself and the validation schema defined at the form level.
+  2. Defining per-field validation (say, one field validates by submit logic while the other validates `onBlur`, while another validates `onChange`) is challenging or downright impossible.
 
   By focusing on fields, the items that make up the form, it alleviates many of these concerns.
 
@@ -41,14 +41,26 @@ Good question, let's break that down:
 [James Perkins](https://www.youtube.com/@james-perkins) recently made an incredible video intro to HouseForm over on his YouTube channel:
 
 <div align="center">
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/bQVUGx8rSuQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="560" style="aspect-ratio: 16/9; max-width: 100%;" src="https://www.youtube-nocookie.com/embed/bQVUGx8rSuQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 </div>
 
 ## Installation
 
-```shell
+::: code-group
+
+```shell [npm]
 npm install houseform zod
 ```
+
+```shell [yarn]
+yarn add houseform zod
+```
+
+```shell [pnpm]
+pnpm add houseform zod
+```
+
+:::
 
 > Zod is a peer dependency of this project.
 
@@ -68,10 +80,12 @@ export default function App() {
       }}
     >
       {({ isValid, submit }) => (
-        <form onSubmit={e => {
-          e.preventDefault();
-          submit();
-        }}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            submit();
+          }}
+        >
           <Field
             name="email"
             onBlurValidate={z.string().email("This must be an email")}
@@ -137,9 +151,8 @@ export default function App() {
                     placeholder={"Password Confirmation"}
                     type="password"
                   />
-                  {isTouched && errors.map((error) => (
-                    <p key={error}>{error}</p>
-                  ))}
+                  {isTouched &&
+                    errors.map((error) => <p key={error}>{error}</p>)}
                 </div>
               );
             }}

@@ -21,6 +21,7 @@ The `ArrayField` component takes the following props:
 | ------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | `name`             | `string`                                                     | The name of the array field within the form.                 |
 | `initialValue`     | `T[]`                                                        | The initial value of the field array.                        |
+| `resetValue`       | `T[]`                                                        | The value to which a field array should be reset upon calling the `reset()` method. |
 | `listenTo`         | `string[]`                                                   | A list of form field names to listen to. When a listened field updates it's value, it will trigger the relevant `onChangeValidation` change detection. Useful when making one field depend on the validation of another. |
 | `children`         | `(props: FieldArrayInstance<T>) => JSX.Element`              | Passed [`FieldArrayInstance`](#interface-fieldarrayinstance), expected to return a JSX element. |
 | `onChangeValidate` | `() => Promise<boolean>` or [`ZodType`](https://github.com/colinhacks/zod) | The validation logic for when the user has changed the field value. Either a Zod type or Promise. If resolved, no error is passed. If rejected, rejection string is set as an error. |
