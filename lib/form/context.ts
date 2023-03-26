@@ -26,6 +26,8 @@ export const initialFormContext = {
   isTouched: false,
   isValidating: false,
   isSubmitted: false,
+  value: {},
+  recomputeFormValue: () => {},
 } as FormInstance as unknown;
 /* c8 ignore stop */
 

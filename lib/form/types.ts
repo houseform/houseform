@@ -17,10 +17,12 @@ export interface FormInstance<T = Record<string, any>> {
   recomputeErrors: () => void;
   recomputeIsDirty: () => void;
   recomputeIsTouched: () => void;
+  recomputeFormValue: () => void;
   recomputeIsValidating: () => void;
   errors: string[];
   errorsMap: ErrorsMap<T>;
   submit: () => Promise<boolean>;
+  value: Partial<T>;
   reset: () => void;
   isValid: boolean;
   setIsTouched: (val: boolean) => void;

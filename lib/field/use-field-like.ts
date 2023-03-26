@@ -208,6 +208,7 @@ export const useFieldLike = <
           );
         }, 0);
 
+        formContext.recomputeFormValue();
         runFieldValidation("onChangeValidate", newVal);
         return newVal;
       });
