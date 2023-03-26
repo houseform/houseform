@@ -126,6 +126,17 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "ShooTeX",
+      "name": "Erik Simon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10850738?v=4",
+      "profile": "http://eriksimon.dev",
+      "contributions": [
+        "code",
+        "test",
+        "doc"
+      ]
     }
   ],
   "repoHost": "https://github.com",
