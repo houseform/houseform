@@ -120,11 +120,20 @@ export const useFieldLike = <
   }, [name]);
 
   const formContext = useFormContext<F>();
+  const fieldInstance = formContext.formFieldsRef.current.find(
+    (field) => field._normalizedDotName === _normalizedDotName
+  );
 
-  const [errors, setErrors] = useState<string[]>([]);
-  const [isTouched, setIsTouched] = useState<boolean>(false);
-  const [isDirty, setIsDirty] = useState<boolean>(false);
-  const [isValidating, setIsValidating] = useState<boolean>(false);
+  const [errors, setErrors] = useState<string[]>(fieldInstance?.errors ?? []);
+  const [isTouched, setIsTouched] = useState<boolean>(
+    fieldInstance?.isTouched ?? false
+  );
+  const [isDirty, setIsDirty] = useState<boolean>(
+    fieldInstance?.isDirty ?? false
+  );
+  const [isValidating, setIsValidating] = useState<boolean>(
+    fieldInstance?.isValidating ?? false
+  );
 
   const runFieldValidation = useCallback(
     (
@@ -160,11 +169,9 @@ export const useFieldLike = <
     [formContext, props]
   );
 
-  const initVal = (props.initialValue ?? initialValue) as UseFieldLikeProps<
-    T,
-    F,
-    TT
-  >["initialValue"];
+  const initVal = (fieldInstance?.value ??
+    props.initialValue ??
+    initialValue) as UseFieldLikeProps<T, F, TT>["initialValue"];
 
   const hasRanMountHook = useRef(false);
   const [value, _setValue] = useState(initVal);
