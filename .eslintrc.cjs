@@ -15,4 +15,13 @@ module.exports = {
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/no-unused-vars": "off",
   },
+  overrides: [
+    {
+      files: ["*.md", "*.mdx"],
+      extends: "plugin:mdx/recommended",
+      settings: {
+        "mdx/code-blocks": true,
+      },
+    },
+  ],
 };
