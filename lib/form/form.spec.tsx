@@ -588,7 +588,7 @@ test("Form should show all field errors if requested", async () => {
               {() => <></>}
             </Field>
             <Field<string>
-              name={"email"}
+              name={"password"}
               initialValue=""
               onMountValidate={z
                 .string()

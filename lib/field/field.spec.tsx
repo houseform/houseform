@@ -1185,3 +1185,85 @@ test("Field should not remove its value if preserveValue", async () => {
     `)
   );
 });
+
+test("Field should persist values when remounts if preserveValue", async () => {
+  const Comp = () => {
+    const [show, setShow] = useState(true);
+
+    return (
+      <Form>
+        {() => (
+          <div>
+            <button onClick={() => setShow(!show)}>Toggle mount</button>
+            {show && (
+              <Field<string> name={"email"} initialValue="" preserveValue>
+                {({ value, setValue }) => (
+                  <>
+                    <input
+                      placeholder="Email"
+                      value={value}
+                      onChange={(e) => setValue(e.target.value)}
+                    />
+                    <p>{value}</p>
+                  </>
+                )}
+              </Field>
+            )}
+          </div>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByPlaceholderText, getByText, queryByText } = render(<Comp />);
+
+  expect(queryByText("emailHere")).not.toBeInTheDocument();
+
+  await user.type(getByPlaceholderText("Email"), "emailHere");
+
+  await user.click(getByText("Toggle mount"));
+  await user.click(getByText("Toggle mount"));
+
+  expect(getByText("emailHere")).toBeInTheDocument();
+});
+
+test("Field should not have duplication when remounts if preserveValue", async () => {
+  const Comp = () => {
+    const [show, setShow] = useState(true);
+
+    return (
+      <Form>
+        {({ formFieldsRef }) => (
+          <div>
+            <button onClick={() => setShow(!show)}>Toggle mount</button>
+            {show && (
+              <Field<string> name={"email"} initialValue="" preserveValue>
+                {({ value, setValue }) => (
+                  <>
+                    <input
+                      placeholder="Email"
+                      value={value}
+                      onChange={(e) => setValue(e.target.value)}
+                    />
+                    <p>{value}</p>
+                  </>
+                )}
+              </Field>
+            )}
+            <p>Total fields: {formFieldsRef.current.length}</p>
+          </div>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByText, queryByText, rerender } = render(<Comp />);
+
+  expect(queryByText("emailHere")).not.toBeInTheDocument();
+
+  await user.click(getByText("Toggle mount"));
+  await user.click(getByText("Toggle mount"));
+
+  rerender(<Comp />);
+  expect(getByText("Total fields: 1")).toBeInTheDocument();
+});
