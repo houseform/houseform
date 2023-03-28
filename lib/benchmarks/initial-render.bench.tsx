@@ -1,10 +1,10 @@
 import { describe, bench } from "vitest";
-
 import { Field, Form } from "houseform";
 import { cleanup, findByTestId, render } from "@testing-library/react";
 import { Formik, Field as FormikField } from "formik";
 import { FieldProps } from "formik/dist/Field";
 import { Controller, useForm } from "react-hook-form";
+import { Form as ReactFinalForm, Field as ReactFinalFormField} from 'react-final-form'
 
 const arr = Array.from({ length: 1000 }, (_, i) => i);
 
@@ -113,6 +113,30 @@ function ReactHookFormInitialRenderBenchmark() {
   );
 }
 
+function ReactFinalFormInitialRenderBenchmark() {
+  
+  return (
+    <ReactFinalForm
+      onSubmit={(values) => {}}
+    >
+      {() => (
+        <>
+          {arr.map((num, i) => (
+              <ReactFinalFormField name={`num[${i}]`}>
+              {({ input, meta }) => (
+                <>
+                  <input {...input} type="text" placeholder="First Name" />
+                  {meta.error && meta.touched && <span>{meta.error}</span>}
+                </>
+              )}
+            </ReactFinalFormField>
+          ))}
+        </>
+      )}
+    </ReactFinalForm>
+  );
+}
+
 describe("Renders 1,000 form items", () => {
   bench(
     "HouseForm",
@@ -164,6 +188,24 @@ describe("Renders 1,000 form items", () => {
 
   bench(
     "React Hook Form (Headless)",
+    async () => {
+      const { findByTestId } = render(
+        <ReactHookFormHeadlessInitialRenderBenchmark />
+      );
+
+      await findByTestId("999");
+    },
+    {
+      setup(task) {
+        task.opts.beforeEach = () => {
+          cleanup();
+        };
+      },
+    }
+  );
+  
+  bench(
+    "React Final Form",
     async () => {
       const { findByTestId } = render(
         <ReactHookFormHeadlessInitialRenderBenchmark />
