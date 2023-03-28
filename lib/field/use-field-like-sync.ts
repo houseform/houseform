@@ -3,6 +3,7 @@ import { FieldInstance } from "./types";
 import { FieldArrayInstance } from "../field-array";
 import { useFormContext } from "../form";
 import useIsomorphicLayoutEffect from "../utils/use-isomorphic-layout-effect";
+import { stringToPath } from "../utils";
 
 export interface UseFieldLikeSyncProps<
   T,
@@ -44,12 +45,16 @@ export const useFieldLikeSync = <
     fieldInstanceRef.current.props = props;
     const fieldInstance = fieldInstanceRef.current;
     const formFields = formContext.formFieldsRef.current;
-    const found = formFields.find((field) => field === fieldInstance);
-    if (!found) formFields.push(fieldInstance);
+    const normalizedDotName = stringToPath(props.name).join(".");
+    const found = formFields.find(
+      (field) => field._normalizedDotName === normalizedDotName
+    );
+    if (found) formFields.splice(formFields.indexOf(found), 1);
+    formFields.push(fieldInstance);
 
     if (!preserveValue) {
       return () => {
-        formFields.splice(formFields.indexOf(fieldInstance), 1);
+        if (found) formFields.splice(formFields.indexOf(found), 1);
       };
     }
   }, [formContext.formFieldsRef, fieldInstanceRef, props, preserveValue]);

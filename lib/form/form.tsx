@@ -52,7 +52,9 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
       const fieldInstance = formFields.find(
         (field) => field._normalizedDotName === normalizedName
       );
-      if (fieldInstance) formFields.splice(formFields.indexOf(fieldInstance));
+      if (fieldInstance) {
+        formFields.splice(formFields.indexOf(fieldInstance), 1);
+      }
     },
     [formFieldsRef]
   ) as FormInstance<T>["deleteField"];
