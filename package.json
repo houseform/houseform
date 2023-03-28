@@ -117,5 +117,8 @@
         "prerelease": true
       }
     ]
+  },
+  "dependencies": {
+    "@typescript-eslint/utils": "^5.56.0"
   }
 }
