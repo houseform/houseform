@@ -12,10 +12,10 @@ head:
 
 Because HouseForm is headless, it supports React Native without any further customizations. Here's an example of a simple React Native form using HouseForm:
 
-```jsx
+```tsx
 import { Field, Form } from "houseform";
 import { z } from "zod";
-import {Alert, Button, Text, TextInput, View} from "react-native";
+import { Alert, Button, Text, TextInput, View } from "react-native";
 
 export default function App() {
   return (
@@ -46,11 +46,10 @@ export default function App() {
               );
             }}
           </Field>
-          <Button disabled={!isValid} title="Submit"/>
+          <Button disabled={!isValid} title="Submit" />
         </View>
       )}
     </Form>
   );
 }
 ```
-
