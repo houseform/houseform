@@ -121,7 +121,7 @@ import { z } from "zod";
 
 // ...
 
-const App = (
+const App = () => (
   <Field
     name="username"
     initialValue={""}

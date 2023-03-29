@@ -19,9 +19,9 @@ If using Zod, you can use a custom validator using one of three methods:
 
 While `custom` and `superRefine` have more functionality, let's leave the explaination of those two methods to the Zod documentation. Instead, let's take a look at how we can pass a custom function to Zod using `refine`:
 
-```jsx
-import { Field, Form } from 'houseform';
-import { z } from 'zod';
+```tsx
+import { Field, Form } from "houseform";
+import { z } from "zod";
 
 export default function App() {
   return (
@@ -30,7 +30,7 @@ export default function App() {
         <>
           <Field
             name="name"
-            onChangeValidate={z.string().refine((val) => val !== 'John', {
+            onChangeValidate={z.string().refine((val) => val !== "John", {
               message:
                 "John, you know you're not allowed to use our app anymore",
             })}
@@ -42,7 +42,7 @@ export default function App() {
                     value={value}
                     onBlur={onBlur}
                     onChange={(e) => setValue(e.target.value)}
-                    placeholder={'First Name'}
+                    placeholder={"First Name"}
                   />
                   {errors.map((error) => (
                     <p key={error}>{error}</p>
@@ -71,8 +71,8 @@ While Zod usage is powerful, you may want to:
 
 Luckily, HouseForm supports functions that return a promise to be used for validation, allowing you to bypass Zod usage entirely.
 
-```jsx
-import { Field, Form } from 'houseform';
+```tsx
+import { Field, Form } from "houseform";
 
 export default function App() {
   return (
@@ -83,7 +83,7 @@ export default function App() {
             name="email"
             onChangeValidate={(val) =>
               val.length < 3
-                ? Promise.reject('Email must have three characters')
+                ? Promise.reject("Email must have three characters")
                 : Promise.resolve(true)
             }
           >
@@ -94,7 +94,7 @@ export default function App() {
                     value={value}
                     onBlur={onBlur}
                     onChange={(e) => setValue(e.target.value)}
-                    placeholder={'Email'}
+                    placeholder={"Email"}
                   />
                   {errors.map((error) => (
                     <p key={error}>{error}</p>
@@ -112,34 +112,42 @@ export default function App() {
 
 Because `async` functions return a promise behind-the-scenes, you may also choose to use an async function that `throw`s an error message to display:
 
-```jsx
-<Field
-  name="email"
-  onChangeValidate={async (val) => {
-    if (val.length < 3) {
-      throw 'Email must have three characters';
-    }
-    // Validation has passed
-    return true;
-  }}
->
+```tsx
+import { Field } from "houseform";
+
+const App = () => (
+  <Field
+    name="email"
+    onChangeValidate={async (val) => {
+      if (val.length < 3) {
+        throw "Email must have three characters";
+      }
+      // Validation has passed
+      return true;
+    }}
+  />
+);
 ```
 
 ### Form Metadata Access in Async Field Validator
 
 There may be times where you want to access the form's metadata or the metadata of another field in your custom validator. This is possible by using the second argument of the `onChangeValidate` function, which is a [FormInstance](https://houseform.dev/reference/form.html#interface-forminstance):
 
-```jsx
-<Field
-  listenTo={['password']}
-  name="confirmpassword"
-  onChangeValidate={async (val, form) => {
-    if (form.getFieldValue('password')?.value !== val) {
-      throw 'Passwords must match';
-    }
-    return true;
-  }}
->
+```tsx
+import { Field } from "houseform";
+
+const App = (
+  <Field
+    listenTo={["password"]}
+    name="confirmpassword"
+    onChangeValidate={async (val, form) => {
+      if (form.getFieldValue("password")?.value !== val) {
+        throw "Passwords must match";
+      }
+      return true;
+    }}
+  />
+);
 ```
 
  <ClickToIFrame title="HouseForm Async Validator StackBlitz Example" src="https://stackblitz.com/edit/houseform-v1-example-async-validator?file=App.tsx"/>
