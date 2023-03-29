@@ -21,6 +21,8 @@ src="./docs/public/logo.svg"
 [![gzip size](https://img.badgesize.io/https://unpkg.com/houseform@latest/dist/houseform.umd.cjs?compression=gzip)](https://unpkg.com/browse/houseform@latest/dist/houseform.umd.cjs)
 [![license](https://badgen.now.sh/badge/license/MIT)](./LICENSE.md)
 
+[![Discord](https://img.shields.io/discord/1087742343832154152?color=7389D8&label&logo=discord&logoColor=ffffff)](https://discord.com/invite/n9pGcTh3Sx)
+
 </div>
 
 **Visit [https://houseform.dev/](https://houseform.dev/) to get started with HouseForm.**

@@ -21,6 +21,7 @@ export default defineConfig({
     logo: "/logo.svg",
     socialLinks: [
       { icon: "github", link: "https://github.com/houseform/houseform" },
+      { icon: "discord", link: "https://discord.com/invite/n9pGcTh3Sx" },
     ],
     editLink: {
       pattern: "https://github.com/houseform/houseform/edit/main/docs/:path",
