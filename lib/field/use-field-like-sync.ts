@@ -54,6 +54,9 @@ export const useFieldLikeSync = <
 
     if (!preserveValue) {
       return () => {
+        const found = formFields.find(
+          (field) => field._normalizedDotName === normalizedDotName
+        );
         if (found) formFields.splice(formFields.indexOf(found), 1);
       };
     }
