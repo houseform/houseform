@@ -1,0 +1,1 @@
+import{_ as e,c as t,o,Q as d}from"./chunks/framework.989a1717.js";const u=JSON.parse('{"title":"Field","description":"","frontmatter":{},"headers":[],"relativePath":"reference/field.md","lastUpdated":1680280081000}'),a={name:"reference/field.md"},s=d("",7),r=[s];function n(l,c,i,p,h,f){return o(),t("div",null,r)}const F=e(a,[["render",n]]);export{u as __pageData,F as default};
