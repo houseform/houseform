@@ -1,4 +1,4 @@
-import React, {
+import {
   ForwardedRef,
   forwardRef,
   memo,
@@ -24,7 +24,7 @@ function FieldArrayComp<T = any, F = any>(
   props: FieldArrayRenderProps<T, F>,
   ref: ForwardedRef<FieldArrayInstance<T, F>>
 ) {
-  const { children, memoChild } = props;
+  const { children, memoChild, preserveValue } = props;
 
   const {
     value,
@@ -179,17 +179,18 @@ function FieldArrayComp<T = any, F = any>(
     validate,
   ]);
 
-  const mutableRef = useRef<FieldArrayInstance<T, F>>(fieldArrayInstance);
+  const fieldInstanceRef = useRef<FieldArrayInstance<T, F>>(fieldArrayInstance);
 
   useFieldLikeSync<T, F, FieldArrayInstance<T, F>>({
     value,
-    mutableRef,
+    fieldInstanceRef,
     isValid,
     isValidating,
     isDirty,
     isTouched,
     props,
     errors,
+    preserveValue,
   });
 
   useImperativeHandle(ref, () => fieldArrayInstance, [fieldArrayInstance]);

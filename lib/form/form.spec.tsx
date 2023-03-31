@@ -588,7 +588,7 @@ test("Form should show all field errors if requested", async () => {
               {() => <></>}
             </Field>
             <Field<string>
-              name={"email"}
+              name={"password"}
               initialValue=""
               onMountValidate={z
                 .string()
@@ -1544,4 +1544,46 @@ test("Form should use value to conditionally hide field based on another's value
   user.click(getByText("Set"));
 
   await waitFor(() => expect(queryByText("I am here")).toBeInTheDocument());
+});
+
+test("Form `deleteField` should remove field", async () => {
+  const Comp = () => {
+    const [show, setShow] = useState(true);
+
+    return (
+      <Form>
+        {({ getFieldValue, deleteField }) => (
+          <div>
+            <button onClick={() => setShow(false)}>Unmount</button>
+            <button onClick={() => deleteField("email")}>Delete field</button>
+            {show && (
+              <Field<string>
+                name={"email"}
+                initialValue="emailHere"
+                preserveValue
+              >
+                {({ value }) => <input value={value} />}
+              </Field>
+            )}
+            <p>{getFieldValue("email")?.value}</p>
+          </div>
+        )}
+      </Form>
+    );
+  };
+
+  const { rerender, getByText, queryByText } = render(<Comp />);
+
+  rerender(<Comp />);
+  expect(getByText("emailHere")).toBeInTheDocument();
+
+  await user.click(getByText("Unmount"));
+
+  rerender(<Comp />);
+  expect(getByText("emailHere")).toBeInTheDocument();
+
+  await user.click(getByText("Delete field"));
+
+  rerender(<Comp />);
+  expect(queryByText("emailHere")).not.toBeInTheDocument();
 });
