@@ -3,7 +3,7 @@
 An `ArrayFieldItem` is a helper used to validate sub-items in a `FieldArray`. An example `ArrayFieldItem` usage is:
 
 ```jsx
-<FieldArray name={"people"} initialValue={[1]}>
+<FieldArray name={"people"} initialValue={[{name: "Bob"}]}>
   {({ value }) => (
     <>
       {value.map((person, i) => (
