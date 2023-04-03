@@ -16,7 +16,7 @@ A field is the primitive for every input that you'd like to display to the user.
 | ------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | `name`             | `string`                                                     | The name of the field in the form.                           |
 | `initialValue`     | `T`                                                          | The initial value of the form field.                         |
-| `resetValue`       | `T`                                                          | The value to which a form field should be reset upon calling the `reset()` method. |
+| `resetWithValue`       | `T`                                                          | The value to which a form field should be reset upon calling the `reset()` method. |
 | `preserveValue`    | `boolean`                                                    | Preserve the field's values when unmount. |
 | `listenTo`         | `string[]`                                                   | A list of form field names to listen to. When a listened field updates it's value, it will trigger the relevant `onChangeValidation` change detection. Useful when making one field depend on the validation of another. |
 | `children`         | `(props: FieldInstance<T>) => JSX.Element`                   | Passed [`FieldInstance`](#interface-fieldinstance), expected to return a JSX element. |
