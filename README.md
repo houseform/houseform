@@ -61,6 +61,9 @@ Thanks goes to these wonderful people
       <td align="center" valign="top" width="14.28%"><a href="http://eriksimon.dev"><img src="https://avatars.githubusercontent.com/u/10850738?v=4?s=100" width="100px;" alt="Erik Simon"/><br /><sub><b>Erik Simon</b></sub></a><br /><a href="https://github.com/houseform/houseform/commits?author=ShooTeX" title="Code">💻</a> <a href="https://github.com/houseform/houseform/commits?author=ShooTeX" title="Tests">⚠️</a> <a href="https://github.com/houseform/houseform/commits?author=ShooTeX" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/sgoodluck"><img src="https://avatars.githubusercontent.com/u/106334996?v=4?s=100" width="100px;" alt="Seth"/><br /><sub><b>Seth</b></sub></a><br /><a href="https://github.com/houseform/houseform/issues?q=author%3Asgoodluck" title="Bug reports">🐛</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://joostschuur.com"><img src="https://avatars.githubusercontent.com/u/92457?v=4?s=100" width="100px;" alt="Joost Schuur"/><br /><sub><b>Joost Schuur</b></sub></a><br /><a href="https://github.com/houseform/houseform/commits?author=jschuur" title="Code">💻</a> <a href="https://github.com/houseform/houseform/commits?author=jschuur" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 
