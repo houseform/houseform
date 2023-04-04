@@ -243,7 +243,7 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
         );
       })
       .forEach((field) => {
-        const value = field.props.resetWithValue || field.props.initialValue;
+        const value = field.props.resetWithValue ?? field.props.initialValue;
 
         const isFieldArray = (v: typeof field): v is FieldArrayInstance => {
           return !!(v as FieldArrayInstance).setValues;

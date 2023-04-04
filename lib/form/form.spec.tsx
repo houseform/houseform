@@ -1390,6 +1390,83 @@ test("Form should reset with resetWithValues correctly", async () => {
       `)
   );
 });
+test("Form should reset with empty string resetWithValue correctly", async () => {
+  const ResetValues = () => {
+    return (
+      <Form
+        onSubmit={(_values, { reset }) => {
+          reset();
+        }}
+      >
+        {({ submit, isDirty, isTouched }) => (
+          <>
+            <Field<string>
+              name={"test['other']['email']"}
+              initialValue="initial@email.com"
+              resetWithValue=""
+            >
+              {({ value, setValue }) => (
+                <input
+                  placeholder="Email"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+            <Field<string>
+              name={"test['other']['password']"}
+              resetWithValue="password"
+            >
+              {({ value, setValue }) => (
+                <input
+                  placeholder="Password"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+            <button onClick={submit}>Submit</button>
+            <p>{isDirty ? "isDirty" : "isNotDirty"}</p>
+            <p>{isTouched ? "isTouched" : "isNotTouched"}</p>
+          </>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByText, container, getByPlaceholderText } = render(
+    <ResetValues />
+  );
+
+  await user.type(getByPlaceholderText("Email"), "test");
+  await user.type(getByPlaceholderText("Password"), "test");
+
+  await user.click(getByText("Submit"));
+
+  await waitFor(() =>
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        <input
+          placeholder="Email"
+          value=""
+        />
+        <input
+          placeholder="Password"
+          value="password"
+        />
+        <button>
+          Submit
+        </button>
+        <p>
+          isNotDirty
+        </p>
+        <p>
+          isNotTouched
+        </p>
+      </div>
+      `)
+  );
+});
 
 test("Form should reset with resetWithValues and initial values correctly", async () => {
   const ResetValues = () => {
