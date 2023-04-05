@@ -1664,3 +1664,44 @@ test("Form `deleteField` should remove field", async () => {
   rerender(<Comp />);
   expect(queryByText("emailHere")).not.toBeInTheDocument();
 });
+
+test("Form submit should reset errors", async () => {
+  const submitMock = vi.fn();
+
+  const { getByText, queryByText, getByPlaceholderText } = render(
+    <Form onSubmit={submitMock}>
+      {({ submit, errors }) => (
+        <div>
+          <button onClick={submit}>Submit</button>
+          <Field<string> name="email" onSubmitValidate={z.string().min(1)}>
+            {({ value, setValue }) => (
+              <input
+                value={value}
+                placeholder="Email"
+                onChange={(e) => setValue(e.target.value)}
+              />
+            )}
+          </Field>
+          {errors.map((error) => {
+            return <p key={error}>{error}</p>;
+          })}
+        </div>
+      )}
+    </Form>
+  );
+
+  await user.click(getByText("Submit"));
+
+  expect(
+    getByText("String must contain at least 1 character(s)")
+  ).toBeInTheDocument();
+
+  await user.type(getByPlaceholderText("Email"), "emailhere");
+
+  await user.click(getByText("Submit"));
+
+  expect(
+    queryByText("String must contain at least 1 character(s)")
+  ).not.toBeInTheDocument();
+  expect(submitMock).toHaveBeenCalledTimes(1);
+});
