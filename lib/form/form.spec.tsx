@@ -1664,3 +1664,41 @@ test("Form `deleteField` should remove field", async () => {
   rerender(<Comp />);
   expect(queryByText("emailHere")).not.toBeInTheDocument();
 });
+
+test("Form should not trigger validation when reset", async () => {
+  const Comp = () => {
+    return (
+      <Form>
+        {({ reset }) => (
+          <div>
+            <button onClick={reset}>Reset</button>
+            <Field<string>
+              name="email"
+              onChangeValidate={z.string().min(1, "email error")}
+            >
+              {({ value, setValue, errors }) => (
+                <>
+                  <input
+                    placeholder="Email"
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                  />
+                  {errors.map((error) => (
+                    <p key={error}>{error}</p>
+                  ))}
+                </>
+              )}
+            </Field>
+          </div>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByText, getByPlaceholderText, queryByText } = render(<Comp />);
+
+  await user.type(getByPlaceholderText("Email"), "emailHere");
+  await user.click(getByText("Reset"));
+
+  expect(queryByText("email error")).not.toBeInTheDocument();
+});
