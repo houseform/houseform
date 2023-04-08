@@ -347,7 +347,11 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
     const validArrays = await Promise.all(
       formFieldsRef.current.map(async (formField) => {
         const runValidationType = async (
-          type: "onChangeValidate" | "onSubmitValidate" | "onBlurValidate"
+          type:
+            | "onMountValidate"
+            | "onChangeValidate"
+            | "onSubmitValidate"
+            | "onBlurValidate"
         ) => {
           const validator = formField.props[type as "onChangeValidate"];
           if (!validator) return true;
@@ -362,6 +366,9 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
             if (type === "onSubmitValidate") formField._setIsValidating(false);
           }
         };
+        formField.setErrors([]);
+        const onMountRes = await runValidationType("onMountValidate");
+        if (!onMountRes) return false;
         const onChangeRes = await runValidationType("onChangeValidate");
         if (!onChangeRes) return false;
         const onBlurRes = await runValidationType("onBlurValidate");
