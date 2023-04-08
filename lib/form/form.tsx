@@ -253,7 +253,8 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
           return !(v as FieldArrayInstance).setValues;
         };
 
-        field.setErrors([]);
+        // We delay reset errors to ensure don't show an error message
+        setTimeout(() => field.setErrors([]));
         field.setIsTouched(false);
         field.setIsDirty(false);
         if (isFieldArray(field)) {
