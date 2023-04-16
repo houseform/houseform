@@ -24,7 +24,7 @@ export interface FieldInstanceProps<T = any, F = any>
 
 export interface FieldInstance<T = any, F = any> {
   value: T;
-  setValue: (val: T | ((prevState: T) => T), isResetting?: boolean) => void;
+  setValue: (val: T | ((prevState: T) => T)) => void;
   onBlur: () => void;
   props: FieldInstanceProps<T, F>;
   _normalizedDotName: string;
