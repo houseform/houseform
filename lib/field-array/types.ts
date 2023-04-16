@@ -23,7 +23,7 @@ export interface FieldArrayInstance<T = any, F = any>
   _setIsValidating: (val: boolean) => void;
   props: FieldArrayInstanceProps<T, F>;
   value: T[];
-  setValues: (value: T[]) => void;
+  setValues: (value: T[], isResetting?: boolean) => void;
   setValue: (index: number, value: T) => void;
   setErrors: (errors: string[]) => void;
   errors: string[];

@@ -517,6 +517,37 @@ test("Is dirty should be set", async () => {
   expect(getByText("Dirty")).toBeInTheDocument();
 });
 
+test("Is dirty should be false if value is the initially provided", async () => {
+  const { getByPlaceholderText, queryByText, getByText } = render(
+    <Form onSubmit={(values) => {}}>
+      {() => (
+        <Field<string> name="email" initialValue="">
+          {({ value, setValue, isDirty }) => (
+            <div>
+              <input
+                placeholder="Email"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+              />
+              {isDirty && <p>Dirty</p>}
+            </div>
+          )}
+        </Field>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Dirty")).not.toBeInTheDocument();
+
+  await user.type(getByPlaceholderText("Email"), "test");
+
+  expect(getByText("Dirty")).toBeInTheDocument();
+
+  await user.clear(getByPlaceholderText("Email"));
+
+  expect(queryByText("Dirty")).not.toBeInTheDocument();
+});
+
 test("Field can listen for changes in other fields to validate on multiple field changes - onChange", async () => {
   const { getByPlaceholderText, queryByText, getByText } = render(
     <Form onSubmit={(values) => {}}>

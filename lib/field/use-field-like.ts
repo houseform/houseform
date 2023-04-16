@@ -169,12 +169,16 @@ export const useFieldLike = <
     [formContext, props]
   );
 
-  const initVal = (fieldInstance?.value ??
-    props.initialValue ??
-    initialValue) as UseFieldLikeProps<T, F, TT>["initialValue"];
+  const initVal = (props.initialValue ?? initialValue) as UseFieldLikeProps<
+    T,
+    F,
+    TT
+  >["initialValue"];
 
   const hasRanMountHook = useRef(false);
-  const [value, _setValue] = useState(initVal);
+  const [value, _setValue] = useState<
+    UseFieldLikeProps<T, F, TT>["initialValue"]
+  >(fieldInstance?.value ?? initVal);
 
   useIsomorphicLayoutEffect(() => {
     if (hasRanMountHook.current) return;
@@ -194,7 +198,8 @@ export const useFieldLike = <
         TT
       >["initialValue"]
     >(
-      val: J | ((prevState: J) => J)
+      val: J | ((prevState: J) => J),
+      isResetting?: boolean
     ) => {
       _setValue((prev) => {
         const isPrevAFunction = (
@@ -202,24 +207,26 @@ export const useFieldLike = <
         ): t is (prevState: typeof value) => typeof value =>
           typeof t === "function";
         const newVal = isPrevAFunction(val) ? val(prev) : (val as typeof value);
-        setIsDirty(true);
+        if (!isResetting) {
+          setIsDirty(newVal !== initVal);
 
-        /**
-         * Call `listenTo` field subscribers for other fields.
-         *
-         * Placed into a `setTimeout` so that the `setValue` call can finish before the `onChangeListenerRefs` are called.
-         */
-        setTimeout(() => {
-          formContext.onChangeListenerRefs.current[props.name]?.forEach((fn) =>
-            fn()
-          );
-        }, 0);
+          /**
+           * Call `listenTo` field subscribers for other fields.
+           *
+           * Placed into a `setTimeout` so that the `setValue` call can finish before the `onChangeListenerRefs` are called.
+           */
+          setTimeout(() => {
+            formContext.onChangeListenerRefs.current[props.name]?.forEach(
+              (fn) => fn()
+            );
+          }, 0);
 
-        runFieldValidation("onChangeValidate", newVal);
+          runFieldValidation("onChangeValidate", newVal);
+        }
         return newVal;
       });
     },
-    [runFieldValidation, formContext, props.name]
+    [initVal, runFieldValidation, formContext.onChangeListenerRefs, props.name]
   );
 
   const isValid = useMemo(() => {

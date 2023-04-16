@@ -254,13 +254,13 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
         };
 
         // We delay reset errors to ensure don't show an error message
-        setTimeout(() => field.setErrors([]));
+        field.setErrors([]);
         field.setIsTouched(false);
         field.setIsDirty(false);
         if (isFieldArray(field)) {
-          field.setValues(value || []);
+          field.setValues(value || [], true);
         } else if (isField(field)) {
-          field.setValue(value || "");
+          field.setValue(value || "", true);
         }
       });
     _setErrors([]);
