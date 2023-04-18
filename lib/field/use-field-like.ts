@@ -13,6 +13,19 @@ import { FieldArrayInstance } from "../field-array";
 import { getValidationError, stringToPath, validate } from "../utils";
 import useIsomorphicLayoutEffect from "../utils/use-isomorphic-layout-effect";
 
+type InternalValue = {
+  __value: string;
+  __isResetting: boolean;
+};
+
+const isInternal = (value: any): value is InternalValue => {
+  return (
+    !Array.isArray(value) &&
+    typeof value === "object" &&
+    "__isResetting" in value
+  );
+};
+
 interface UseListenToListenToArrayProps<T> {
   listenTo: string[] | undefined;
   runFieldValidation: (
@@ -169,12 +182,16 @@ export const useFieldLike = <
     [formContext, props]
   );
 
-  const initVal = (fieldInstance?.value ??
-    props.initialValue ??
-    initialValue) as UseFieldLikeProps<T, F, TT>["initialValue"];
+  const initVal = (props.initialValue ?? initialValue) as UseFieldLikeProps<
+    T,
+    F,
+    TT
+  >["initialValue"];
 
   const hasRanMountHook = useRef(false);
-  const [value, _setValue] = useState(initVal);
+  const [value, _setValue] = useState<
+    UseFieldLikeProps<T, F, TT>["initialValue"]
+  >(fieldInstance?.value ?? initVal);
 
   useIsomorphicLayoutEffect(() => {
     if (hasRanMountHook.current) return;
@@ -197,29 +214,38 @@ export const useFieldLike = <
       val: J | ((prevState: J) => J)
     ) => {
       _setValue((prev) => {
+        const isResetting = isInternal(val) && val.__isResetting;
+        const newValue = isInternal(val) ? val.__value : val;
+
         const isPrevAFunction = (
           t: any
         ): t is (prevState: typeof value) => typeof value =>
           typeof t === "function";
-        const newVal = isPrevAFunction(val) ? val(prev) : (val as typeof value);
-        setIsDirty(true);
 
-        /**
-         * Call `listenTo` field subscribers for other fields.
-         *
-         * Placed into a `setTimeout` so that the `setValue` call can finish before the `onChangeListenerRefs` are called.
-         */
-        setTimeout(() => {
-          formContext.onChangeListenerRefs.current[props.name]?.forEach((fn) =>
-            fn()
-          );
-        }, 0);
+        const newVal = isPrevAFunction(newValue)
+          ? newValue(prev)
+          : (newValue as typeof value);
 
-        runFieldValidation("onChangeValidate", newVal);
+        if (!isResetting) {
+          setIsDirty(newVal !== initVal);
+
+          /**
+           * Call `listenTo` field subscribers for other fields.
+           *
+           * Placed into a `setTimeout` so that the `setValue` call can finish before the `onChangeListenerRefs` are called.
+           */
+          setTimeout(() => {
+            formContext.onChangeListenerRefs.current[props.name]?.forEach(
+              (fn) => fn()
+            );
+          }, 0);
+
+          runFieldValidation("onChangeValidate", newVal);
+        }
         return newVal;
       });
     },
-    [runFieldValidation, formContext, props.name]
+    [initVal, runFieldValidation, formContext.onChangeListenerRefs, props.name]
   );
 
   const isValid = useMemo(() => {
