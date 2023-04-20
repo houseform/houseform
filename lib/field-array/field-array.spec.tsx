@@ -432,6 +432,36 @@ test("field array should set isValidating with onSubmit validation", async () =>
   await waitForElementToBeRemoved(() => queryByText("Validating"));
 });
 
+test("FieldArray should not be dirty if form is reset", async () => {
+  const { getByText } = render(
+    <Form onSubmit={(values) => {}}>
+      {({ reset }) => (
+        <>
+          <FieldArray<number> name={"people"} initialValue={[1]}>
+            {({ add, isDirty }) => (
+              <>
+                <button onClick={() => add(2)}>Add two</button>
+                <p>{isDirty ? "Dirty" : "Clean"}</p>
+              </>
+            )}
+          </FieldArray>
+          <button onClick={() => reset()}>Reset</button>
+        </>
+      )}
+    </Form>
+  );
+
+  expect(getByText("Clean")).toBeInTheDocument();
+
+  await user.click(getByText("Add two"));
+
+  expect(getByText("Dirty")).toBeInTheDocument();
+
+  await user.click(getByText("Reset"));
+
+  expect(getByText("Clean")).toBeInTheDocument();
+});
+
 test.todo("Should work with listenTo");
 
 test.todo("Should expose meta fields to ref");

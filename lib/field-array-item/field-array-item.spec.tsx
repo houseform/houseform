@@ -26,7 +26,7 @@ test("Field array item should submit with values in tact", async () => {
                 <>
                   {value.map((person, i) => (
                     <FieldArrayItem<number>
-                      key={person.thing}
+                      key={`people[${i}].thing`}
                       name={`people[${i}].thing`}
                     >
                       {({ value, setValue }) => (
@@ -80,7 +80,7 @@ test("Field array item be able to set a value", async () => {
             <>
               {value.map((person, i) => (
                 <FieldArrayItem<number>
-                  key={person.thing}
+                  key={`people[${i}].thing`}
                   name={`people[${i}].thing`}
                 >
                   {({ value, setValue }) => (
@@ -571,4 +571,48 @@ test("field array item should set isValidating with onSubmit validation", async 
   expect(getByText("Validating")).toBeInTheDocument();
 
   await waitForElementToBeRemoved(() => queryByText("Validating"));
+});
+
+test("Field array item should not be dirty when form reset", async () => {
+  const { getByText } = render(
+    <Form>
+      {({ reset }) => (
+        <>
+          <FieldArray<{ thing: number }>
+            initialValue={[{ thing: 1 }]}
+            name={"people"}
+          >
+            {({ value }) => (
+              <>
+                {value.map((person, i) => (
+                  <FieldArrayItem<number>
+                    key={`people[${i}].thing`}
+                    name={`people[${i}].thing`}
+                  >
+                    {({ setValue, isDirty }) => (
+                      <div>
+                        <button onClick={() => setValue(2)}>Set value</button>
+                        <p>{isDirty ? "Dirty" : "Clean"}</p>
+                      </div>
+                    )}
+                  </FieldArrayItem>
+                ))}
+              </>
+            )}
+          </FieldArray>
+          <button onClick={() => reset()}>Reset</button>
+        </>
+      )}
+    </Form>
+  );
+
+  expect(getByText("Clean")).toBeInTheDocument();
+
+  await user.click(getByText("Set value"));
+
+  expect(getByText("Dirty")).toBeInTheDocument();
+
+  await user.click(getByText("Reset"));
+
+  expect(getByText("Clean")).toBeInTheDocument();
 });
