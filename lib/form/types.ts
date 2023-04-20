@@ -40,6 +40,7 @@ export interface FormInstance<T = Record<string, any>> {
   ): Path<T, Split<P, ".">> extends infer R
     ? FieldInstance<R, T> | FieldArrayInstance<R, T> | undefined
     : never;
+  deleteField: (name: string) => void;
   onChangeListenerRefs: MutableRefObject<Record<string, (() => void)[]>>;
   onBlurListenerRefs: MutableRefObject<Record<string, (() => void)[]>>;
   onMountListenerRefs: MutableRefObject<Record<string, (() => void)[]>>;

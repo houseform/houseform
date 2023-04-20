@@ -137,6 +137,25 @@
         "test",
         "doc"
       ]
+    },
+    {
+      "login": "sgoodluck",
+      "name": "Seth",
+      "avatar_url": "https://avatars.githubusercontent.com/u/106334996?v=4",
+      "profile": "https://github.com/sgoodluck",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "jschuur",
+      "name": "Joost Schuur",
+      "avatar_url": "https://avatars.githubusercontent.com/u/92457?v=4",
+      "profile": "http://joostschuur.com",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "repoHost": "https://github.com",

@@ -588,7 +588,7 @@ test("Form should show all field errors if requested", async () => {
               {() => <></>}
             </Field>
             <Field<string>
-              name={"email"}
+              name={"password"}
               initialValue=""
               onMountValidate={z
                 .string()
@@ -1390,6 +1390,83 @@ test("Form should reset with resetWithValues correctly", async () => {
       `)
   );
 });
+test("Form should reset with empty string resetWithValue correctly", async () => {
+  const ResetValues = () => {
+    return (
+      <Form
+        onSubmit={(_values, { reset }) => {
+          reset();
+        }}
+      >
+        {({ submit, isDirty, isTouched }) => (
+          <>
+            <Field<string>
+              name={"test['other']['email']"}
+              initialValue="initial@email.com"
+              resetWithValue=""
+            >
+              {({ value, setValue }) => (
+                <input
+                  placeholder="Email"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+            <Field<string>
+              name={"test['other']['password']"}
+              resetWithValue="password"
+            >
+              {({ value, setValue }) => (
+                <input
+                  placeholder="Password"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+            <button onClick={submit}>Submit</button>
+            <p>{isDirty ? "isDirty" : "isNotDirty"}</p>
+            <p>{isTouched ? "isTouched" : "isNotTouched"}</p>
+          </>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByText, container, getByPlaceholderText } = render(
+    <ResetValues />
+  );
+
+  await user.type(getByPlaceholderText("Email"), "test");
+  await user.type(getByPlaceholderText("Password"), "test");
+
+  await user.click(getByText("Submit"));
+
+  await waitFor(() =>
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        <input
+          placeholder="Email"
+          value=""
+        />
+        <input
+          placeholder="Password"
+          value="password"
+        />
+        <button>
+          Submit
+        </button>
+        <p>
+          isNotDirty
+        </p>
+        <p>
+          isNotTouched
+        </p>
+      </div>
+      `)
+  );
+});
 
 test("Form should reset with resetWithValues and initial values correctly", async () => {
   const ResetValues = () => {
@@ -1544,4 +1621,125 @@ test("Form should use value to conditionally hide field based on another's value
   user.click(getByText("Set"));
 
   await waitFor(() => expect(queryByText("I am here")).toBeInTheDocument());
+});
+
+test("Form `deleteField` should remove field", async () => {
+  const Comp = () => {
+    const [show, setShow] = useState(true);
+
+    return (
+      <Form>
+        {({ getFieldValue, deleteField }) => (
+          <div>
+            <button onClick={() => setShow(false)}>Unmount</button>
+            <button onClick={() => deleteField("email")}>Delete field</button>
+            {show && (
+              <Field<string>
+                name={"email"}
+                initialValue="emailHere"
+                preserveValue
+              >
+                {({ value }) => <input value={value} />}
+              </Field>
+            )}
+            <p>{getFieldValue("email")?.value}</p>
+          </div>
+        )}
+      </Form>
+    );
+  };
+
+  const { rerender, getByText, queryByText } = render(<Comp />);
+
+  rerender(<Comp />);
+  expect(getByText("emailHere")).toBeInTheDocument();
+
+  await user.click(getByText("Unmount"));
+
+  rerender(<Comp />);
+  expect(getByText("emailHere")).toBeInTheDocument();
+
+  await user.click(getByText("Delete field"));
+
+  rerender(<Comp />);
+  expect(queryByText("emailHere")).not.toBeInTheDocument();
+});
+
+test("Form submit should reset errors", async () => {
+  const submitMock = vi.fn();
+
+  const { getByText, queryByText, getByPlaceholderText } = render(
+    <Form onSubmit={submitMock}>
+      {({ submit, errors }) => (
+        <div>
+          <button onClick={submit}>Submit</button>
+          <Field<string> name="email" onSubmitValidate={z.string().min(1)}>
+            {({ value, setValue }) => (
+              <input
+                value={value}
+                placeholder="Email"
+                onChange={(e) => setValue(e.target.value)}
+              />
+            )}
+          </Field>
+          {errors.map((error) => {
+            return <p key={error}>{error}</p>;
+          })}
+        </div>
+      )}
+    </Form>
+  );
+
+  await user.click(getByText("Submit"));
+
+  expect(
+    getByText("String must contain at least 1 character(s)")
+  ).toBeInTheDocument();
+
+  await user.type(getByPlaceholderText("Email"), "emailhere");
+
+  await user.click(getByText("Submit"));
+
+  expect(
+    queryByText("String must contain at least 1 character(s)")
+  ).not.toBeInTheDocument();
+  expect(submitMock).toHaveBeenCalledTimes(1);
+});
+
+test("Form should not trigger validation when reset", async () => {
+  const Comp = () => {
+    return (
+      <Form>
+        {({ reset }) => (
+          <div>
+            <button onClick={reset}>Reset</button>
+            <Field<string>
+              name="email"
+              onChangeValidate={z.string().min(1, "email error")}
+            >
+              {({ value, setValue, errors }) => (
+                <>
+                  <input
+                    placeholder="Email"
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                  />
+                  {errors.map((error) => (
+                    <p key={error}>{error}</p>
+                  ))}
+                </>
+              )}
+            </Field>
+          </div>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByText, getByPlaceholderText, queryByText } = render(<Comp />);
+
+  await user.type(getByPlaceholderText("Email"), "emailHere");
+  await user.click(getByText("Reset"));
+
+  expect(queryByText("email error")).not.toBeInTheDocument();
 });

@@ -3,7 +3,6 @@ import {
   forwardRef,
   memo,
   useCallback,
-  useContext,
   useImperativeHandle,
   useMemo,
   useRef,
@@ -11,7 +10,7 @@ import {
 import { FieldInstance, FieldInstanceProps } from "./types";
 import { useFieldLike, useListenToListenToArray } from "./use-field-like";
 import { useFieldLikeSync } from "./use-field-like-sync";
-import { FormContext, useFormContext } from "../form";
+import { useFormContext } from "../form";
 
 export interface FieldRenderProps<T = any, F = any>
   extends FieldInstanceProps<T, F> {
@@ -23,7 +22,7 @@ function FieldComp<T = any, F = any>(
   ref: ForwardedRef<FieldInstance<T, F>>
 ) {
   const formContext = useFormContext<F>();
-  const { children, memoChild } = props;
+  const { children, memoChild, preserveValue } = props;
 
   const {
     value,
@@ -109,10 +108,10 @@ function FieldComp<T = any, F = any>(
     validate,
   ]);
 
-  const mutableRef = useRef<FieldInstance<T>>(fieldInstance);
+  const fieldInstanceRef = useRef<FieldInstance<T>>(fieldInstance);
 
   useFieldLikeSync<T, F, FieldInstance<T, F>>({
-    mutableRef,
+    fieldInstanceRef,
     props,
     value,
     errors,
@@ -120,6 +119,7 @@ function FieldComp<T = any, F = any>(
     isDirty,
     isTouched,
     isValidating,
+    preserveValue,
   });
 
   useImperativeHandle(ref, () => fieldInstance, [fieldInstance]);

@@ -517,6 +517,37 @@ test("Is dirty should be set", async () => {
   expect(getByText("Dirty")).toBeInTheDocument();
 });
 
+test("Is dirty should be false if value is the initially provided", async () => {
+  const { getByPlaceholderText, queryByText, getByText } = render(
+    <Form onSubmit={(values) => {}}>
+      {() => (
+        <Field<string> name="email" initialValue="">
+          {({ value, setValue, isDirty }) => (
+            <div>
+              <input
+                placeholder="Email"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+              />
+              {isDirty && <p>Dirty</p>}
+            </div>
+          )}
+        </Field>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Dirty")).not.toBeInTheDocument();
+
+  await user.type(getByPlaceholderText("Email"), "test");
+
+  expect(getByText("Dirty")).toBeInTheDocument();
+
+  await user.clear(getByPlaceholderText("Email"));
+
+  expect(queryByText("Dirty")).not.toBeInTheDocument();
+});
+
 test("Field can listen for changes in other fields to validate on multiple field changes - onChange", async () => {
   const { getByPlaceholderText, queryByText, getByText } = render(
     <Form onSubmit={(values) => {}}>
@@ -1126,4 +1157,144 @@ test("Field should remove its value when unrendered", async () => {
       </div>
     `)
   );
+});
+
+test("Field should not remove its value if preserveValue", async () => {
+  const Comp = () => {
+    const [show, setShow] = useState(true);
+    const [values, setValues] = useState<string | null>(null);
+
+    if (values) return <p>{values}</p>;
+
+    return (
+      <Form onSubmit={(values) => setValues(JSON.stringify(values))}>
+        {({ submit }) => (
+          <div>
+            <button onClick={() => setShow(false)}>Unmount</button>
+            <button onClick={submit}>Submit</button>
+            {show && (
+              <Field<string> name={"email"} initialValue="" preserveValue>
+                {({ value, setValue }) => (
+                  <input
+                    placeholder="Email"
+                    value={value}
+                    onChange={(e) => setValue(e.target.value)}
+                  />
+                )}
+              </Field>
+            )}
+            <Field<string> name={"password"} initialValue="">
+              {({ value, setValue }) => (
+                <input
+                  placeholder="Password"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+              )}
+            </Field>
+          </div>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByPlaceholderText, getByText, container } = render(<Comp />);
+
+  await user.type(getByPlaceholderText("Email"), "emailHere");
+  await user.type(getByPlaceholderText("Password"), "passwordHere");
+
+  await user.click(getByText("Unmount"));
+  await user.click(getByText("Submit"));
+
+  await waitFor(() =>
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        <p>
+          {"email":"emailHere","password":"passwordHere"}
+        </p>
+      </div>
+    `)
+  );
+});
+
+test("Field should persist values when remounts if preserveValue", async () => {
+  const Comp = () => {
+    const [show, setShow] = useState(true);
+
+    return (
+      <Form>
+        {() => (
+          <div>
+            <button onClick={() => setShow(!show)}>Toggle mount</button>
+            {show && (
+              <Field<string> name={"email"} initialValue="" preserveValue>
+                {({ value, setValue }) => (
+                  <>
+                    <input
+                      placeholder="Email"
+                      value={value}
+                      onChange={(e) => setValue(e.target.value)}
+                    />
+                    <p>{value}</p>
+                  </>
+                )}
+              </Field>
+            )}
+          </div>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByPlaceholderText, getByText, queryByText } = render(<Comp />);
+
+  expect(queryByText("emailHere")).not.toBeInTheDocument();
+
+  await user.type(getByPlaceholderText("Email"), "emailHere");
+
+  await user.click(getByText("Toggle mount"));
+  await user.click(getByText("Toggle mount"));
+
+  expect(getByText("emailHere")).toBeInTheDocument();
+});
+
+test("Field should not have duplication when remounts if preserveValue", async () => {
+  const Comp = () => {
+    const [show, setShow] = useState(true);
+
+    return (
+      <Form>
+        {({ formFieldsRef }) => (
+          <div>
+            <button onClick={() => setShow(!show)}>Toggle mount</button>
+            {show && (
+              <Field<string> name={"email"} initialValue="" preserveValue>
+                {({ value, setValue }) => (
+                  <>
+                    <input
+                      placeholder="Email"
+                      value={value}
+                      onChange={(e) => setValue(e.target.value)}
+                    />
+                    <p>{value}</p>
+                  </>
+                )}
+              </Field>
+            )}
+            <p>Total fields: {formFieldsRef.current.length}</p>
+          </div>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByText, queryByText, rerender } = render(<Comp />);
+
+  expect(queryByText("emailHere")).not.toBeInTheDocument();
+
+  await user.click(getByText("Toggle mount"));
+  await user.click(getByText("Toggle mount"));
+
+  rerender(<Comp />);
+  expect(getByText("Total fields: 1")).toBeInTheDocument();
 });

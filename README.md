@@ -21,6 +21,8 @@ src="./docs/public/logo.svg"
 [![gzip size](https://img.badgesize.io/https://unpkg.com/houseform@latest/dist/houseform.umd.cjs?compression=gzip)](https://unpkg.com/browse/houseform@latest/dist/houseform.umd.cjs)
 [![license](https://badgen.now.sh/badge/license/MIT)](./LICENSE.md)
 
+[![Discord](https://img.shields.io/discord/1087742343832154152?color=7389D8&label&logo=discord&logoColor=ffffff)](https://discord.com/invite/n9pGcTh3Sx)
+
 </div>
 
 **Visit [https://houseform.dev/](https://houseform.dev/) to get started with HouseForm.**
@@ -57,6 +59,10 @@ Thanks goes to these wonderful people
       <td align="center" valign="top" width="14.28%"><a href="https://bejo.dev/"><img src="https://avatars.githubusercontent.com/u/3190666?v=4?s=100" width="100px;" alt="Orlando Benjamin"/><br /><sub><b>Orlando Benjamin</b></sub></a><br /><a href="https://github.com/houseform/houseform/commits?author=caxco93" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mostafaegouda"><img src="https://avatars.githubusercontent.com/u/100293809?v=4?s=100" width="100px;" alt="Mostafa Gouda"/><br /><sub><b>Mostafa Gouda</b></sub></a><br /><a href="https://github.com/houseform/houseform/commits?author=mostafaegouda" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://eriksimon.dev"><img src="https://avatars.githubusercontent.com/u/10850738?v=4?s=100" width="100px;" alt="Erik Simon"/><br /><sub><b>Erik Simon</b></sub></a><br /><a href="https://github.com/houseform/houseform/commits?author=ShooTeX" title="Code">💻</a> <a href="https://github.com/houseform/houseform/commits?author=ShooTeX" title="Tests">⚠️</a> <a href="https://github.com/houseform/houseform/commits?author=ShooTeX" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/sgoodluck"><img src="https://avatars.githubusercontent.com/u/106334996?v=4?s=100" width="100px;" alt="Seth"/><br /><sub><b>Seth</b></sub></a><br /><a href="https://github.com/houseform/houseform/issues?q=author%3Asgoodluck" title="Bug reports">🐛</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://joostschuur.com"><img src="https://avatars.githubusercontent.com/u/92457?v=4?s=100" width="100px;" alt="Joost Schuur"/><br /><sub><b>Joost Schuur</b></sub></a><br /><a href="https://github.com/houseform/houseform/commits?author=jschuur" title="Code">💻</a> <a href="https://github.com/houseform/houseform/commits?author=jschuur" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

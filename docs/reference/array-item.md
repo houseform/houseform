@@ -2,29 +2,25 @@
 
 An `ArrayFieldItem` is a helper used to validate sub-items in a `FieldArray`. An example `ArrayFieldItem` usage is:
 
-```tsx
-import { FieldArray, FieldArrayItem } from "houseform";
-
-const App = () => (
-  <FieldArray name={"people"} initialValue={[1]}>
-    {({ value }) => (
-      <>
-        {value.map((person, i) => (
-          <FieldArrayItem key={`people[${i}].name`} name={`people[${i}].name`}>
-            {({ setValue, value, onBlur }) => (
-              <input
-                value={value}
-                onBlur={onBlur}
-                onChange={(e) => setValue(e.target.value)}
-                placeholder={"Name"}
-              />
-            )}
-          </FieldArrayItem>
-        ))}
-      </>
-    )}
-  </FieldArray>
-);
+```jsx
+<FieldArray name={"people"} initialValue={[{ name: "Bob" }]}>
+  {({ value }) => (
+    <>
+      {value.map((person, i) => (
+        <FieldArrayItem key={`people[${i}].name`} name={`people[${i}].name`}>
+          {({ setValue, value, onBlur }) => (
+            <input
+              value={value}
+              onBlur={onBlur}
+              onChange={(e) => setValue(e.target.value)}
+              placeholder={"Name"}
+            />
+          )}
+        </FieldArrayItem>
+      ))}
+    </>
+  )}
+</FieldArray>
 ```
 
 ## Array Field Item Props
