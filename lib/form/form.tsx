@@ -10,7 +10,7 @@ import {
 } from "react";
 import type { ZodError } from "zod";
 import { fillPath, getValidationError, stringToPath, validate } from "../utils";
-import { FieldInstance } from "../field";
+import { FieldInstance, InternalValue } from "../field";
 import { FieldArrayInstance } from "../field-array";
 import { ErrorsMap, FormInstance } from "./types";
 import { FormContext } from "./context";
@@ -260,12 +260,12 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
           field.setValues({
             __value: value || [],
             __isResetting: true,
-          } as unknown as any[]);
+          } as InternalValue<T> as unknown as T[]);
         } else if (isField(field)) {
           field.setValue({
             __value: value || "",
             __isResetting: true,
-          } as unknown as any);
+          } as InternalValue<T> as unknown as T);
         }
       });
     _setErrors([]);

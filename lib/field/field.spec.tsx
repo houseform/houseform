@@ -1298,3 +1298,37 @@ test("Field should not have duplication when remounts if preserveValue", async (
   rerender(<Comp />);
   expect(getByText("Total fields: 1")).toBeInTheDocument();
 });
+
+test("Field should not be dirty if form is reset", async () => {
+  const { getByPlaceholderText, queryByText, getByText, findByText } = render(
+    <Form onSubmit={(values) => {}}>
+      {({ reset }) => (
+        <div>
+          <Field<string> name="email" initialValue="">
+            {({ value, setValue, isDirty }) => (
+              <div>
+                <input
+                  placeholder="Email"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+                {isDirty && <p>Dirty</p>}
+              </div>
+            )}
+          </Field>
+          <button onClick={() => reset()}>Reset</button>
+        </div>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Dirty")).not.toBeInTheDocument();
+
+  await user.type(getByPlaceholderText("Email"), "test");
+
+  expect(getByText("Dirty")).toBeInTheDocument();
+
+  await user.click(getByText("Reset"));
+
+  expect(queryByText("Dirty")).not.toBeInTheDocument();
+});

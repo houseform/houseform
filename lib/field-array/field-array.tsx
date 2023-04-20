@@ -10,6 +10,8 @@ import {
 import { FieldArrayContext } from "./context";
 import { FieldArrayInstance, FieldArrayInstanceProps } from "./types";
 import {
+  InternalValue,
+  isInternal,
   useFieldLike,
   useListenToListenToArray,
 } from "../field/use-field-like";
@@ -55,11 +57,28 @@ function FieldArrayComp<T = any, F = any>(
 
   const setValue = useCallback(
     (index: number, value: T) => {
-      setValues((v) => {
+      /**
+       * Because `FieldArrayItem` utilizes `FieldArray.setValue`, we need to add
+       * This edge-guard here, otherwise we run into strange issues with `reset`
+       */
+      const isResetting = isInternal(value) && value.__isResetting;
+      const newValue = isInternal<T>(value) ? value.__value : value;
+
+      const updateFn = (v: T[]) => {
         const newValues = [...v];
-        newValues[index] = value;
+        newValues[index] = newValue;
         return newValues;
-      });
+      };
+
+      if (isResetting) {
+        setValues({
+          __value: updateFn,
+          __isResetting: true,
+        } as InternalValue<(prevState: T[]) => T[]> as unknown as (prevState: T[]) => T[]);
+        return;
+      }
+
+      setValues(updateFn);
     },
     [setValues]
   );

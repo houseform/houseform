@@ -4,8 +4,9 @@ import {
   render,
   waitForElementToBeRemoved,
 } from "@testing-library/react";
-import { Field, FieldArray, Form } from "houseform";
+import { Field, FieldArray, FieldArrayItem, Form } from "houseform";
 import { z } from "zod";
+import * as React from "react";
 
 test("field array should track `isDirty` for the array of values", async () => {
   const { getByText, queryByText } = render(
@@ -430,6 +431,96 @@ test("field array should set isValidating with onSubmit validation", async () =>
   expect(getByText("Validating")).toBeInTheDocument();
 
   await waitForElementToBeRemoved(() => queryByText("Validating"));
+});
+
+test("FieldArray should not be dirty if form is reset", async () => {
+  const { getByText } = render(
+    <Form onSubmit={(values) => {}}>
+      {({ reset }) => (
+        <>
+          <FieldArray<number> name={"people"} initialValue={[1]}>
+            {({ add, isDirty }) => (
+              <>
+                <button onClick={() => add(2)}>Add two</button>
+                <p>{isDirty ? "Dirty" : "Clean"}</p>
+              </>
+            )}
+          </FieldArray>
+          <button onClick={() => reset()}>Reset</button>
+        </>
+      )}
+    </Form>
+  );
+
+  expect(getByText("Clean")).toBeInTheDocument();
+
+  await user.click(getByText("Add two"));
+
+  expect(getByText("Dirty")).toBeInTheDocument();
+
+  await user.click(getByText("Reset"));
+
+  expect(getByText("Clean")).toBeInTheDocument();
+});
+
+test("FieldArray should not be dirty if form is reset when sub-children are present", async () => {
+  const Comp = () => {
+    const products = [
+      { name: "T-Shirt", price: 19.99 },
+      { name: "Hoodie", price: 39.99 },
+      { name: "Jeans", price: 29.99 },
+    ];
+
+    return (
+      <Form
+        onSubmit={(values, form) => {
+          alert("Form was submitted with: " + JSON.stringify(values));
+        }}
+      >
+        {({ submit, reset, isDirty }) => (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              submit();
+            }}
+          >
+            <div>{isDirty ? "Dirty" : "Clean"}</div>
+            <FieldArray<{ name: string; price: number }>
+              name="products"
+              initialValue={products}
+            >
+              {({ value, errors }) => (
+                <div>
+                  {value.map((val, i) => (
+                    <div key={i}>
+                      <FieldArrayItem<number>
+                        key={i}
+                        name={`products[${i}].price`}
+                        initialValue={val.price}
+                      >
+                        {({ value }) => <p>{value}</p>}
+                      </FieldArrayItem>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </FieldArray>
+            <button type="button" onClick={() => reset()}>
+              Reset
+            </button>
+          </form>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByText } = render(<Comp />);
+
+  expect(getByText("Clean")).toBeInTheDocument();
+
+  await user.click(getByText("Reset"));
+
+  expect(getByText("Clean")).toBeInTheDocument();
 });
 
 test.todo("Should work with listenTo");

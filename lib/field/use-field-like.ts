@@ -13,12 +13,12 @@ import { FieldArrayInstance } from "../field-array";
 import { getValidationError, stringToPath, validate } from "../utils";
 import useIsomorphicLayoutEffect from "../utils/use-isomorphic-layout-effect";
 
-type InternalValue = {
-  __value: string;
+export type InternalValue<T> = {
+  __value: T;
   __isResetting: boolean;
 };
 
-const isInternal = (value: any): value is InternalValue => {
+export const isInternal = <T>(value: any): value is InternalValue<T> => {
   return (
     !Array.isArray(value) &&
     typeof value === "object" &&
@@ -215,7 +215,7 @@ export const useFieldLike = <
     ) => {
       _setValue((prev) => {
         const isResetting = isInternal(val) && val.__isResetting;
-        const newValue = isInternal(val) ? val.__value : val;
+        const newValue = isInternal<J>(val) ? val.__value : val;
 
         const isPrevAFunction = (
           t: any
@@ -226,22 +226,25 @@ export const useFieldLike = <
           ? newValue(prev)
           : (newValue as typeof value);
 
-        if (!isResetting) {
-          setIsDirty(newVal !== initVal);
-
-          /**
-           * Call `listenTo` field subscribers for other fields.
-           *
-           * Placed into a `setTimeout` so that the `setValue` call can finish before the `onChangeListenerRefs` are called.
-           */
-          setTimeout(() => {
-            formContext.onChangeListenerRefs.current[props.name]?.forEach(
-              (fn) => fn()
-            );
-          }, 0);
-
-          runFieldValidation("onChangeValidate", newVal);
+        if (isResetting) {
+          return newVal;
         }
+
+        setIsDirty(newVal !== initVal);
+
+        /**
+         * Call `listenTo` field subscribers for other fields.
+         *
+         * Placed into a `setTimeout` so that the `setValue` call can finish before the `onChangeListenerRefs` are called.
+         */
+        setTimeout(() => {
+          formContext.onChangeListenerRefs.current[props.name]?.forEach((fn) =>
+            fn()
+          );
+        }, 0);
+
+        runFieldValidation("onChangeValidate", newVal);
+
         return newVal;
       });
     },
