@@ -1,12 +1,12 @@
 # Non-Text Inputs
 
-Simple text inputs aren't the only useful item to keep track of in your form state. Because of HouseForm's headless nature, you're able to use any existing HTML or UI Library elements to track other parts of state. 
+Simple text inputs aren't the only useful item to keep track of in your form state. Because of HouseForm's headless nature, you're able to use any existing HTML or UI Library elements to track other parts of state.
 
 ## Radio Inputs
 
 The following is an example of a HouseForm form capable of handling a radio input:
 
-```jsx
+```tsx
 import { Field, Form } from "houseform";
 import { set, z } from "zod";
 
@@ -26,7 +26,7 @@ export default function App() {
               return (
                 <div>
                   <fieldset>
-                    <legend>What's the best FromSoftware game:</legend>
+                    <legend>What&apos;s the best FromSoftware game:</legend>
 
                     <div>
                       <input
@@ -79,11 +79,11 @@ export default function App() {
 }
 ```
 
- ## Select Dropdowns
+## Select Dropdowns
 
 The following is a select field example in HouseForm:
 
-```jsx
+```tsx
 import { Field, Form } from "houseform";
 import { z } from "zod";
 
@@ -102,7 +102,9 @@ export default function App() {
                 z.literal("eldenring"),
               ],
               {
-                errorMap: () => ({ message: "You have invalid tastes in games... JK!" }),
+                errorMap: () => ({
+                  message: "You have invalid tastes in games... JK!",
+                }),
               }
             )}
           >
@@ -110,7 +112,7 @@ export default function App() {
               return (
                 <div>
                   <label htmlFor="games">
-                    What's the best FromSoftware game:
+                    What&apos;s the best FromSoftware game:
                   </label>
                   <select
                     name="games"
@@ -144,4 +146,3 @@ export default function App() {
   );
 }
 ```
-

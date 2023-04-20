@@ -12,14 +12,14 @@ head:
 
 Every form in HouseForm starts with a `<Form>` component:
 
-```jsx
-import {Form} from 'houseform';
+```tsx
+import { Form } from "houseform";
 
 const App = () => (
-    <Form onSubmit={() => {}}>
-		{({submit}) => <button onClick={submit}>Submit</button>}
-	</Form>
-)
+  <Form onSubmit={() => {}}>
+    {({ submit }) => <button onClick={submit}>Submit</button>}
+  </Form>
+);
 ```
 
 Within `Form`, there's a required `onSubmit` prop. This property should be a function that you want ran when the `submit` function is ran.
@@ -30,21 +30,27 @@ The child of a `Form` should be a function that returns a JSX element. This can 
 
 Once you have a `<Form>` established, you'll want to add a `<Field>` component.
 
-```jsx
-import {Form, Field} from 'houseform';
+```tsx
+import { Form, Field } from "houseform";
 
 const App = () => (
-    <Form onSubmit={() => {}}>
-		{({submit}) => <div>
-			<Field name="username" initialValue={""}>
-                {({value, setValue, onBlur}) => (
-                	<input value={value} onChange={e => setValue(e.target.value)} onBlur={onBlur}/>
-                )}
-             </Field>			
-			<button onClick={submit}>Submit</button>
-		</div>}
-	</Form>
-)
+  <Form onSubmit={() => {}}>
+    {({ submit }) => (
+      <div>
+        <Field name="username" initialValue={""}>
+          {({ value, setValue, onBlur }) => (
+            <input
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              onBlur={onBlur}
+            />
+          )}
+        </Field>
+        <button onClick={submit}>Submit</button>
+      </div>
+    )}
+  </Form>
+);
 ```
 
 This is the most basic a form field can get within HouseForm. This field has:
@@ -63,31 +69,44 @@ Much like the parent `<Form>` component, the function of `Field` will render the
 
 Now that we have a field, we can update our `<Form>`'s `onSubmit` function to show an `alert` when the form is submitted:
 
-```jsx {2}
+```tsx {2}
+import { Form, Field } from "houseform";
+
 const App = () => (
-    <Form onSubmit={(values) => alert(values)}>
-		{({submit}) => <div>
-			<Field name="username" initialValue={""}>
-                {({value, setValue, onBlur}) => (
-                	<input value={value} onChange={e => setValue(e.target.value)} onBlur={onBlur}/>
-                )}
-             </Field>
-			<button onClick={submit}>Submit</button>
-		</div>}
-	</Form>
-)
+  <Form onSubmit={(values) => alert(values)}>
+    {({ submit }) => (
+      <div>
+        <Field name="username" initialValue={""}>
+          {({ value, setValue, onBlur }) => (
+            <input
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+              onBlur={onBlur}
+            />
+          )}
+        </Field>
+        <button onClick={submit}>Submit</button>
+      </div>
+    )}
+  </Form>
+);
 ```
 
 This `values` object will represent the fields within the form. For example, when submitting this form, you'll see:
 
-```javascript
-{username: "User input here"}
+```json
+{
+  "username": "User input here"
+}
 ```
 
 If you had a second `<Field>` component rendered with `name="email"` you would see:
 
-```javascript
-{username: "User input here", email: "User input here"}
+```json
+{
+  "username": "User input here",
+  "email": "User input here"
+}
 ```
 
 ## Adding field validation
@@ -96,17 +115,34 @@ Now that we have a field, a form, and can receive values from the form's submiss
 
 Validation in HouseForm is done on a per-field basis:
 
-```jsx
-import {z} from "zod";
+```tsx
+import { Field } from "houseform";
+import { z } from "zod";
 
 // ...
- 
-<Field name="username" initialValue={""} onChangeValidate={z.string().min(3, "Your username must have at least three characters")}>
-    {({value, setValue, onBlur, errors}) => (
-	    <input value={value} onChange={e => setValue(e.target.value)} onBlur={onBlur}/>
-        {errors.map(error => <p key={error}>{error}</p>)}
+
+const App = () => (
+  <Field
+    name="username"
+    initialValue={""}
+    onChangeValidate={z
+      .string()
+      .min(3, "Your username must have at least three characters")}
+  >
+    {({ value, setValue, onBlur, errors }) => (
+      <>
+        <input
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          onBlur={onBlur}
+        />
+        {errors.map((error) => (
+          <p key={error}>{error}</p>
+        ))}
+      </>
     )}
-</Field>
+  </Field>
+);
 ```
 
 This field, for example, will validate the user's input whenever they type a value. If said input is less than three characters, [Zod](https://github.com/colinhacks/zod) will run its validation and present the error to the user via the `errors.map` logic.
@@ -189,9 +225,3 @@ function isEmailUnique(val: string) {
 ```
 
 If resolved, it will validate; Otherwise it will pass the rejection explanation to the `errors` property of the `<Field>`.
-
-
-
-
-
-

@@ -19,10 +19,10 @@ const App = () => {
   return (
     <div>
       <Form onSubmit={() => {}} ref={formRef}>
-        {() =>
+        {() => (
           // ...
           <></>
-        }
+        )}
       </Form>
       <button onClick={doSubmit}>Submit</button>
     </div>
@@ -56,4 +56,3 @@ export default function App() {
   );
 }
 ```
-

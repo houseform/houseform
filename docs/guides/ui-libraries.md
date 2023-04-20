@@ -14,20 +14,20 @@ Because HouseForm is headless, you can combine it with any number of UI librarie
 
 While anything ranging from [TailwindCSS](https://tailwindcss.com/) to [MUI](https://mui.com/) work just fine, here's an example of using HouseForm with [React Bootstrap](https://react-bootstrap.github.io/):
 
-```jsx
-import * as React from 'react';
-import { Field as HouseField, Form as HouseForm } from 'houseform';
-import { z } from 'zod';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import 'bootstrap/dist/css/bootstrap.min.css';
+```tsx
+import * as React from "react";
+import { Field as HouseField, Form as HouseForm } from "houseform";
+import { z } from "zod";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function App() {
   return (
     <div className="m-3">
       <HouseForm
         onSubmit={(values) => {
-          alert('Form was submitted with: ' + JSON.stringify(values));
+          alert("Form was submitted with: " + JSON.stringify(values));
         }}
       >
         {({ isValid, submit }) => (
@@ -39,7 +39,7 @@ export default function App() {
           >
             <HouseField
               name="email"
-              onBlurValidate={z.string().email('This must be an email')}
+              onBlurValidate={z.string().email("This must be an email")}
             >
               {({ value, setValue, onBlur, errors }) => {
                 return (

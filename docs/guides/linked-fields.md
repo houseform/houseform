@@ -6,8 +6,11 @@ The first step to do this is to figure out how to cross-reference one field's va
 
 This can be done using the second argument of any `Validate` function and utilizing the`getFieldValue` function:
 
-```jsx
-<Field
+```tsx
+import { Field } from "houseform";
+
+const App = () => (
+  <Field
     name="confirmpassword"
     listenTo={["password"]}
     onChangeValidate={(val, form) => {
@@ -17,9 +20,10 @@ This can be done using the second argument of any `Validate` function and utiliz
         return Promise.reject("Passwords must match");
       }
     }}
->
-    // ...
-</Field>
+  >
+    {/* ... */}
+  </Field>
+);
 ```
 
 While this works, it introduces some edgecase bugs. Imagine the following userflow:
@@ -31,58 +35,60 @@ In this example, the form will still have errors present, as the confirm passwor
 
 To solve this, we need to make sure that the confirm password validation is re-ran when the password field is updated. To do this, you just need to add a `listenTo` field to one of the two form fields.
 
-```jsx
-<Field
-    name="password"
-    onChangeValidate={z
-        .string()
-        .min(8, "Must be at least 8 characters long")}
->
-  {({ value, setValue, onBlur, errors }) => {
-    return (
-        <div>
-          <input
+```tsx
+import { Field } from "houseform";
+
+const App = () => (
+  <>
+    <Field
+      name="password"
+      onChangeValidate={z.string().min(8, "Must be at least 8 characters long")}
+    >
+      {({ value, setValue, onBlur, errors }) => {
+        return (
+          <div>
+            <input
               value={value}
               onBlur={onBlur}
               onChange={(e) => setValue(e.target.value)}
               placeholder={"Password"}
               type="password"
-          />
-          {errors.map((error) => (
+            />
+            {errors.map((error) => (
               <p key={error}>{error}</p>
-          ))}
-        </div>
-    );
-  }}
-</Field>
-<Field
-    name="confirmpassword"
-    listenTo={["password"]}
-    onChangeValidate={(val, form) => {
-      if (val === form.getFieldValue("password")!.value) {
-        return Promise.resolve(true);
-      } else {
-        return Promise.reject("Passwords must match");
-      }
-    }}
->
-  {({ value, setValue, onBlur, errors, isTouched }) => {
-    return (
-        <div>
-          <input
+            ))}
+          </div>
+        );
+      }}
+    </Field>
+    <Field
+      name="confirmpassword"
+      listenTo={["password"]}
+      onChangeValidate={(val, form) => {
+        if (val === form.getFieldValue("password")!.value) {
+          return Promise.resolve(true);
+        } else {
+          return Promise.reject("Passwords must match");
+        }
+      }}
+    >
+      {({ value, setValue, onBlur, errors, isTouched }) => {
+        return (
+          <div>
+            <input
               value={value}
               onBlur={onBlur}
               onChange={(e) => setValue(e.target.value)}
               placeholder={"Password Confirmation"}
               type="password"
-          />
-          {isTouched && errors.map((error) => (
-              <p key={error}>{error}</p>
-          ))}
-        </div>
-    );
-  }}
-</Field>
+            />
+            {isTouched && errors.map((error) => <p key={error}>{error}</p>)}
+          </div>
+        );
+      }}
+    </Field>
+  </>
+);
 ```
 
 This `listenTo` field expects the name of another field to be passed to it as an array. When the listened to field has events ran on it (say, `onBlur`), it will run the respective validation for the field doing the listening as well.
@@ -91,7 +97,9 @@ This `listenTo` field expects the name of another field to be passed to it as an
 
 Similarly, you may have instances where you want to show or hide a field based on the value of another field. This can be done using a form's `value` property:
 
-```jsx
+```tsx
+import { Form, Field } from "houseform";
+
 function App() {
   return (
     <Form

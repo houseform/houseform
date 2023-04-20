@@ -31,8 +31,10 @@ Thanks for being willing to contribute!
 - `pnpm test`: Run integration test
 - `pnpm coverage`: Run integration test and get test coverage
 - `pnpm typecheck`: Run the type tests
-- `pnpm lint`: Run the linter
-- `pnpm format`: Run the linter and format all code
+- `pnpm lint`: Run the linter for lib code
+- `pnpm format`: Run the linter and format all lib code
+- `pnpm docs:lint`: Run the linter for the docs
+- `pnpm docs:format`: Run the linter and format all docs
 - `pnpm docs:dev`: Start the development server for docs
 - `pnpm docs:build`: Build the docs site
 
