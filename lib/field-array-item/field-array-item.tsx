@@ -11,6 +11,7 @@ import { useFieldArrayContext } from "../field-array/context";
 import {
   FieldInstance,
   FieldInstanceProps,
+  isInternal,
   useFieldLike,
   useFieldLikeSync,
   useListenToListenToArray,
@@ -87,15 +88,24 @@ export function FieldArrayItemComp<T = any, F = any>(
   });
 
   const setValue = useCallback(
-    (v: T | ((prevState: T) => T)) => {
+    (val: T | ((prevState: T) => T)) => {
+      const isResetting = isInternal(val) && val.__isResetting;
+      const newValue = isInternal<T>(val) ? val.__value : val;
+
       const isPrevAFunction = (t: any): t is (prevState: T) => T =>
         typeof t === "function";
 
-      const newVal = isPrevAFunction(v) ? v(array.value[itemIndex]) : v;
+      const newVal = isPrevAFunction(newValue)
+        ? newValue(array.value[itemIndex])
+        : newValue;
 
       const newArrayObject = { ...array.value[itemIndex] } as object;
       fillPath(newArrayObject, accessorPath.join("."), newVal);
       array.setValue(itemIndex, newArrayObject as T);
+
+      if (isResetting) {
+        return;
+      }
 
       setIsDirty(true);
 
