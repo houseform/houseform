@@ -11,6 +11,7 @@ import { useFieldArrayContext } from "../field-array/context";
 import {
   FieldInstance,
   FieldInstanceProps,
+  InternalValue,
   isInternal,
   useFieldLike,
   useFieldLikeSync,
@@ -101,11 +102,16 @@ export function FieldArrayItemComp<T = any, F = any>(
 
       const newArrayObject = { ...array.value[itemIndex] } as object;
       fillPath(newArrayObject, accessorPath.join("."), newVal);
-      array.setValue(itemIndex, newArrayObject as T);
-
       if (isResetting) {
+        array.setValue(itemIndex, {
+          __value: newArrayObject,
+          __isResetting: true,
+        } as InternalValue<T> as T);
+
         return;
       }
+
+      array.setValue(itemIndex, newArrayObject as T);
 
       setIsDirty(true);
 
