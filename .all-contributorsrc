@@ -156,8 +156,19 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "babycourageous",
+      "name": "Rene Dellefont",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14936212?v=4",
+      "profile": "https://github.com/babycourageous",
+      "contributions": [
+        "bug",
+        "research"
+      ]
     }
   ],
   "repoHost": "https://github.com",
-  "commitConvention": "none"
+  "commitConvention": "none",
+  "commitType": "docs"
 }

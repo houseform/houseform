@@ -63,6 +63,7 @@ Thanks goes to these wonderful people
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://joostschuur.com"><img src="https://avatars.githubusercontent.com/u/92457?v=4?s=100" width="100px;" alt="Joost Schuur"/><br /><sub><b>Joost Schuur</b></sub></a><br /><a href="https://github.com/houseform/houseform/commits?author=jschuur" title="Code">💻</a> <a href="https://github.com/houseform/houseform/commits?author=jschuur" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/babycourageous"><img src="https://avatars.githubusercontent.com/u/14936212?v=4?s=100" width="100px;" alt="Rene Dellefont"/><br /><sub><b>Rene Dellefont</b></sub></a><br /><a href="https://github.com/houseform/houseform/issues?q=author%3Ababycourageous" title="Bug reports">🐛</a> <a href="#research-babycourageous" title="Research">🔬</a></td>
     </tr>
   </tbody>
 </table>
