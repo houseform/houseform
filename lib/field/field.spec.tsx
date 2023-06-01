@@ -8,7 +8,7 @@ import {
 import { Field, FieldInstance, Form, FormInstance } from "houseform";
 
 import { z } from "zod";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 test("Field should render children", () => {
   const { getByText } = render(

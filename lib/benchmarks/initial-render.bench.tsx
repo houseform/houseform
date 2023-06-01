@@ -1,5 +1,6 @@
 import { describe, bench } from "vitest";
 
+import React from "react";
 import { Field, Form } from "houseform";
 import { cleanup, findByTestId, render } from "@testing-library/react";
 import { Formik, Field as FormikField } from "formik";
