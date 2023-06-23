@@ -5,10 +5,15 @@ type ValidationFunction<T, F> =
   | ZodTypeAny
   | ((val: T, form: FormInstance<F>) => Promise<boolean>);
 
+type TransformFunction<T, F> =
+  | ZodTypeAny
+  | ((val: T, form: FormInstance<F>) => any);
+
 export interface FieldInstanceBaseProps<T = any, F = any> {
   name: string;
   onChangeValidate?: ValidationFunction<T, F>;
   onSubmitValidate?: ValidationFunction<T, F>;
+  onSubmitTransform?: TransformFunction<T, F>;
   listenTo?: string[];
 }
 
