@@ -1743,3 +1743,194 @@ test("Form should not trigger validation when reset", async () => {
 
   expect(queryByText("email error")).not.toBeInTheDocument();
 });
+
+test("onSubmitTransform should work with transform function", async () => {
+  const submitMock = vi.fn();
+  const { getByText, getByPlaceholderText } = render(
+    <Form onSubmit={submitMock}>
+      {({ submit }) => (
+        <>
+          <Field<string>
+            name={"price"}
+            onSubmitTransform={(value) => parseInt(value)}
+          >
+            {({ value, setValue }) => (
+              <input
+                placeholder="Price"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+              />
+            )}
+          </Field>
+          <button onClick={submit}>Submit</button>
+        </>
+      )}
+    </Form>
+  );
+
+  await user.type(getByPlaceholderText("Price"), "69");
+
+  await user.click(getByText("Submit"));
+
+  expect(submitMock.mock.calls[0][0]).toEqual({ price: 69 });
+});
+
+test("onSubmitTransform should work with async transform function", async () => {
+  const submitMock = vi.fn();
+  const { getByText, getByPlaceholderText } = render(
+    <Form onSubmit={submitMock}>
+      {({ submit }) => (
+        <>
+          <Field<string>
+            name={"price"}
+            onSubmitTransform={async (value) => {
+              await new Promise((resolve) =>
+                setTimeout(() => resolve(true), 50)
+              );
+              return Number(value);
+            }}
+          >
+            {({ value, setValue }) => (
+              <input
+                placeholder="Price"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+              />
+            )}
+          </Field>
+          <button onClick={submit}>Submit</button>
+        </>
+      )}
+    </Form>
+  );
+
+  await user.type(getByPlaceholderText("Price"), "69");
+
+  await user.click(getByText("Submit"));
+
+  await waitFor(() => expect(submitMock).toBeCalledTimes(1));
+
+  expect(submitMock.mock.calls[0][0]).toEqual({ price: 69 });
+});
+
+test("onSubmitTransform should work with zod transform", async () => {
+  const submitMock = vi.fn();
+  const { getByText, getByPlaceholderText } = render(
+    <Form onSubmit={submitMock}>
+      {({ submit }) => (
+        <>
+          <Field<string>
+            name={"price"}
+            onSubmitTransform={z.string().transform(Number)}
+          >
+            {({ value, setValue }) => (
+              <input
+                placeholder="Price"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+              />
+            )}
+          </Field>
+          <button onClick={submit}>Submit</button>
+        </>
+      )}
+    </Form>
+  );
+
+  await user.type(getByPlaceholderText("Price"), "69");
+
+  await user.click(getByText("Submit"));
+
+  expect(submitMock.mock.calls[0][0]).toEqual({ price: 69 });
+});
+
+test("onSubmitTransform should work with onSubmitValidate", async () => {
+  const submitMock = vi.fn();
+  const { getByText, getByPlaceholderText, queryByText } = render(
+    <Form onSubmit={submitMock}>
+      {({ submit, isValidating }) => (
+        <>
+          <Field<string>
+            name={"price"}
+            onSubmitValidate={() =>
+              new Promise((resolve) => setTimeout(() => resolve(true), 50))
+            }
+            onSubmitTransform={Number}
+          >
+            {({ value, setValue }) => (
+              <input
+                placeholder="Price"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+              />
+            )}
+          </Field>
+          <button onClick={submit}>Submit</button>
+          {isValidating && <p>Validating</p>}
+        </>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("Validating")).not.toBeInTheDocument();
+
+  await user.type(getByPlaceholderText("Price"), "69");
+
+  await user.click(getByText("Submit"));
+
+  expect(getByText("Validating")).toBeInTheDocument();
+
+  await waitForElementToBeRemoved(() => queryByText("Validating"));
+
+  await waitFor(() => expect(submitMock).toBeCalledTimes(1));
+
+  expect(submitMock.mock.calls[0][0]).toEqual({ price: 69 });
+});
+
+test("onSubmitTransform should set errors and ignore value if it throws", async () => {
+  const submitMock = vi.fn();
+  const { getByText, getByPlaceholderText, findByText, queryByText } = render(
+    <Form onSubmit={submitMock} submitWhenInvalid>
+      {({ submit, errors }) => (
+        <>
+          <Field<string>
+            name={"price"}
+            onSubmitTransform={z.string().min(1, "Not valid").transform(Number)}
+          >
+            {({ value, setValue }) => (
+              <div>
+                <input
+                  placeholder="Price"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+                {errors.map((error) => (
+                  <p key={error}>{error}</p>
+                ))}
+              </div>
+            )}
+          </Field>
+          <button onClick={submit}>Submit</button>
+        </>
+      )}
+    </Form>
+  );
+
+  await user.click(getByText("Submit"));
+
+  expect(await findByText("Not valid")).toBeInTheDocument();
+
+  await waitFor(() => expect(submitMock).toBeCalledTimes(1));
+
+  expect(submitMock.mock.calls[0][0]).toEqual({});
+
+  await user.type(getByPlaceholderText("Price"), "69");
+
+  await user.click(getByText("Submit"));
+
+  await waitFor(() => expect(submitMock).toBeCalledTimes(2));
+
+  expect(queryByText("Not valid")).not.toBeInTheDocument();
+
+  expect(submitMock.mock.calls[1][0]).toEqual({ price: 69 });
+});

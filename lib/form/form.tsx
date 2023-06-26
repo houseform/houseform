@@ -381,8 +381,22 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
         if (!onBlurRes) return false;
         const onSubmitRes = await runValidationType("onSubmitValidate");
         if (!onSubmitRes) return false;
+
+        const runTransform = async () => {
+          const transform = formField.props.onSubmitTransform;
+          if (!transform) {
+            return formField.value;
+          }
+          try {
+            return await validate(formField.value, baseValue, transform);
+          } catch (error) {
+            formField.setErrors(getValidationError(error as ZodError | string));
+          }
+        };
+        const value = await runTransform();
+
         if (formField.errors.length > 0) return false;
-        fillPath(values, formField.props.name, formField.value);
+        fillPath(values, formField.props.name, value);
         return true;
       })
     );
