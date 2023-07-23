@@ -34,6 +34,62 @@ test("Field should render with initial values", async () => {
   expect(getByText("test@example.com")).toBeInTheDocument();
 });
 
+test("Field should default to empty string initialValue", async () => {
+  const { queryByText } = render(
+    <Form onSubmit={(_) => {}}>
+      {() => (
+        <>
+          <Field<string | null> name={"email"} initialValue={null}>
+            {({ value }) => <p>{value === "" ? "" : "FAIL"}</p>}
+          </Field>
+          <Field<string> name={"email"}>
+            {({ value }) => <p>{value === "" ? "" : "FAIL"}</p>}
+          </Field>
+        </>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("FAIL")).not.toBeInTheDocument();
+});
+
+test("Field should default to empty string for undefined initialValue", async () => {
+  const { queryByText } = render(
+    <Form onSubmit={(_) => {}}>
+      {() => (
+        <Field<string> name={"email"}>
+          {({ value }) => <p>{value === "" ? "PASS" : "FAIL"}</p>}
+        </Field>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("PASS")).toBeInTheDocument();
+});
+
+test("Field should passthrough initialValue if explicitInitialValue is set", async () => {
+  const { queryByText } = render(
+    <Form onSubmit={(_) => {}}>
+      {() => (
+        <>
+          <Field<string> name={"email"} explicitInitialValue={true}>
+            {({ value }) => <p>{value === undefined ? "" : "FAIL"}</p>}
+          </Field>
+          <Field<string | null>
+            name={"email"}
+            explicitInitialValue={true}
+            initialValue={null}
+          >
+            {({ value }) => <p>{value === null ? "" : "FAIL"}</p>}
+          </Field>
+        </>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("FAIL")).not.toBeInTheDocument();
+});
+
 test("Field should allow changing value", async () => {
   const { getByPlaceholderText } = render(
     <Form onSubmit={(_) => {}}>

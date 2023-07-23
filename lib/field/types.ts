@@ -25,6 +25,7 @@ export interface FieldInstanceProps<T = any, F = any>
   resetWithValue?: T;
   memoChild?: any[];
   preserveValue?: boolean;
+  explicitInitialValue?: boolean;
 }
 
 export interface FieldInstance<T = any, F = any> {
