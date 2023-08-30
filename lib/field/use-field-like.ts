@@ -21,6 +21,7 @@ export type InternalValue<T> = {
 export const isInternal = <T>(value: any): value is InternalValue<T> => {
   return (
     !Array.isArray(value) &&
+    value !== null &&
     typeof value === "object" &&
     "__isResetting" in value
   );
