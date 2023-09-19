@@ -148,6 +148,7 @@ export const useFieldLike = <
   const [isValidating, setIsValidating] = useState<boolean>(
     fieldInstance?.isValidating ?? false
   );
+  const isSubmitted = formContext.isSubmitted;
 
   const runFieldValidation = useCallback(
     (
@@ -274,6 +275,7 @@ export const useFieldLike = <
     isDirty,
     isValid,
     isValidating,
+    isSubmitted,
     runFieldValidation,
     valueRef,
     validate: exportedValidate,

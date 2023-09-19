@@ -42,6 +42,7 @@ export interface FieldInstance<T = any, F = any> {
   setIsDirty: (val: boolean) => void;
   isDirty: boolean;
   isValidating: boolean;
+  isSubmitted: boolean;
   validate: (
     validationType: "onChangeValidate" | "onBlurValidate" | "onMountValidate"
   ) => void;
