@@ -95,8 +95,8 @@ export const App = () => (
       listenTo={["auth.password"]}
       onChangeValidate={(val, form) => {
         // Notice the `auth.password` field's name is using the bracket syntax
-        if (val === form.getFieldValue("auth.password")!.value) {
-          // OR: if (val === form.getFieldValue(`auth["password"]`)!.value) {
+        if (val === form.getFieldValue("auth.password")?.value) {
+          // OR: if (val === form.getFieldValue(`auth["password"]`)?.value) {
           return Promise.resolve(true);
         } else {
           return Promise.reject("Passwords must match");
