@@ -92,21 +92,36 @@ export const useFieldLikeSync = <
    */
   useIsomorphicLayoutEffect(() => {
     formContext.recomputeErrors();
+    return () => {
+      formContext.recomputeErrors();
+    };
   }, [errors, formContext.recomputeErrors]);
 
   useIsomorphicLayoutEffect(() => {
     formContext.recomputeIsTouched();
+    return () => {
+      formContext.recomputeIsTouched();
+    };
   }, [isTouched, formContext.recomputeIsTouched]);
 
   useIsomorphicLayoutEffect(() => {
     formContext.recomputeIsDirty();
+    return () => {
+      formContext.recomputeIsDirty();
+    };
   }, [isDirty, formContext.recomputeIsDirty]);
 
   useIsomorphicLayoutEffect(() => {
     formContext.recomputeIsValidating();
+    return () => {
+      formContext.recomputeIsValidating();
+    };
   }, [isValidating, formContext.recomputeIsValidating]);
 
   useIsomorphicLayoutEffect(() => {
     formContext.recomputeFormValue();
+    return () => {
+      formContext.recomputeFormValue();
+    };
   }, [value, formContext.recomputeFormValue]);
 };
