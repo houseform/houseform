@@ -331,7 +331,7 @@ test("Field can receive data from other fields", async () => {
           <Field<string>
             name="confirmpassword"
             onChangeValidate={(val, form) => {
-              if (val === form.getFieldValue("password")!.value) {
+              if (val === form.getFieldValue("password")?.value) {
                 return Promise.resolve(true);
               } else {
                 return Promise.reject("Passwords must match");
@@ -385,7 +385,7 @@ test("Field can check for onChangeValidate errors on submit", async () => {
           <Field<string>
             name="confirmpassword"
             onChangeValidate={(val, form) => {
-              if (val === form.getFieldValue("password")!.value) {
+              if (val === form.getFieldValue("password")?.value) {
                 return Promise.resolve(true);
               } else {
                 return Promise.reject("Passwords must match");
@@ -566,7 +566,7 @@ test("Field can listen for changes in other fields to validate on multiple field
             name="confirmpassword"
             listenTo={["password"]}
             onChangeValidate={(val, form) => {
-              if (val === form.getFieldValue("password")!.value) {
+              if (val === form.getFieldValue("password")?.value) {
                 return Promise.resolve(true);
               } else {
                 return Promise.reject("Passwords must match");
@@ -622,7 +622,7 @@ test("Field can listen for changes in other fields to validate on multiple field
             name="confirmpassword"
             listenTo={["password"]}
             onBlurValidate={(val, form) => {
-              if (val === form.getFieldValue("password")!.value) {
+              if (val === form.getFieldValue("password")?.value) {
                 return Promise.resolve(true);
               } else {
                 return Promise.reject("Passwords must match");
@@ -827,7 +827,7 @@ test("Field should manually validate", async () => {
     const formRef = useRef<FormInstance>(null);
 
     const runValidate = () => {
-      formRef.current?.getFieldValue("test")!.validate("onChangeValidate");
+      formRef.current?.getFieldValue("test")?.validate("onChangeValidate");
     };
 
     return (
@@ -870,7 +870,7 @@ test("Field should not throw error if manually validate against non-used validat
     const formRef = useRef<FormInstance>(null);
 
     const runValidate = () => {
-      formRef.current?.getFieldValue("test")!.validate("onBlurValidate");
+      formRef.current?.getFieldValue("test")?.validate("onBlurValidate");
     };
 
     return (
