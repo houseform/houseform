@@ -1332,3 +1332,97 @@ test("Field should not be dirty if form is reset", async () => {
 
   expect(queryByText("Dirty")).not.toBeInTheDocument();
 });
+
+test("Field should recompute form context when unmounted", async () => {
+  const Comp = () => {
+    const [formProps, setFormProps] = useState<string | null>(null);
+
+    if (formProps) return <p>{formProps}</p>;
+
+    return (
+      <Form>
+        {({ isValid, submit, value, ...form }) => (
+          <div>
+            <button
+              onClick={() => {
+                setFormProps(
+                  JSON.stringify(
+                    {
+                      isDirty: form.isDirty,
+                      isTouched: form.isTouched,
+                      isValid,
+                      isValidating: form.isValidating,
+                      value,
+                    },
+                    null,
+                    2
+                  )
+                );
+                submit();
+              }}
+            >
+              Submit
+            </button>
+            <Field<boolean> name="isVisible">
+              {({ value, setValue, onBlur }) => {
+                return (
+                  <input
+                    type="checkbox"
+                    value={value ? "on" : undefined}
+                    onBlur={onBlur}
+                    onChange={(e) => setValue(e.target.checked)}
+                  />
+                );
+              }}
+            </Field>
+            {value.isVisible && (
+              <Field<string>
+                name="conditional"
+                initialValue=""
+                onChangeValidate={z
+                  .string()
+                  .min(8, "Must be at least 8 characters long")}
+              >
+                {({ value, setValue, onBlur }) => (
+                  <input
+                    placeholder="Conditional"
+                    value={value}
+                    onBlur={onBlur}
+                    onChange={(e) => setValue(e.target.value)}
+                  />
+                )}
+              </Field>
+            )}
+          </div>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByPlaceholderText, getByRole, getByText, container } = render(
+    <Comp />
+  );
+
+  await user.click(getByRole("checkbox"));
+  await user.type(getByPlaceholderText("Conditional"), "toofew");
+  await user.click(getByRole("checkbox"));
+  await user.click(getByText("Submit"));
+
+  await waitFor(() =>
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        <p>
+          {
+        "isDirty": true,
+        "isTouched": true,
+        "isValid": true,
+        "isValidating": false,
+        "value": {
+          "isVisible": false
+        }
+      }
+        </p>
+      </div>
+    `)
+  );
+});
