@@ -33,6 +33,8 @@ function FieldArrayComp<T = any, F = any>(
     errors,
     setErrors,
     setValue: setValues,
+    hints,
+    setHints,
     isTouched,
     isDirty,
     isValid,
@@ -44,6 +46,7 @@ function FieldArrayComp<T = any, F = any>(
     setIsDirty,
     setIsTouched,
     validate,
+    checkHint,
   } = useFieldLike<T, F, FieldArrayInstance<T, F>>({
     props,
     initialValue: [] as T[],
@@ -165,6 +168,8 @@ function FieldArrayComp<T = any, F = any>(
       _setIsValidating,
       errors,
       setErrors,
+      hints,
+      setHints,
       isValid,
       isValidating,
       setIsDirty,
@@ -173,6 +178,7 @@ function FieldArrayComp<T = any, F = any>(
       isTouched,
       setValues,
       validate,
+      checkHint,
     };
   }, [
     value,
@@ -188,6 +194,8 @@ function FieldArrayComp<T = any, F = any>(
     _setIsValidating,
     errors,
     setErrors,
+    hints,
+    setHints,
     isValid,
     isValidating,
     setIsDirty,
@@ -196,6 +204,7 @@ function FieldArrayComp<T = any, F = any>(
     isTouched,
     setValues,
     validate,
+    checkHint,
   ]);
 
   const fieldInstanceRef = useRef<FieldArrayInstance<T, F>>(fieldArrayInstance);

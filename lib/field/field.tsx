@@ -28,6 +28,8 @@ function FieldComp<T = any, F = any>(
     value,
     setErrors,
     errors,
+    hints,
+    setHints,
     setIsDirty,
     setIsTouched,
     setValue,
@@ -37,10 +39,12 @@ function FieldComp<T = any, F = any>(
     isValidating,
     isSubmitted,
     runFieldValidation,
+    runFieldHintCheck,
     valueRef,
     _normalizedDotName,
     _setIsValidating,
     validate,
+    checkHint,
   } = useFieldLike<T, F, FieldInstance<T, F>>({
     props,
     initialValue: "" as T,
@@ -64,6 +68,7 @@ function FieldComp<T = any, F = any>(
       formContext.onBlurListenerRefs.current[props.name]?.forEach((fn) => fn());
     }, 0);
 
+    runFieldHintCheck("onBlurHint", valueRef.current);
     runFieldValidation("onBlurValidate", valueRef.current);
   }, [
     formContext.onBlurListenerRefs,
@@ -91,6 +96,9 @@ function FieldComp<T = any, F = any>(
       _normalizedDotName,
       _setIsValidating,
       validate,
+      hints,
+      setHints,
+      checkHint,
     };
   }, [
     props,
@@ -109,6 +117,9 @@ function FieldComp<T = any, F = any>(
     _normalizedDotName,
     _setIsValidating,
     validate,
+    hints,
+    setHints,
+    checkHint,
   ]);
 
   const fieldInstanceRef = useRef<FieldInstance<T>>(fieldInstance);

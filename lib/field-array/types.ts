@@ -27,6 +27,8 @@ export interface FieldArrayInstance<T = any, F = any>
   setValue: (index: number, value: T) => void;
   setErrors: (errors: string[]) => void;
   errors: string[];
+  setHints: (hint: string[]) => void;
+  hints: string[];
   isValid: boolean;
   setIsTouched: (val: boolean) => void;
   setIsDirty: (val: boolean) => void;
@@ -36,4 +38,5 @@ export interface FieldArrayInstance<T = any, F = any>
   validate: (
     validationType: "onChangeValidate" | "onBlurValidate" | "onMountValidate"
   ) => void;
+  checkHint: (hintType: "onChangeHint" | "onBlurHint" | "onMountHint") => void;
 }
