@@ -41,6 +41,7 @@ export function FieldArrayItemComp<T = any, F = any>(
     isValid,
     isValidating,
     isTouched,
+    isSubmitted,
     setIsTouched,
     isDirty,
     setIsDirty,
@@ -177,6 +178,7 @@ export function FieldArrayItemComp<T = any, F = any>(
       setErrors,
       setIsTouched,
       validate,
+      isSubmitted,
     };
   }, [
     setValue,
@@ -194,6 +196,7 @@ export function FieldArrayItemComp<T = any, F = any>(
     setErrors,
     setIsTouched,
     validate,
+    isSubmitted,
   ]);
 
   const fieldInstanceRef = useRef<FieldInstance<T>>(fieldArrayInstance);

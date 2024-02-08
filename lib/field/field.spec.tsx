@@ -1,4 +1,4 @@
-import { expect, test } from "vitest";
+import { expect, test, vi } from "vitest";
 import {
   fireEvent,
   render,
@@ -1331,6 +1331,53 @@ test("Field should not be dirty if form is reset", async () => {
   await user.click(getByText("Reset"));
 
   expect(queryByText("Dirty")).not.toBeInTheDocument();
+});
+
+test("Field should have the `isSubmitted` value", async () => {
+  const submitMock = vi.fn();
+
+  const { getByPlaceholderText, queryByText, getByText } = render(
+    <Form onSubmit={submitMock}>
+      {({ submit }) => (
+        <div>
+          <Field<string>
+            name="email"
+            initialValue=""
+            onChangeValidate={z.string().email("You must input a valid email")}
+          >
+            {({ value, setValue, isSubmitted }) => (
+              <div>
+                <input
+                  placeholder="Email"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+                {isSubmitted && <p>isSubmitted</p>}
+              </div>
+            )}
+          </Field>
+          <button onClick={() => submit()}>Submit</button>
+        </div>
+      )}
+    </Form>
+  );
+
+  const email = getByPlaceholderText("Email");
+
+  expect(queryByText("isSubmitted")).not.toBeInTheDocument();
+
+  await user.click(getByText("Submit"));
+
+  expect(getByText("isSubmitted")).toBeInTheDocument();
+
+  expect(submitMock).not.toHaveBeenCalled();
+
+  await user.type(email, "test@example.com");
+
+  await user.click(getByText("Submit"));
+
+  expect(getByText("isSubmitted")).toBeInTheDocument();
+  expect(submitMock).toHaveBeenCalled();
 });
 
 test("Field should recompute form context when unmounted", async () => {
