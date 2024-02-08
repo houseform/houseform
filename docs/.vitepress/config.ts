@@ -109,6 +109,10 @@ export default defineConfig({
             link: "/guides/arrays",
           },
           {
+            text: "Soft Errors / Hints",
+            link: "/guides/soft-errors",
+          },
+          {
             text: "TypeScript",
             link: "/guides/typescript",
           },
