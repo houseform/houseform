@@ -14,7 +14,7 @@ const App = () => (
     name="confirmpassword"
     listenTo={["password"]}
     onChangeValidate={(val, form) => {
-      if (val === form.getFieldValue("password")!.value) {
+      if (val === form.getFieldValue("password")?.value) {
         return Promise.resolve(true);
       } else {
         return Promise.reject("Passwords must match");
@@ -65,7 +65,7 @@ const App = () => (
       name="confirmpassword"
       listenTo={["password"]}
       onChangeValidate={(val, form) => {
-        if (val === form.getFieldValue("password")!.value) {
+        if (val === form.getFieldValue("password")?.value) {
           return Promise.resolve(true);
         } else {
           return Promise.reject("Passwords must match");

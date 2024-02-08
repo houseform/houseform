@@ -331,7 +331,7 @@ test("Field can receive data from other fields", async () => {
           <Field<string>
             name="confirmpassword"
             onChangeValidate={(val, form) => {
-              if (val === form.getFieldValue("password")!.value) {
+              if (val === form.getFieldValue("password")?.value) {
                 return Promise.resolve(true);
               } else {
                 return Promise.reject("Passwords must match");
@@ -385,7 +385,7 @@ test("Field can check for onChangeValidate errors on submit", async () => {
           <Field<string>
             name="confirmpassword"
             onChangeValidate={(val, form) => {
-              if (val === form.getFieldValue("password")!.value) {
+              if (val === form.getFieldValue("password")?.value) {
                 return Promise.resolve(true);
               } else {
                 return Promise.reject("Passwords must match");
@@ -566,7 +566,7 @@ test("Field can listen for changes in other fields to validate on multiple field
             name="confirmpassword"
             listenTo={["password"]}
             onChangeValidate={(val, form) => {
-              if (val === form.getFieldValue("password")!.value) {
+              if (val === form.getFieldValue("password")?.value) {
                 return Promise.resolve(true);
               } else {
                 return Promise.reject("Passwords must match");
@@ -622,7 +622,7 @@ test("Field can listen for changes in other fields to validate on multiple field
             name="confirmpassword"
             listenTo={["password"]}
             onBlurValidate={(val, form) => {
-              if (val === form.getFieldValue("password")!.value) {
+              if (val === form.getFieldValue("password")?.value) {
                 return Promise.resolve(true);
               } else {
                 return Promise.reject("Passwords must match");
@@ -827,7 +827,7 @@ test("Field should manually validate", async () => {
     const formRef = useRef<FormInstance>(null);
 
     const runValidate = () => {
-      formRef.current?.getFieldValue("test")!.validate("onChangeValidate");
+      formRef.current?.getFieldValue("test")?.validate("onChangeValidate");
     };
 
     return (
@@ -870,7 +870,7 @@ test("Field should not throw error if manually validate against non-used validat
     const formRef = useRef<FormInstance>(null);
 
     const runValidate = () => {
-      formRef.current?.getFieldValue("test")!.validate("onBlurValidate");
+      formRef.current?.getFieldValue("test")?.validate("onBlurValidate");
     };
 
     return (
@@ -1378,4 +1378,98 @@ test("Field should have the `isSubmitted` value", async () => {
 
   expect(getByText("isSubmitted")).toBeInTheDocument();
   expect(submitMock).toHaveBeenCalled();
+});
+
+test("Field should recompute form context when unmounted", async () => {
+  const Comp = () => {
+    const [formProps, setFormProps] = useState<string | null>(null);
+
+    if (formProps) return <p>{formProps}</p>;
+
+    return (
+      <Form>
+        {({ isValid, submit, value, ...form }) => (
+          <div>
+            <button
+              onClick={() => {
+                setFormProps(
+                  JSON.stringify(
+                    {
+                      isDirty: form.isDirty,
+                      isTouched: form.isTouched,
+                      isValid,
+                      isValidating: form.isValidating,
+                      value,
+                    },
+                    null,
+                    2
+                  )
+                );
+                submit();
+              }}
+            >
+              Submit
+            </button>
+            <Field<boolean> name="isVisible">
+              {({ value, setValue, onBlur }) => {
+                return (
+                  <input
+                    type="checkbox"
+                    value={value ? "on" : undefined}
+                    onBlur={onBlur}
+                    onChange={(e) => setValue(e.target.checked)}
+                  />
+                );
+              }}
+            </Field>
+            {value.isVisible && (
+              <Field<string>
+                name="conditional"
+                initialValue=""
+                onChangeValidate={z
+                  .string()
+                  .min(8, "Must be at least 8 characters long")}
+              >
+                {({ value, setValue, onBlur }) => (
+                  <input
+                    placeholder="Conditional"
+                    value={value}
+                    onBlur={onBlur}
+                    onChange={(e) => setValue(e.target.value)}
+                  />
+                )}
+              </Field>
+            )}
+          </div>
+        )}
+      </Form>
+    );
+  };
+
+  const { getByPlaceholderText, getByRole, getByText, container } = render(
+    <Comp />
+  );
+
+  await user.click(getByRole("checkbox"));
+  await user.type(getByPlaceholderText("Conditional"), "toofew");
+  await user.click(getByRole("checkbox"));
+  await user.click(getByText("Submit"));
+
+  await waitFor(() =>
+    expect(container).toMatchInlineSnapshot(`
+      <div>
+        <p>
+          {
+        "isDirty": true,
+        "isTouched": true,
+        "isValid": true,
+        "isValidating": false,
+        "value": {
+          "isVisible": false
+        }
+      }
+        </p>
+      </div>
+    `)
+  );
 });
