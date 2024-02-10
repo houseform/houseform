@@ -15,6 +15,7 @@ export interface FieldArrayInstanceProps<T = any, F = any>
   resetWithValue?: T[];
   memoChild?: any[];
   preserveValue?: boolean;
+  explicitInitialValue?: boolean;
 }
 
 export interface FieldArrayInstance<T = any, F = any>

@@ -184,11 +184,11 @@ export const useFieldLike = <
     [formContext, props]
   );
 
-  const initVal = (props.initialValue ?? initialValue) as UseFieldLikeProps<
-    T,
-    F,
-    TT
-  >["initialValue"];
+  const initVal = (
+    props.explicitInitialValue
+      ? props.initialValue
+      : props.initialValue ?? initialValue
+  ) as UseFieldLikeProps<T, F, TT>["initialValue"];
 
   const hasRanMountHook = useRef(false);
   const [value, _setValue] = useState<
