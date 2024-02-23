@@ -1,6 +1,10 @@
 import type { ZodTypeAny } from "zod";
 import { FormInstance } from "../form/types";
 
+type HintFunction<T, F> =
+  | ZodTypeAny
+  | ((val: T, form: FormInstance<F>) => Promise<boolean>);
+
 type ValidationFunction<T, F> =
   | ZodTypeAny
   | ((val: T, form: FormInstance<F>) => Promise<boolean>);
@@ -14,13 +18,17 @@ export interface FieldInstanceBaseProps<T = any, F = any> {
   onChangeValidate?: ValidationFunction<T, F>;
   onSubmitValidate?: ValidationFunction<T, F>;
   onSubmitTransform?: TransformFunction<T, F>;
+  onChangeHint?: HintFunction<T, F>;
+  onSubmitHint?: HintFunction<T, F>;
   listenTo?: string[];
 }
 
 export interface FieldInstanceProps<T = any, F = any>
   extends FieldInstanceBaseProps<T, F> {
   onBlurValidate?: ValidationFunction<T, F>;
+  onBlurHint?: HintFunction<T, F>;
   onMountValidate?: ValidationFunction<T, F>;
+  onMountHint?: HintFunction<T, F>;
   initialValue?: T;
   resetWithValue?: T;
   memoChild?: any[];
@@ -36,6 +44,8 @@ export interface FieldInstance<T = any, F = any> {
   _setIsValidating: (val: boolean) => void;
   setErrors: (error: string[]) => void;
   errors: string[];
+  setHints: (hint: string[]) => void;
+  hints: string[];
   isValid: boolean;
   setIsTouched: (val: boolean) => void;
   isTouched: boolean;
@@ -46,4 +56,5 @@ export interface FieldInstance<T = any, F = any> {
   validate: (
     validationType: "onChangeValidate" | "onBlurValidate" | "onMountValidate"
   ) => void;
+  checkHint: (hintType: "onChangeHint" | "onBlurHint" | "onMountHint") => void;
 }

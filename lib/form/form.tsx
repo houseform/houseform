@@ -372,6 +372,26 @@ function FormComp<T extends Record<string, any> = Record<string, any>>(
             if (type === "onSubmitValidate") formField._setIsValidating(false);
           }
         };
+
+        const runHintType = async (
+          type: "onMountHint" | "onChangeHint" | "onSubmitHint" | "onBlurHint"
+        ) => {
+          const validator = formField.props[type as "onChangeHint"];
+          if (!validator) return true;
+          try {
+            await validate(formField.value, baseValue, validator);
+            return true;
+          } catch (error) {
+            formField.setHints(getValidationError(error as ZodError | string));
+            return false;
+          }
+        };
+
+        formField.setHints([]);
+        await runHintType("onMountHint");
+        await runHintType("onChangeHint");
+        await runHintType("onBlurHint");
+        await runHintType("onSubmitHint");
         formField.setErrors([]);
         const onMountRes = await runValidationType("onMountValidate");
         if (!onMountRes) return false;

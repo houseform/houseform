@@ -139,6 +139,7 @@ export const useFieldLike = <
   );
 
   const [errors, setErrors] = useState<string[]>(fieldInstance?.errors ?? []);
+  const [hints, setHints] = useState<string[]>(fieldInstance?.hints ?? []);
   const [isTouched, setIsTouched] = useState<boolean>(
     fieldInstance?.isTouched ?? false
   );
@@ -184,6 +185,37 @@ export const useFieldLike = <
     [formContext, props]
   );
 
+  const runFieldHintCheck = useCallback(
+    (
+      validationFnName: "onChangeHint" | "onBlurHint" | "onMountHint",
+      val: UseFieldLikeProps<T, F, TT>["initialValue"]
+    ) => {
+      let validationFn = props.onChangeHint;
+      if (validationFnName === "onBlurHint") {
+        validationFn = (props as unknown as FieldInstance<T, F>["props"])
+          ?.onBlurHint;
+      }
+      if (validationFnName === "onMountHint") {
+        validationFn = (props as unknown as FieldInstance<T, F>["props"])
+          ?.onMountHint;
+      }
+      if (validationFn) {
+        setIsValidating(true);
+        validate(val as T, formContext, validationFn)
+          .then(() => {
+            setHints([]);
+          })
+          .catch((error: string | ZodError) => {
+            setHints(getValidationError(error as ZodError | string));
+          })
+          .finally(() => {
+            setIsValidating(false);
+          });
+      }
+    },
+    [formContext, props]
+  );
+
   const initVal = (props.initialValue ?? initialValue) as UseFieldLikeProps<
     T,
     F,
@@ -198,6 +230,7 @@ export const useFieldLike = <
   useIsomorphicLayoutEffect(() => {
     if (hasRanMountHook.current) return;
     hasRanMountHook.current = true;
+    runFieldHintCheck("onMountHint", initVal);
     runFieldValidation("onMountValidate", initVal);
   });
 
@@ -245,12 +278,19 @@ export const useFieldLike = <
           );
         }, 0);
 
+        runFieldHintCheck("onChangeHint", newVal);
         runFieldValidation("onChangeValidate", newVal);
 
         return newVal;
       });
     },
-    [initVal, runFieldValidation, formContext.onChangeListenerRefs, props.name]
+    [
+      initVal,
+      runFieldValidation,
+      runFieldHintCheck,
+      formContext.onChangeListenerRefs,
+      props.name,
+    ]
   );
 
   const isValid = useMemo(() => {
@@ -264,10 +304,19 @@ export const useFieldLike = <
     [runFieldValidation, valueRef]
   );
 
+  const exportedHintCheck = useCallback(
+    (validationFnName: Parameters<typeof runFieldHintCheck>[0]) => {
+      runFieldHintCheck(validationFnName, valueRef.current);
+    },
+    [runFieldHintCheck, valueRef]
+  );
+
   return {
     value,
     setErrors,
     errors,
+    hints,
+    setHints,
     setIsDirty,
     setIsTouched,
     setValue,
@@ -277,8 +326,10 @@ export const useFieldLike = <
     isValidating,
     isSubmitted,
     runFieldValidation,
+    runFieldHintCheck,
     valueRef,
     validate: exportedValidate,
+    checkHint: exportedHintCheck,
     _normalizedDotName,
     _setIsValidating: setIsValidating,
   };

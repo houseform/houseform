@@ -37,7 +37,10 @@ export function FieldArrayItemComp<T = any, F = any>(
     _setIsValidating,
     errors,
     setErrors,
+    hints,
+    setHints,
     runFieldValidation,
+    runFieldHintCheck,
     isValid,
     isValidating,
     isTouched,
@@ -46,6 +49,7 @@ export function FieldArrayItemComp<T = any, F = any>(
     isDirty,
     setIsDirty,
     validate,
+    checkHint,
   } = useFieldLike<T, F, FieldInstance<T, F>>({
     props,
     initialValue: "" as T,
@@ -152,13 +156,14 @@ export function FieldArrayItemComp<T = any, F = any>(
       formContext.onBlurListenerRefs.current[props.name]?.forEach((fn) => fn());
     }, 0);
 
+    runFieldHintCheck("onBlurHint", valueRef.current);
     runFieldValidation("onBlurValidate", valueRef.current);
   }, [
     formContext.onBlurListenerRefs,
     props.name,
+    runFieldHintCheck,
     runFieldValidation,
     setIsTouched,
-    valueRef,
   ]);
 
   const fieldArrayInstance = useMemo(() => {
@@ -179,6 +184,9 @@ export function FieldArrayItemComp<T = any, F = any>(
       setIsTouched,
       validate,
       isSubmitted,
+      hints,
+      setHints,
+      checkHint,
     };
   }, [
     setValue,
@@ -197,6 +205,9 @@ export function FieldArrayItemComp<T = any, F = any>(
     setIsTouched,
     validate,
     isSubmitted,
+    hints,
+    setHints,
+    checkHint,
   ]);
 
   const fieldInstanceRef = useRef<FieldInstance<T>>(fieldArrayInstance);

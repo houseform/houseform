@@ -26,6 +26,9 @@ export const initialFieldArrayContext = {
   replace: () => {},
   validate: () => {},
   _setIsValidating: () => {},
+  hints: [],
+  setHints: () => {},
+  checkHint: () => {},
 } as FieldArrayInstance as unknown;
 /* c8 ignore stop */
 

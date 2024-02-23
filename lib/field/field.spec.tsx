@@ -1473,3 +1473,69 @@ test("Field should recompute form context when unmounted", async () => {
     `)
   );
 });
+
+test("Field should show hints with async onChange hint function", async () => {
+  const { getByPlaceholderText, queryByText, getByText } = render(
+    <Form onSubmit={(_) => {}}>
+      {() => (
+        <Field<string>
+          name={"email"}
+          initialValue=""
+          onChangeHint={() => Promise.reject("This should show up")}
+        >
+          {({ value, setValue, hints }) => (
+            <div>
+              <input
+                placeholder="Email"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+              />
+              {hints.map((hint) => (
+                <p key={hint}>{hint}</p>
+              ))}
+            </div>
+          )}
+        </Field>
+      )}
+    </Form>
+  );
+
+  expect(queryByText("This should show up")).not.toBeInTheDocument();
+
+  await user.type(getByPlaceholderText("Email"), "test");
+
+  expect(getByText("This should show up")).toBeInTheDocument();
+});
+
+test("Field hints should not prevent an error", async () => {
+  const fn = vi.fn();
+  const { findByText, getByText } = render(
+    <Form onSubmit={fn}>
+      {({ submit }) => (
+        <Field<string>
+          name={"email"}
+          initialValue=""
+          onMountHint={() => Promise.reject("This should show up")}
+        >
+          {({ value, setValue, hints }) => (
+            <div>
+              <input
+                placeholder="Email"
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+              />
+              {hints.map((hint) => (
+                <p key={hint}>{hint}</p>
+              ))}
+              <button onClick={submit}>Submit</button>
+            </div>
+          )}
+        </Field>
+      )}
+    </Form>
+  );
+
+  expect(await findByText("This should show up")).toBeInTheDocument();
+  await user.click(getByText("Submit"));
+  await waitFor(() => expect(fn).toHaveBeenCalled());
+});
